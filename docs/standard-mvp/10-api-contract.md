@@ -1,0 +1,732 @@
+# 第 10 章：接口文档完善版
+
+## 10.1 通用规范
+
+### Base URL
+
+```text
+测试环境：https://test-api.xxx.com
+生产环境：https://api.xxx.com
+```
+
+### Content-Type
+
+```http
+Content-Type: application/json
+```
+
+文件上传接口可使用 `multipart/form-data` 或后端签名直传对象存储。
+
+### 统一返回格式
+
+成功：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {}
+}
+```
+
+失败：
+
+```json
+{
+  "code": 40001,
+  "msg": "今日已领取过基础券",
+  "data": null,
+  "request_id": "req_20260627_xxx"
+}
+```
+
+### 请求头
+
+```http
+Authorization: Bearer <session_token>
+X-Request-Id: req_20260627_xxx
+X-Idempotency-Key: idem_xxx
+```
+
+说明：
+
+- 顾客端登录后接口带 `Authorization`。
+- 发券、核销、海报生成必须带 `X-Idempotency-Key`。
+- 如果前端不传 `X-Request-Id`，后端生成一个并返回。
+
+## 10.2 错误码
+
+| code | 含义 |
+|------|------|
+| 200 | 成功 |
+| 40000 | 参数错误 |
+| 40001 | 今日已领取 |
+| 40002 | 优惠券不存在 |
+| 40003 | 优惠券已使用 |
+| 40004 | 优惠券已过期 |
+| 40005 | 跨门店不可用 |
+| 40100 | 未登录或登录过期 |
+| 40300 | 无权限 |
+| 40400 | 资源不存在 |
+| 40900 | 幂等冲突或重复提交 |
+| 42900 | 请求过于频繁 |
+| 50000 | 服务器错误 |
+| 51000 | AI 服务失败 |
+| 51001 | AI 内容安全未通过 |
+| 51002 | AI 配额不足 |
+
+## 10.3 鉴权
+
+### 顾客端
+
+1. 小程序调用 `wx.login()` 获取 `code`。
+2. 调用 `/api/user/login`。
+3. 后端返回 `session_token`。
+4. 后续请求带 `Authorization: Bearer <session_token>`。
+
+### 商家端
+
+MVP 可用两种方案：
+
+- 手机号 + 验证码/密码。
+- 微信 openid 绑定操作员。
+
+商家端接口必须校验 `operator.role`。
+
+## 10.4 接口列表
+
+| 模块 | 方法 | 路径 | 说明 |
+|------|------|------|------|
+| 用户 | POST | `/api/user/login` | 微信登录并创建会员 |
+| 门店 | GET | `/api/store/detail` | 获取门店详情 |
+| 桌码 | GET | `/api/qr/parse` | 解析 scene |
+| 优惠券 | POST | `/api/coupon/issue` | 发券 |
+| 优惠券 | GET | `/api/coupon/list` | 我的券列表 |
+| 优惠券 | GET | `/api/coupon/detail` | 券详情 |
+| 优惠券 | POST | `/api/coupon/verify` | 商家核销 |
+| 文件 | POST | `/api/upload/token` | 获取上传凭证 |
+| AI | POST | `/api/ai/text` | 文案生成 |
+| AI | POST | `/api/ai/image` | 图片增强 |
+| 海报 | POST | `/api/poster/generate` | 生成海报 |
+| 邀请 | POST | `/api/invite/bind` | 绑定邀请 |
+| 钱包 | GET | `/api/wallet/balance` | 查询返现余额 |
+| 钱包 | GET | `/api/wallet/transactions` | 查询余额流水 |
+| 钱包 | POST | `/api/wallet/spend` | 核销时抵扣余额 |
+| 等级 | GET | `/api/member/level` | 查询店长等级与进度 |
+| 统计 | POST | `/api/stats/event` | 通用埋点 |
+| 统计 | GET | `/api/stats/daily` | 日统计 |
+| 商家 | POST | `/api/merchant/login` | 商家登录 |
+| 商家 | GET | `/api/merchant/verify/preview` | 核销前查询 |
+
+## 10.5 代表性接口详情
+
+### POST `/api/user/login`
+
+请求：
+
+```json
+{
+  "code": "wx_login_code_xxx",
+  "store_id": "STORE001",
+  "table_id": "A01",
+  "scene": "s=STORE001&t=A01&i=MEM202606260045&p=POST001"
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "session_token": "jwt_or_random_token",
+    "openid": "oAbCdEfGhIjKlMnOpQrStUvWxYz",
+    "member_id": "MEM202606270001",
+    "is_new_member": true,
+    "store": {
+      "store_id": "STORE001",
+      "store_name": "牛里牛气潮汕牛肉火锅",
+      "slogan": "吃肉的人终会相遇",
+      "store_logo_url": "https://oss.xxx.com/logo.png"
+    },
+    "coupon_status": {
+      "base_coupon_issued_today": false
+    }
+  }
+}
+```
+
+后端处理：
+
+1. 使用 code 换 openid。
+2. 查找或创建 `users`。
+3. 查找或创建 `members`。
+4. 如果 scene 包含 inviter，创建邀请关系。
+5. 写入 scan/login 事件。
+
+### GET `/api/store/detail`
+
+请求：
+
+```http
+GET /api/store/detail?store_id=STORE001
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "store_id": "STORE001",
+    "store_name": "牛里牛气潮汕牛肉火锅",
+    "slogan": "吃肉的人终会相遇",
+    "brand_keywords": ["潮汕牛肉火锅", "05后女生老板", "肉好实惠"],
+    "group_chat_url": "https://xxx.com/group-guide",
+    "poster_template": "hotpot_standard",
+    "activity_enabled": true
+  }
+}
+```
+
+### POST `/api/coupon/issue`
+
+请求：
+
+```json
+{
+  "member_id": "MEM202606270001",
+  "store_id": "STORE001",
+  "coupon_type": "base"
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "coupon_id": "CPN202606270001",
+    "coupon_code": "8827639401",
+    "type": "base",
+    "title": "今日吃肉券",
+    "discount_rate": 0.85,
+    "status": "unused",
+    "expire_time": "2026-06-27 23:59:59"
+  }
+}
+```
+
+幂等规则：
+
+- `store_id + member_id + coupon_type + 当天日期` 唯一。
+- 重复请求返回第一次发放的券，或返回 `40001`，二选一。建议返回已发券数据，前端体验更稳。
+
+### GET `/api/coupon/list`
+
+请求：
+
+```http
+GET /api/coupon/list?member_id=MEM202606270001&status=unused&page=1&page_size=20
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "total": 1,
+    "list": [
+      {
+        "coupon_id": "CPN202606270001",
+        "coupon_code": "8827639401",
+        "type": "base",
+        "title": "今日吃肉券",
+        "discount_rate": 0.85,
+        "status": "unused",
+        "expire_time": "2026-06-27 23:59:59"
+      }
+    ]
+  }
+}
+```
+
+### GET `/api/merchant/verify/preview`
+
+请求：
+
+```http
+GET /api/merchant/verify/preview?coupon_code=8827639401&store_id=STORE001
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "coupon_id": "CPN202606270001",
+    "coupon_code": "8827639401",
+    "title": "今日吃肉券",
+    "coupon_type": "base",
+    "discount_rate": 0.85,
+    "gift_name": null,
+    "status": "unused",
+    "expire_time": "2026-06-27 23:59:59",
+    "member": {
+      "member_id": "MEM202606270001",
+      "nickname": "微信用户"
+    }
+  }
+}
+```
+
+### POST `/api/coupon/verify`
+
+请求：
+
+```json
+{
+  "coupon_code": "8827639401",
+  "store_id": "STORE001",
+  "operator_id": "STAFF001",
+  "order_amount": 256.00
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "coupon_id": "CPN202606270001",
+    "original_amount": 256.00,
+    "discount_amount": 38.40,
+    "final_amount": 217.60,
+    "verified_time": "2026-06-27 20:13:22",
+    "invite_reward": {
+      "triggered": true,
+      "inviter_member_id": "MEM202606260045",
+      "reward_coupon_id": "CPN202606270089"
+    }
+  }
+}
+```
+
+后端校验：
+
+- 券存在。
+- 券属于当前门店。
+- 券未使用。
+- 券未过期。
+- 操作员有核销权限。
+- 使用 Redis 锁防止重复核销。
+
+### POST `/api/upload/token`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "member_id": "MEM202606270001",
+  "file_name": "hotpot.jpg",
+  "file_mime": "image/jpeg",
+  "asset_type": "original_image"
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "asset_id": "AST202606270001",
+    "upload_url": "https://oss.xxx.com/presigned-url",
+    "file_url": "https://oss.xxx.com/store001/20260627/hotpot.jpg",
+    "expires_in": 600
+  }
+}
+```
+
+### POST `/api/ai/text`
+
+请求：
+
+```json
+{
+  "member_id": "MEM202606270001",
+  "store_id": "STORE001",
+  "raw_text": "吊龙太嫩了",
+  "style": "meat_girl",
+  "image_asset_ids": ["AST202606270001"]
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "task_id": "AIT202606270001",
+    "candidates": [
+      "今天这顿吊龙嫩到离谱，05后女生老板真的太会选肉了。",
+      "肉食少女打卡成功，吊龙嫩嫩的，钱包也很轻松。",
+      "这家偏一点，但肉真的值得跑一趟。"
+    ],
+    "usage": {
+      "text_used": 16,
+      "text_quota": 1000,
+      "remaining": 984
+    },
+    "fallback": false
+  }
+}
+```
+
+内容安全：
+
+- 用户输入先审。
+- AI 输出后审。
+- 未通过则返回 `51001` 或兜底文案。
+
+### POST `/api/ai/image`
+
+请求：
+
+```json
+{
+  "member_id": "MEM202606270001",
+  "store_id": "STORE001",
+  "asset_id": "AST202606270001",
+  "styles": ["natural", "warm", "premium"]
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "task_id": "AIT202606270002",
+    "original_asset_id": "AST202606270001",
+    "enhanced_images": [
+      {
+        "style": "natural",
+        "asset_id": "AST202606270101",
+        "url": "https://oss.xxx.com/enhanced_natural.jpg"
+      },
+      {
+        "style": "warm",
+        "asset_id": "AST202606270102",
+        "url": "https://oss.xxx.com/enhanced_warm.jpg"
+      }
+    ],
+    "fallback": false
+  }
+}
+```
+
+### POST `/api/poster/generate`
+
+请求：
+
+```json
+{
+  "member_id": "MEM202606270001",
+  "store_id": "STORE001",
+  "selected_text": "今天这顿吊龙嫩到离谱，05后女生老板真的太会选肉了。",
+  "enhanced_asset_id": "AST202606270102",
+  "template_code": "hotpot_standard"
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "post_id": "POST202606270001",
+    "poster_asset_id": "AST202606270201",
+    "poster_url": "https://oss.xxx.com/poster/20260627/poster.jpg",
+    "share_scene": "s=STORE001&i=MEM202606270001&p=POST202606270001"
+  }
+}
+```
+
+### POST `/api/invite/bind`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "inviter_member_id": "MEM202606270001",
+  "invitee_member_id": "MEM202606280001",
+  "post_id": "POST202606270001"
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "relation_id": "INV202606280001",
+    "inviter_member_id": "MEM202606270001",
+    "invitee_member_id": "MEM202606280001",
+    "bind_time": "2026-06-28 12:01:00"
+  }
+}
+```
+
+规则：
+
+- 自己不能邀请自己。
+- 同一门店同一 invitee 只绑定一次。
+- 邀请奖励只在新客完成首次核销后发放。
+
+### GET `/api/wallet/balance`
+
+请求：
+
+```http
+GET /api/wallet/balance?store_id=STORE001&member_id=MEM202606270001
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "account_id": "WAL202606270001",
+    "available_amount": 28.80,
+    "frozen_amount": 0.00,
+    "total_earned_amount": 58.80,
+    "total_used_amount": 30.00,
+    "expire_soon_amount": 10.00,
+    "expire_soon_date": "2026-07-29"
+  }
+}
+```
+
+规则：
+
+- 余额不能提现、不可转赠。
+- 余额只能在本门店或商家配置的适用门店抵扣。
+- 余额来源必须能追溯到消费返现、邀请奖励或手动调整。
+
+### GET `/api/wallet/transactions`
+
+请求：
+
+```http
+GET /api/wallet/transactions?store_id=STORE001&member_id=MEM202606270001&page=1&page_size=20
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "page": 1,
+    "page_size": 20,
+    "total": 2,
+    "list": [
+      {
+        "transaction_id": "WTX202606270001",
+        "transaction_type": "earn",
+        "source_type": "invite_reward",
+        "amount": 10.00,
+        "balance_after": 28.80,
+        "status": "succeeded",
+        "created_at": "2026-06-27 19:20:00",
+        "expire_at": "2026-09-25 23:59:59"
+      }
+    ]
+  }
+}
+```
+
+### POST `/api/wallet/spend`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "member_id": "MEM202606270001",
+  "coupon_code": "8827639401",
+  "order_amount": 256.00,
+  "spend_amount": 20.00
+}
+```
+
+请求头必须包含：
+
+```http
+X-Idempotency-Key: wallet_spend_STORE001_MEM202606270001_8827639401
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "transaction_id": "WTX202606270188",
+    "spent_amount": 20.00,
+    "balance_after": 8.80,
+    "final_amount": 197.60
+  }
+}
+```
+
+规则：
+
+- 抵扣金额不能大于可用余额。
+- 抵扣必须和核销订单绑定。
+- 幂等键重复提交时返回同一笔流水，不重复扣减。
+- 抵扣失败时不得扣减余额。
+
+### GET `/api/member/level`
+
+请求：
+
+```http
+GET /api/member/level?store_id=STORE001&member_id=MEM202606270001
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "level_code": "LV2",
+    "level_name": "吃肉达人",
+    "star_points": 128,
+    "next_level": {
+      "level_code": "LV3",
+      "level_name": "邀请店长",
+      "required_verified_invites": 1,
+      "current_verified_invites": 0
+    },
+    "tasks": [
+      {
+        "task_key": "daily_checkin",
+        "title": "每日签到",
+        "reward_points": 10,
+        "status": "available"
+      },
+      {
+        "task_key": "create_poster",
+        "title": "创作海报",
+        "reward_points": 20,
+        "status": "done"
+      }
+    ]
+  }
+}
+```
+
+### POST `/api/stats/event`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "member_id": "MEM202606270001",
+  "table_id": "A01",
+  "event_type": "group_click",
+  "event_payload": {
+    "page": "home",
+    "button": "join_group"
+  }
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "event_id": "EVT202606270001"
+  }
+}
+```
+
+### GET `/api/stats/daily`
+
+请求：
+
+```http
+GET /api/stats/daily?store_id=STORE001&date=2026-06-27
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "date": "2026-06-27",
+    "scan_count": 42,
+    "new_member_count": 30,
+    "coupon_issue_count": 38,
+    "coupon_verify_count": 35,
+    "ai_text_count": 18,
+    "ai_image_count": 12,
+    "poster_count": 7,
+    "group_join_click_count": 12,
+    "invite_bind_count": 3,
+    "new_customer_verified_count": 1,
+    "ai_cost_amount": 4.86,
+    "order_amount_sum": 8960.00,
+    "discount_amount_sum": 1280.00
+  }
+}
+```
+
+## 10.6 非功能要求
+
+| 项 | 要求 |
+|----|------|
+| 登录接口 | P95 < 800ms |
+| 发券接口 | P95 < 500ms |
+| 核销接口 | P95 < 500ms |
+| 文案生成 | 常规 < 4s，超时 8s 降级 |
+| 图片增强 | 常规 < 10s，超时 15s 降级 |
+| 海报生成 | < 3s |
+| 日志 | 所有 P0 接口记录 request_id |
+| 安全 | AI 密钥不得下发小程序 |
+| 数据 | 核销、发券、邀请必须可追溯 |

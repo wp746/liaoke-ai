@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-06-29T13:47:21.184Z",
+  "brand": "燎客 AI / SparkFlow AI",
+  "assets": [
+    {
+      "id": "logo-primary",
+      "source": "brand-kit/assets/svg/liaoke-logo.svg",
+      "png": "brand-kit/exports/liaoke-logo-primary.png",
+      "width": 1600,
+      "height": 444,
+      "usage": "PPT, website, document header"
+    },
+    {
+      "id": "logo-mark",
+      "source": "brand-kit/assets/svg/liaoke-mark.svg",
+      "png": "brand-kit/exports/liaoke-mark-1024.png",
+      "width": 1024,
+      "height": 1024,
+      "usage": "app icon source, avatar, corner mark"
+    },
+    {
+      "id": "mascot-liaoxiaoxing",
+      "source": "brand-kit/ip-liaoxiaoxing/assets/standard/liaoxiaoxing-standalone-no-star.png",
+      "png": "brand-kit/exports/liaoxiaoxing-1024.png",
+      "width": 895,
+      "height": 1024,
+      "usage": "caped 3D assistant illustration, reward card, onboarding"
+    },
+    {
+      "id": "app-icon-1024",
+      "source": "brand-kit/templates/app-icon-1024.svg",
+      "png": "brand-kit/exports/app-icon-1024.png",
+      "width": 1024,
+      "height": 1024,
+      "usage": "WeChat mini program icon draft"
+    },
+    {
+      "id": "table-tent-ai-rouxiaoqian",
+      "source": "brand-kit/templates/table-tent-ai-rouxiaoqian.svg",
+      "png": "brand-kit/exports/table-tent-ai-rouxiaoqian.png",
+      "width": 1080,
+      "height": 1600,
+      "usage": "table tent print preview"
+    },
+    {
+      "id": "share-poster-template",
+      "source": "brand-kit/templates/share-poster-template.svg",
+      "png": "brand-kit/exports/share-poster-template.png",
+      "width": 1080,
+      "height": 1600,
+      "usage": "generated poster visual template"
+    },
+    {
+      "id": "logo-clearspace-spec",
+      "source": "brand-kit/templates/logo-clearspace-spec.svg",
+      "png": "brand-kit/exports/logo-clearspace-spec.png",
+      "width": 1400,
+      "height": 900,
+      "usage": "brand usage guide"
+    }
+  ]
+}

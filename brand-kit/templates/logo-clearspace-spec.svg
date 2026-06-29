@@ -1,0 +1,22 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="燎客 AI logo 留白规范">
+  <rect width="1400" height="900" fill="#F7F6F3"/>
+  <rect x="152" y="142" width="1096" height="616" rx="34" fill="#FFFFFF" stroke="#E8E1D5" stroke-width="2"/>
+  <rect x="320" y="280" width="760" height="250" fill="#FFF8EC" stroke="#FF6B1A" stroke-width="3" stroke-dasharray="14 12"/>
+  <rect x="378" y="338" width="132" height="132" rx="30" fill="url(#bg)"/>
+  <path d="M449.2 354.4C444 373.3 432.2 384.5 411.2 392.5C429.4 397 439.4 407.4 444.6 429.3C449.8 410.4 461.5 399.2 482.6 391.2C464.5 386.7 454.4 376.3 449.2 354.4Z" fill="white"/>
+  <path d="M430.6 371.8C415 381.4 402.5 394.5 394.1 412C412.2 405.5 426.6 407 439 417.6C435.7 401.8 438.7 387.1 430.6 371.8Z" fill="white" fill-opacity=".95"/>
+  <path d="M472.5 413.5C467.9 426.2 459.1 435 446 440.6C460.6 442 473.3 438.8 484.5 430.5C478.7 426 474.8 420.4 472.5 413.5Z" fill="white" fill-opacity=".9"/>
+  <text x="542" y="404" fill="#1F1F23" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800">燎客 AI</text>
+  <text x="545" y="448" fill="#4A4B52" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="600">SparkFlow AI</text>
+  <path d="M544 466H796" stroke="#FF6B1A" stroke-width="4" stroke-linecap="round"/>
+  <text x="545" y="490" fill="#F36A16" font-family="Inter, Arial, sans-serif" font-size="16" font-style="italic">One Scan, Spark Your Flow</text>
+  <text x="320" y="242" fill="#1F1F23" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="34" font-weight="900">Logo 留白区</text>
+  <text x="320" y="588" fill="#5F6068" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="24">横版锁定四周至少保留 0.25x 标识高度的留白；不要贴边、压在复杂图片上或改变比例。</text>
+  <defs>
+    <linearGradient id="bg" x1="402" y1="344" x2="498" y2="466" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4B1B"/>
+      <stop offset=".52" stop-color="#FF8A12"/>
+      <stop offset="1" stop-color="#F9C845"/>
+    </linearGradient>
+  </defs>
+</svg>

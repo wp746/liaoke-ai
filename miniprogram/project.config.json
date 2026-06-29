@@ -1,0 +1,14 @@
+{
+  "description": "燎客 AI 小程序 MVP",
+  "appid": "touristappid",
+  "projectname": "liaoke-ai-mini-program",
+  "miniprogramRoot": "./",
+  "compileType": "miniprogram",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true
+  }
+}

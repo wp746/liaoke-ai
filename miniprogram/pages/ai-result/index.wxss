@@ -1,0 +1,75 @@
+.result-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.screen-title {
+  color: #1f1f23;
+  font-size: 46rpx;
+  font-weight: 900;
+}
+
+.copy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.copy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  padding: 28rpx;
+  border: 1rpx solid #ebe1d2;
+  border-radius: 32rpx;
+  background: #ffffff;
+  text-align: left;
+}
+
+.copy-card.active {
+  border-color: #ff6b1a;
+  background: #fff8ec;
+}
+
+.copy-title {
+  color: #1f1f23;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.select-dot {
+  padding: 10rpx 18rpx;
+  border-radius: 999rpx;
+  background: #1f1f23;
+  color: #ffffff;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.copy-content {
+  color: #4b4c54;
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+.effect-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding: 28rpx;
+}
+
+.effect-card view {
+  display: flex;
+  gap: 12rpx;
+}
+
+.effect-card view text {
+  padding: 16rpx 22rpx;
+  border-radius: 999rpx;
+  background: #f7f6f3;
+  color: #5f6068;
+  font-size: 24rpx;
+  font-weight: 700;
+}

@@ -1,0 +1,9 @@
+<view class="coupon-card">
+  <view class="coupon-ribbon"></view>
+  <view class="coupon-main">
+    <text class="coupon-title">{{coupon.title}}</text>
+    <text class="coupon-benefit">{{coupon.benefit}}</text>
+    <text class="coupon-note">{{coupon.note}} · {{coupon.expireText}}</text>
+  </view>
+  <button class="coupon-action" bindtap="handleTap">{{actionText}}</button>
+</view>

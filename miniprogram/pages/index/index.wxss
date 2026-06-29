@@ -1,0 +1,140 @@
+.hero {
+  position: relative;
+  min-height: 470rpx;
+  overflow: hidden;
+  padding: 38rpx 34rpx;
+  border-radius: 42rpx;
+  background: linear-gradient(145deg, #fff1d8 0%, #ffffff 58%, #effaff 100%);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 70%;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.table-ip {
+  color: #ff4b1b;
+  font-size: 24rpx;
+  font-weight: 900;
+}
+
+.store-name {
+  color: #1f1f23;
+  font-size: 52rpx;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.store-slogan {
+  color: #33343a;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.hero-text {
+  color: #696a72;
+  font-size: 26rpx;
+  line-height: 1.62;
+}
+
+.hero-mascot {
+  position: absolute;
+  right: 20rpx;
+  bottom: 20rpx;
+  width: 262rpx;
+  height: 252rpx;
+  border-radius: 30rpx;
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 18rpx 44rpx rgba(255, 107, 26, 0.14);
+}
+
+.section-title {
+  margin-bottom: 18rpx;
+}
+
+.section-title view {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.heading {
+  color: #1f1f23;
+  font-size: 36rpx;
+  font-weight: 900;
+}
+
+.claim-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  padding: 30rpx;
+}
+
+.claim-card text {
+  font-size: 31rpx;
+  font-weight: 800;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+}
+
+.action-card {
+  display: flex;
+  min-height: 210rpx;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28rpx;
+  border-radius: 32rpx;
+  background: #ffffff;
+  box-shadow: 0 16rpx 44rpx rgba(82, 54, 24, 0.07);
+  text-align: left;
+}
+
+.group-entry {
+  display: flex;
+  min-height: 180rpx;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 28rpx 30rpx;
+  border: 1rpx solid rgba(255, 107, 26, 0.18);
+  border-radius: 34rpx;
+  background: linear-gradient(135deg, #fff8ec 0%, #ffffff 76%);
+  box-shadow: 0 16rpx 44rpx rgba(82, 54, 24, 0.07);
+  text-align: left;
+}
+
+.group-entry view {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.group-entry image {
+  flex: 0 0 auto;
+  width: 142rpx;
+  height: 118rpx;
+  border-radius: 24rpx;
+}
+
+.action-title {
+  color: #1f1f23;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.action-body {
+  color: #696a72;
+  font-size: 24rpx;
+  line-height: 1.55;
+}

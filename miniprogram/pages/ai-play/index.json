@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "AI 朋友圈神器",
+  "usingComponents": {
+    "mascot-card": "../../components/mascot-card/mascot-card"
+  }
+}

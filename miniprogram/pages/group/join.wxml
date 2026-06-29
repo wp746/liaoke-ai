@@ -1,0 +1,36 @@
+<view class="page group-page">
+  <view class="group-hero">
+    <view>
+      <text class="tiny-label">会员福利群</text>
+      <text class="screen-title">{{store.groupChatName}}</text>
+      <text class="muted">{{store.groupJoinGuide}}</text>
+    </view>
+    <image src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png" mode="aspectFit" />
+  </view>
+
+  <view class="benefit-list section">
+    <view class="benefit-card">
+      <text>隐藏券</text>
+      <text>不定期发放群内专属券</text>
+    </view>
+    <view class="benefit-card">
+      <text>新品提醒</text>
+      <text>新品、限量菜、午市福利先知道</text>
+    </view>
+    <view class="benefit-card">
+      <text>生日福利</text>
+      <text>生日月可领专属到店礼</text>
+    </view>
+  </view>
+
+  <view class="qr-card card section">
+    <image src="{{store.groupQrImage}}" mode="aspectFit" bindtap="previewQr" />
+    <text class="qr-title">点击二维码可放大</text>
+    <text class="muted">真实上线时这里替换成门店微信群或企微群二维码。</text>
+  </view>
+
+  <button class="primary-btn section" bindtap="copyGroupLink">
+    {{copied ? '已复制入群链接' : '一键复制入群链接'}}
+  </button>
+  <button class="secondary-btn section" bindtap="backHome">返回首页</button>
+</view>

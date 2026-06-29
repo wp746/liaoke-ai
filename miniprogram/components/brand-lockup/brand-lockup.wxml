@@ -1,0 +1,7 @@
+<view class="brand-lockup {{compact ? 'compact' : ''}}">
+  <image class="brand-mark" src="/assets/brand/png/liaoke-mark.png" mode="aspectFit" />
+  <view class="brand-copy">
+    <text class="brand-name">燎客 AI</text>
+    <text class="brand-subtitle">{{subtitle}}</text>
+  </view>
+</view>

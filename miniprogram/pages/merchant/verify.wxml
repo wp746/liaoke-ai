@@ -1,0 +1,28 @@
+<view class="page merchant-page">
+  <view class="verify-head">
+    <text class="tiny-label">牛里牛气 商家端</text>
+    <text class="screen-title">优惠券核销</text>
+    <text class="muted">首版支持扫码后填券码，也可以手动输入。</text>
+  </view>
+
+  <view class="form-card card section">
+    <text class="field-label">券码</text>
+    <input value="{{code}}" bindinput="updateCode" placeholder="输入顾客券码" />
+    <button class="secondary-btn" bindtap="preview">查询券详情</button>
+  </view>
+
+  <view wx:if="{{coupon}}" class="detail-card card section">
+    <text class="coupon-title">{{coupon.title}}</text>
+    <text class="coupon-benefit">{{coupon.benefit}}</text>
+    <text class="muted">{{coupon.note}} · {{coupon.expireText}}</text>
+    <view class="amount-row">
+      <text>本单金额</text>
+      <input type="digit" value="{{amount}}" bindinput="updateAmount" />
+    </view>
+    <view class="money-row"><text>优惠金额</text><text>¥{{discount}}</text></view>
+    <view class="money-row strong"><text>应收金额</text><text>¥{{payable}}</text></view>
+    <button class="primary-btn" bindtap="verify">确认核销</button>
+  </view>
+
+  <view wx:else class="empty-state card section">暂无券详情，请先查询。</view>
+</view>

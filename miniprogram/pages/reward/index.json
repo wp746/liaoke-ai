@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的奖励",
+  "usingComponents": {
+    "mascot-card": "../../components/mascot-card/mascot-card"
+  }
+}

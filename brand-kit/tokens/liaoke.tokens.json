@@ -1,0 +1,55 @@
+{
+  "brand": {
+    "name_zh": "燎客 AI",
+    "name_en": "SparkFlow AI",
+    "slogan": "One Scan, Spark Your Flow",
+    "mascot": "燎小星",
+    "table_ip_default": "AI × 小签",
+    "table_ip_trial": "AI 肉小签"
+  },
+  "color": {
+    "ember_600": "#FF4B1B",
+    "ember_500": "#FF6B1A",
+    "gold_400": "#F8B84D",
+    "cream_100": "#FFF8EC",
+    "ivory": "#F7F6F3",
+    "ink_900": "#1F1F23",
+    "ink_600": "#5F6068",
+    "line": "#E8E1D5",
+    "ai_cyan": "#00C2FF",
+    "white": "#FFFFFF"
+  },
+  "gradient": {
+    "brand_flame": "linear-gradient(135deg, #FF4B1B 0%, #FF8A12 52%, #F9C845 100%)",
+    "warm_surface": "linear-gradient(135deg, #FFF2DA 0%, #FFFFFF 86%)",
+    "poster_fire": "linear-gradient(135deg, #FF4B1B 0%, #FF8A12 52%, #6A1F16 100%)"
+  },
+  "typography": {
+    "zh": "PingFang SC, Microsoft YaHei, Source Han Sans SC, system-ui, sans-serif",
+    "en": "Inter, Manrope, Arial, sans-serif",
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 700,
+      "black": 900
+    },
+    "scale_px": {
+      "display": 64,
+      "h1": 48,
+      "h2": 36,
+      "h3": 28,
+      "body": 16,
+      "caption": 12
+    }
+  },
+  "radius": {
+    "button": 999,
+    "card": 28,
+    "panel": 36,
+    "logo_tile": 30
+  },
+  "shadow": {
+    "soft": "0 18px 56px rgba(88, 55, 24, 0.08)",
+    "brand": "0 18px 38px rgba(255, 75, 27, 0.24)"
+  }
+}

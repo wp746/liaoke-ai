@@ -1,0 +1,61 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/coupon/list",
+    "pages/ai-play/index",
+    "pages/ai-result/index",
+    "pages/poster/preview",
+    "pages/group/join",
+    "pages/reward/index",
+    "pages/me/index",
+    "pages/merchant/verify",
+    "pages/merchant/dashboard"
+  ],
+  "window": {
+    "navigationBarTitleText": "燎客 AI",
+    "navigationBarBackgroundColor": "#FFF8EC",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F7F6F3",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#797A82",
+    "selectedColor": "#FF4B1B",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/tabbar/png/home.png",
+        "selectedIconPath": "assets/tabbar/png/home-active.png"
+      },
+      {
+        "pagePath": "pages/coupon/list",
+        "text": "吃肉券",
+        "iconPath": "assets/tabbar/png/coupon.png",
+        "selectedIconPath": "assets/tabbar/png/coupon-active.png"
+      },
+      {
+        "pagePath": "pages/ai-play/index",
+        "text": "AI 创作",
+        "iconPath": "assets/tabbar/png/create.png",
+        "selectedIconPath": "assets/tabbar/png/create-active.png"
+      },
+      {
+        "pagePath": "pages/reward/index",
+        "text": "奖励",
+        "iconPath": "assets/tabbar/png/reward.png",
+        "selectedIconPath": "assets/tabbar/png/reward-active.png"
+      },
+      {
+        "pagePath": "pages/me/index",
+        "text": "我的",
+        "iconPath": "assets/tabbar/png/me.png",
+        "selectedIconPath": "assets/tabbar/png/me-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,101 @@
+page {
+  min-height: 100vh;
+  background: #f7f6f3;
+  color: #1f1f23;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+}
+
+view,
+text,
+button,
+input,
+textarea {
+  box-sizing: border-box;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+}
+
+button::after {
+  border: 0;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 36rpx 28rpx 56rpx;
+}
+
+.page.with-tab {
+  padding-bottom: 136rpx;
+}
+
+.section {
+  margin-top: 28rpx;
+}
+
+.card {
+  border: 1rpx solid #ebe1d2;
+  border-radius: 34rpx;
+  background: #ffffff;
+  box-shadow: 0 18rpx 56rpx rgba(88, 55, 24, 0.08);
+}
+
+.soft-card {
+  border-radius: 34rpx;
+  background: linear-gradient(135deg, #fff2da 0%, #ffffff 82%);
+}
+
+.primary-btn {
+  display: flex;
+  min-height: 92rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #ff4b1b, #ff8a12);
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 18rpx 38rpx rgba(255, 75, 27, 0.24);
+}
+
+.secondary-btn {
+  display: flex;
+  min-height: 84rpx;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx solid #eadccb;
+  border-radius: 999rpx;
+  background: #ffffff;
+  color: #1f1f23;
+  font-weight: 700;
+}
+
+.tiny-label {
+  color: #ff4b1b;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.muted {
+  color: #696a72;
+}
+
+.split-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.empty-state {
+  padding: 52rpx 32rpx;
+  text-align: center;
+  color: #696a72;
+}

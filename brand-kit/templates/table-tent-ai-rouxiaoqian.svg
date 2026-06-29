@@ -1,0 +1,35 @@
+<svg width="1080" height="1600" viewBox="0 0 1080 1600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI 肉小签桌牌模板">
+  <rect width="1080" height="1600" fill="#FFF8EC"/>
+  <rect x="58" y="58" width="964" height="1484" rx="72" fill="#FFFFFF" stroke="#E8E1D5" stroke-width="4"/>
+  <rect x="118" y="118" width="844" height="560" rx="56" fill="url(#fire)"/>
+  <text x="154" y="234" fill="#FFFFFF" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="74" font-weight="900">AI 肉小签</text>
+  <text x="154" y="302" fill="#FFF8EC" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="36" font-weight="700">扫码领券 · AI 晒圈</text>
+  <path d="M642 210C605 323 532 391 405 424C516 454 575 520 599 655C642 538 720 469 851 438C733 405 669 335 642 210Z" fill="white" fill-opacity=".92"/>
+  <path d="M492 292C386 351 325 430 300 545C394 500 478 505 559 562C538 465 525 374 492 292Z" fill="white" fill-opacity=".82"/>
+  <rect x="230" y="748" width="620" height="620" rx="42" fill="#1F1F23"/>
+  <rect x="278" y="796" width="524" height="524" rx="20" fill="#FFFFFF"/>
+  <g fill="#1F1F23">
+    <rect x="320" y="838" width="104" height="104"/>
+    <rect x="656" y="838" width="104" height="104"/>
+    <rect x="320" y="1174" width="104" height="104"/>
+    <rect x="488" y="922" width="48" height="48"/>
+    <rect x="572" y="922" width="48" height="48"/>
+    <rect x="446" y="1006" width="48" height="48"/>
+    <rect x="530" y="1006" width="48" height="48"/>
+    <rect x="614" y="1006" width="48" height="48"/>
+    <rect x="488" y="1090" width="48" height="48"/>
+    <rect x="656" y="1090" width="48" height="48"/>
+    <rect x="572" y="1174" width="48" height="48"/>
+    <rect x="698" y="1216" width="62" height="62"/>
+  </g>
+  <text x="152" y="1432" fill="#1F1F23" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="46" font-weight="900">先领今天的吃肉券</text>
+  <text x="152" y="1494" fill="#5F6068" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="500">再让燎小星帮你生成高级朋友圈</text>
+  <text x="788" y="1496" fill="#FF4B1B" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800">燎客 AI</text>
+  <defs>
+    <linearGradient id="fire" x1="118" y1="118" x2="957" y2="675" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4B1B"/>
+      <stop offset=".55" stop-color="#FF8A12"/>
+      <stop offset="1" stop-color="#F8B84D"/>
+    </linearGradient>
+  </defs>
+</svg>

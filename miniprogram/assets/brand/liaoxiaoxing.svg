@@ -1,0 +1,29 @@
+<svg width="320" height="360" viewBox="0 0 320 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="燎小星 mascot">
+  <ellipse cx="160" cy="315" rx="72" ry="18" fill="#FF7B1A" fill-opacity=".13"/>
+  <path d="M181.8 38.3C167 83.9 137.7 111.3 86.7 124.6C131.1 136.7 154.9 163.4 164.4 218.1C181.9 170.7 213.6 142.9 266.2 130.3C218.9 117 192.5 88.9 181.8 38.3Z" fill="url(#body)"/>
+  <path d="M122.3 72.1C79.5 96.2 54.8 128.1 44.5 174.6C82.4 156.3 116.4 158.4 149.3 181.7C140.6 142.4 135.7 105.4 122.3 72.1Z" fill="url(#side)"/>
+  <path d="M197.6 185.9C187.8 219.6 166.2 242.9 133.8 256.4C169.3 260.3 199.7 252.4 226.5 231.8C213.1 219.7 203.7 204.8 197.6 185.9Z" fill="#FFD877"/>
+  <circle cx="128" cy="162" r="10" fill="#2B211F"/>
+  <circle cx="191" cy="162" r="10" fill="#2B211F"/>
+  <circle cx="132" cy="158" r="3" fill="white"/>
+  <circle cx="195" cy="158" r="3" fill="white"/>
+  <path d="M143 190C153 200 169 201 179 190" stroke="#8E4C1C" stroke-width="7" stroke-linecap="round"/>
+  <path d="M89 222C58 230 44 252 38 281C68 274 90 259 103 234" fill="#FFA22D"/>
+  <path d="M228 224C259 233 273 255 279 282C249 275 227 260 214 235" fill="#FFA22D"/>
+  <path d="M98 247C128 267 189 267 220 247C211 292 108 292 98 247Z" fill="#241E22"/>
+  <path d="M110 257C134 274 184 274 209 257C200 291 119 291 110 257Z" fill="#3B2D2C"/>
+  <path d="M197 255C219 254 244 249 268 238C248 264 224 280 198 286C202 276 203 266 197 255Z" fill="#FFB23E"/>
+  <path d="M236 65C232 79.7 222.6 89.1 207.8 93.1C222.4 97 231.8 106.4 235.8 121.1C239.7 106.4 249.2 97 263.9 93.1C249.2 89.1 239.9 79.7 236 65Z" fill="#FFB928"/>
+  <path d="M77 48C74.8 56.1 69.6 61.2 61.5 63.4C69.6 65.5 74.8 70.7 77 78.8C79.1 70.7 84.4 65.5 92.5 63.4C84.4 61.2 79.2 56.1 77 48Z" fill="#FF7A1B"/>
+  <defs>
+    <linearGradient id="body" x1="111" y1="53" x2="232" y2="236" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF5D1F"/>
+      <stop offset=".48" stop-color="#FFB941"/>
+      <stop offset="1" stop-color="#FFE4A4"/>
+    </linearGradient>
+    <linearGradient id="side" x1="53" y1="78" x2="144" y2="190" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF5B1E"/>
+      <stop offset="1" stop-color="#FFC04B"/>
+    </linearGradient>
+  </defs>
+</svg>

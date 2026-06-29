@@ -1,0 +1,8 @@
+<view class="mascot-card {{compact ? 'compact' : ''}}">
+  <image class="mascot" src="{{imageSrc}}" mode="aspectFit" />
+  <view class="mascot-copy">
+    <text class="tiny-label">系统级 IP</text>
+    <text class="mascot-title">{{title}}</text>
+    <text class="mascot-text">{{text}}</text>
+  </view>
+</view>

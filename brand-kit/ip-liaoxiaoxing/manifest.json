@@ -1,0 +1,153 @@
+{
+  "name": "燎小星 IP Asset Pack",
+  "version": "0.1.0",
+  "generated_at": "2026-06-28",
+  "status": "prototype_review_assets",
+  "standard_character_rule": "Use the standalone caped 3D Liaoxiaoxing only. Keep yellow cape/collar, chest star, round face, big eyes, and orange flame hair. No star above the head and no surrounding props.",
+  "brand": {
+    "system_brand_cn": "燎客 AI",
+    "system_brand_en": "SparkFlow AI",
+    "ip_name": "燎小星",
+    "role": "小程序内统一 AI 小助手"
+  },
+  "boards": [
+    {
+      "id": "character-sheet",
+      "path": "assets/boards/liaoxiaoxing-character-sheet.png",
+      "usage": "角色标准、三视图、基础动作"
+    },
+    {
+      "id": "sticker-sheet",
+      "path": "assets/boards/liaoxiaoxing-sticker-sheet.png",
+      "usage": "表情动作总览"
+    },
+    {
+      "id": "product-poses",
+      "path": "assets/boards/liaoxiaoxing-product-poses.png",
+      "usage": "小程序业务场景动作总览"
+    }
+  ],
+  "standard_assets": [
+    {
+      "id": "standalone-no-star",
+      "path": "assets/standard/liaoxiaoxing-standalone-no-star.png",
+      "usage": "primary mascot for mini program, logo system, PPT and sales materials"
+    }
+  ],
+  "stickers": [
+    {
+      "id": "welcome",
+      "path": "assets/stickers/liaoxiaoxing-welcome.png",
+      "usage": "首页欢迎、首次进入"
+    },
+    {
+      "id": "thumbs-up",
+      "path": "assets/stickers/liaoxiaoxing-thumbs-up.png",
+      "usage": "操作成功、生成完成"
+    },
+    {
+      "id": "surprised",
+      "path": "assets/stickers/liaoxiaoxing-surprised.png",
+      "usage": "惊喜奖励、优惠提醒"
+    },
+    {
+      "id": "thinking",
+      "path": "assets/stickers/liaoxiaoxing-thinking.png",
+      "usage": "AI 思考中、文案生成中"
+    },
+    {
+      "id": "coupon",
+      "path": "assets/stickers/liaoxiaoxing-coupon.png",
+      "usage": "领券成功、券包入口"
+    },
+    {
+      "id": "phone",
+      "path": "assets/stickers/liaoxiaoxing-phone.png",
+      "usage": "上传照片、手机操作提示"
+    },
+    {
+      "id": "qr",
+      "path": "assets/stickers/liaoxiaoxing-qr.png",
+      "usage": "扫码、核销、桌牌引导"
+    },
+    {
+      "id": "cheering",
+      "path": "assets/stickers/liaoxiaoxing-cheering.png",
+      "usage": "邀请成功、任务完成"
+    },
+    {
+      "id": "meat-lover",
+      "path": "assets/stickers/liaoxiaoxing-meat-lover.png",
+      "usage": "餐饮内容、吃肉券、门店氛围"
+    },
+    {
+      "id": "sleeping",
+      "path": "assets/stickers/liaoxiaoxing-sleeping.png",
+      "usage": "暂无活动、休息中"
+    },
+    {
+      "id": "apology",
+      "path": "assets/stickers/liaoxiaoxing-apology.png",
+      "usage": "失败、重试、内容不通过"
+    },
+    {
+      "id": "gift",
+      "path": "assets/stickers/liaoxiaoxing-gift.png",
+      "usage": "奖励到账、礼包、积分兑换"
+    }
+  ],
+  "product_poses": [
+    {
+      "id": "welcome-table",
+      "path": "assets/product-poses/liaoxiaoxing-welcome-table.png",
+      "usage": "首页扫码桌牌欢迎"
+    },
+    {
+      "id": "coupon-wallet",
+      "path": "assets/product-poses/liaoxiaoxing-coupon-wallet.png",
+      "usage": "吃肉券、优惠钱包"
+    },
+    {
+      "id": "upload-photo",
+      "path": "assets/product-poses/liaoxiaoxing-upload-photo.png",
+      "usage": "上传随手拍"
+    },
+    {
+      "id": "ai-magic",
+      "path": "assets/product-poses/liaoxiaoxing-ai-magic.png",
+      "usage": "AI 创作生成中"
+    },
+    {
+      "id": "poster-saved",
+      "path": "assets/product-poses/liaoxiaoxing-poster-saved.png",
+      "usage": "海报生成完成"
+    },
+    {
+      "id": "reward-points",
+      "path": "assets/product-poses/liaoxiaoxing-reward-points.png",
+      "usage": "燎星值、积分奖励"
+    },
+    {
+      "id": "merchant-verify",
+      "path": "assets/product-poses/liaoxiaoxing-merchant-verify.png",
+      "usage": "商家核销、扫码验证"
+    },
+    {
+      "id": "empty-error",
+      "path": "assets/product-poses/liaoxiaoxing-empty-error.png",
+      "usage": "空状态、错误、稍后重试"
+    }
+  ],
+  "source_assets": [
+    {
+      "id": "original-svg",
+      "path": "assets/source/liaoxiaoxing-original.svg",
+      "usage": "原型阶段的矢量参考形象"
+    }
+  ],
+  "notes": [
+    "当前版本是白底评审资产和原型切片。",
+    "正式进入小程序前建议输出透明底 PNG、WebP 和统一尺寸规格。",
+    "正式商用前需要补版权归属、商标近似和设计师矢量精修。"
+  ]
+}

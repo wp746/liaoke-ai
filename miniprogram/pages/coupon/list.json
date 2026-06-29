@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我的吃肉券",
+  "usingComponents": {
+    "coupon-card": "../../components/coupon-card/coupon-card",
+    "mascot-card": "../../components/mascot-card/mascot-card"
+  }
+}

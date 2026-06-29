@@ -1,0 +1,36 @@
+<view class="page result-page">
+  <view class="result-head">
+    <text class="tiny-label">已按「{{style}}」生成</text>
+    <text class="screen-title">选择你喜欢的一版</text>
+    <text class="muted">原始感受：{{feeling}}</text>
+    <text wx:if="{{imageUrl}}" class="muted">已接入上传图片</text>
+  </view>
+
+  <view class="copy-list section">
+    <button
+      wx:for="{{options}}"
+      wx:key="id"
+      class="copy-card {{selectedId === item.id ? 'active' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="selectCopy"
+    >
+      <view class="split-row">
+        <text class="copy-title">{{item.title}}</text>
+        <text class="select-dot">{{selectedId === item.id ? '已选' : '选择'}}</text>
+      </view>
+      <text class="copy-content">{{item.content}}</text>
+    </button>
+    <view wx:if="{{options.length === 0}}" class="empty-state card">燎小星正在准备文案</view>
+  </view>
+
+  <view class="effect-card card section">
+    <text class="copy-title">图片效果</text>
+    <view>
+      <text>自然</text>
+      <text>暖色</text>
+      <text>高级感</text>
+    </view>
+  </view>
+
+  <button class="primary-btn section" bindtap="generatePoster">生成分享海报</button>
+</view>

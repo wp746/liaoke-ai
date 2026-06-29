@@ -1,0 +1,100 @@
+.wallet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 34rpx;
+}
+
+.wallet view {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.wallet-title {
+  color: #1f1f23;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.wallet image {
+  width: 172rpx;
+  height: 186rpx;
+}
+
+.segment {
+  display: flex;
+  padding: 8rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+}
+
+.segment button {
+  flex: 1;
+  padding: 22rpx 0;
+  border-radius: 999rpx;
+  color: #696a72;
+  font-size: 25rpx;
+  font-weight: 800;
+}
+
+.segment .active {
+  background: #1f1f23;
+  color: #ffffff;
+}
+
+.coupon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  background: rgba(31, 31, 35, 0.5);
+}
+
+.code-modal {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 22rpx;
+  padding: 42rpx;
+  border-radius: 38rpx;
+  background: #ffffff;
+}
+
+.code-title {
+  font-size: 36rpx;
+  font-weight: 900;
+}
+
+.code-benefit {
+  color: #ff4b1b;
+  font-size: 52rpx;
+  font-weight: 900;
+}
+
+.fake-qrcode {
+  display: flex;
+  width: 360rpx;
+  height: 360rpx;
+  align-items: center;
+  justify-content: center;
+  border: 18rpx solid #1f1f23;
+  background: repeating-linear-gradient(45deg, #1f1f23 0 16rpx, #fff 16rpx 32rpx);
+}
+
+.fake-qrcode text {
+  padding: 12rpx 18rpx;
+  background: #ffffff;
+  font-size: 26rpx;
+  font-weight: 900;
+}

@@ -1,0 +1,61 @@
+.verify-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.screen-title {
+  color: #1f1f23;
+  font-size: 45rpx;
+  font-weight: 900;
+}
+
+.form-card,
+.detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding: 30rpx;
+}
+
+.field-label,
+.coupon-title {
+  color: #1f1f23;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+input {
+  min-height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 22rpx;
+  background: #f7f6f3;
+  font-size: 30rpx;
+}
+
+.coupon-benefit {
+  color: #ff4b1b;
+  font-size: 48rpx;
+  font-weight: 900;
+}
+
+.amount-row,
+.money-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+  color: #4b4c54;
+  font-size: 28rpx;
+}
+
+.amount-row input {
+  width: 240rpx;
+  text-align: right;
+}
+
+.strong {
+  color: #1f1f23;
+  font-size: 34rpx;
+  font-weight: 900;
+}

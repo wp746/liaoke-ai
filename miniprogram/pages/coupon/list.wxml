@@ -1,0 +1,46 @@
+<view class="page with-tab coupon-page">
+  <view class="wallet soft-card">
+    <view>
+      <text class="tiny-label">我的钱包</text>
+      <text class="wallet-title">{{filteredCoupons.length}} 张可用权益</text>
+      <text class="muted">结账前出示给店员核销</text>
+    </view>
+    <image src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png" mode="aspectFit" />
+  </view>
+
+  <view class="segment section">
+    <button class="{{activeStatus === 'unused' ? 'active' : ''}}" data-status="unused" bindtap="switchStatus">可用</button>
+    <button class="{{activeStatus === 'used' ? 'active' : ''}}" data-status="used" bindtap="switchStatus">已使用</button>
+    <button class="{{activeStatus === 'expired' ? 'active' : ''}}" data-status="expired" bindtap="switchStatus">已过期</button>
+  </view>
+
+  <view class="coupon-list section">
+    <coupon-card
+      wx:for="{{filteredCoupons}}"
+      wx:key="id"
+      coupon="{{item}}"
+      action-text="出示"
+      bind:action="showCode"
+    />
+    <view wx:if="{{filteredCoupons.length === 0}}" class="empty-state card">当前没有这类券</view>
+  </view>
+
+  <mascot-card
+    compact
+    title="核销提醒"
+    image-src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png"
+    text="请在结账前打开券码，店员确认后再完成核销。"
+  />
+
+  <view wx:if="{{selectedCoupon}}" class="modal-mask" bindtap="closeCode">
+    <view class="code-modal" catchtap="noop">
+      <text class="code-title">{{selectedCoupon.title}}</text>
+      <text class="code-benefit">{{selectedCoupon.benefit}}</text>
+      <view class="fake-qrcode">
+        <text>{{selectedCoupon.code}}</text>
+      </view>
+      <text class="muted">请在结账前出示给店员</text>
+      <button class="secondary-btn" bindtap="closeCode">关闭</button>
+    </view>
+  </view>
+</view>

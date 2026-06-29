@@ -1,0 +1,25 @@
+<view class="page dashboard-page">
+  <view class="dash-head">
+    <text class="tiny-label">牛里牛气 商家端</text>
+    <text class="screen-title">今日数据</text>
+    <text class="muted">扫码、发券、AI 创作和核销表现。</text>
+  </view>
+
+  <view class="stats-grid section">
+    <view wx:for="{{statCards}}" wx:key="label" class="stat-card">
+      <text>{{item.value}}</text>
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+
+  <view class="records card section">
+    <text class="record-title">最近核销记录</text>
+    <view wx:for="{{stats.records}}" wx:key="time" class="record-row">
+      <text>{{item.time}}</text>
+      <view>
+        <text>{{item.title}}</text>
+        <text class="muted">{{item.amount}} · {{item.status}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,48 @@
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.brand-mark {
+  width: 78rpx;
+  height: 78rpx;
+  border-radius: 18rpx;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.brand-name {
+  color: #1f1f23;
+  font-size: 34rpx;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.brand-subtitle {
+  color: #5f6068;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.compact {
+  gap: 12rpx;
+}
+
+.compact .brand-mark {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 14rpx;
+}
+
+.compact .brand-name {
+  font-size: 28rpx;
+}
+
+.compact .brand-subtitle {
+  font-size: 20rpx;
+}

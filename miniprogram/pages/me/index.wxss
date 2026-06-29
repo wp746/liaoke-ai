@@ -1,0 +1,61 @@
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 30rpx;
+}
+
+.avatar {
+  display: flex;
+  width: 116rpx;
+  height: 116rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 34rpx;
+  background: linear-gradient(135deg, #ff4b1b, #f8b84d);
+  color: #ffffff;
+  font-size: 48rpx;
+  font-weight: 900;
+}
+
+.profile-card view:last-child,
+.store-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.nickname,
+.store-name {
+  color: #1f1f23;
+  font-size: 35rpx;
+  font-weight: 900;
+}
+
+.store-card {
+  padding: 30rpx;
+  border-radius: 34rpx;
+}
+
+.menu-list {
+  overflow: hidden;
+  border-radius: 34rpx;
+  background: #ffffff;
+}
+
+.menu-list button {
+  display: flex;
+  width: 100%;
+  min-height: 96rpx;
+  align-items: center;
+  padding: 0 30rpx;
+  border-bottom: 1rpx solid #f0e7dc;
+  color: #1f1f23;
+  font-size: 29rpx;
+  font-weight: 700;
+  text-align: left;
+}
+
+.menu-list button:last-child {
+  border-bottom: 0;
+}

@@ -1,0 +1,133 @@
+.screen-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.screen-head view {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.screen-head image {
+  width: 150rpx;
+  height: 170rpx;
+}
+
+.screen-title {
+  color: #1f1f23;
+  font-size: 43rpx;
+  font-weight: 900;
+  line-height: 1.18;
+}
+
+.upload-card {
+  position: relative;
+  display: flex;
+  min-height: 360rpx;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2rpx dashed #f3b16b;
+  border-radius: 36rpx;
+  background: #fff8ec;
+}
+
+.upload-state {
+  position: absolute;
+  right: 22rpx;
+  top: 22rpx;
+  padding: 12rpx 18rpx;
+  border-radius: 999rpx;
+  background: rgba(31, 31, 35, 0.82);
+  color: #ffffff;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.upload-state.done {
+  background: rgba(255, 75, 27, 0.9);
+}
+
+.upload-state.failed {
+  background: rgba(145, 32, 20, 0.9);
+}
+
+.upload-card image {
+  width: 100%;
+  height: 360rpx;
+}
+
+.upload-card view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.upload-icon {
+  display: flex;
+  width: 94rpx;
+  height: 94rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #ff4b1b, #f8b84d);
+  color: #ffffff;
+  font-size: 60rpx;
+  font-weight: 600;
+}
+
+.upload-title,
+.input-label {
+  color: #1f1f23;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.input-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  padding: 28rpx;
+}
+
+textarea {
+  width: 100%;
+  min-height: 132rpx;
+  color: #33343a;
+  font-size: 29rpx;
+  line-height: 1.55;
+}
+
+.preset-row,
+.style-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.preset-row button,
+.style-grid button {
+  padding: 18rpx 22rpx;
+  border-radius: 999rpx;
+  background: #f7f6f3;
+  color: #5f6068;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.style-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.style-grid .active {
+  background: #1f1f23;
+  color: #ffffff;
+}

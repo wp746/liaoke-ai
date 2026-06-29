@@ -1,0 +1,24 @@
+<view class="page with-tab me-page">
+  <view class="profile-card card">
+    <view class="avatar">{{member.avatarText}}</view>
+    <view>
+      <text class="nickname">{{member.nickname}}</text>
+      <text class="muted">{{member.level}} · {{member.points}} 燎星值</text>
+    </view>
+  </view>
+
+  <view class="store-card soft-card section">
+    <text class="tiny-label">当前门店</text>
+    <text class="store-name">{{store.name}}</text>
+    <text class="muted">{{store.tableIpName}} · {{store.tableName}}</text>
+  </view>
+
+  <view class="menu-list section">
+    <button>会员资料</button>
+    <button>我的海报</button>
+    <button bindtap="goMemberGroup">加入会员福利群</button>
+    <button>联系客服</button>
+    <button bindtap="goMerchantVerify">商家核销入口</button>
+    <button bindtap="goMerchantDashboard">商家数据页</button>
+  </view>
+</view>

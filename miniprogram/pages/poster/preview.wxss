@@ -1,0 +1,97 @@
+.poster-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.screen-title {
+  color: #1f1f23;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.poster-card {
+  overflow: hidden;
+  border-radius: 42rpx;
+  background: #ffffff;
+  box-shadow: 0 24rpx 80rpx rgba(82, 54, 24, 0.12);
+}
+
+.poster-photo {
+  position: relative;
+  display: flex;
+  height: 560rpx;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 18%, #fff2c9 0%, #ff7b1a 42%, #6a1f16 100%);
+}
+
+.poster-photo image {
+  width: 270rpx;
+  height: 300rpx;
+}
+
+.poster-photo view {
+  position: absolute;
+  left: 34rpx;
+  bottom: 34rpx;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+  font-size: 52rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.poster-copy {
+  padding: 30rpx;
+  color: #33343a;
+  font-size: 29rpx;
+  line-height: 1.7;
+}
+
+.poster-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx 34rpx;
+}
+
+.poster-footer view:first-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.store-name {
+  color: #1f1f23;
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.mini-code {
+  display: flex;
+  width: 100rpx;
+  height: 100rpx;
+  align-items: center;
+  justify-content: center;
+  border: 10rpx solid #1f1f23;
+  color: #1f1f23;
+  font-weight: 900;
+}
+
+.double-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+  margin-top: 18rpx;
+}
+
+.poster-canvas {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 750px;
+  height: 1120px;
+}

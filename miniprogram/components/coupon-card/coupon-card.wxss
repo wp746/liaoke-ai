@@ -1,0 +1,53 @@
+.coupon-card {
+  display: flex;
+  align-items: stretch;
+  gap: 20rpx;
+  padding: 22rpx;
+  border: 1rpx solid #ebe1d2;
+  border-radius: 30rpx;
+  background: #ffffff;
+  box-shadow: 0 14rpx 34rpx rgba(82, 54, 24, 0.07);
+}
+
+.coupon-ribbon {
+  width: 12rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(180deg, #ff4b1b, #f8b84d);
+}
+
+.coupon-main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 7rpx;
+}
+
+.coupon-title {
+  color: #1f1f23;
+  font-size: 29rpx;
+  font-weight: 800;
+}
+
+.coupon-benefit {
+  color: #ff4b1b;
+  font-size: 42rpx;
+  font-weight: 900;
+}
+
+.coupon-note {
+  color: #696a72;
+  font-size: 23rpx;
+  line-height: 1.45;
+}
+
+.coupon-action {
+  align-self: center;
+  min-width: 112rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 999rpx;
+  background: #1f1f23;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: 800;
+}

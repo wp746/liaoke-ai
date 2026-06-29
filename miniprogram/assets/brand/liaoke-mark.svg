@@ -1,0 +1,23 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="燎客 AI logo mark">
+  <rect width="160" height="160" rx="36" fill="url(#markBg)"/>
+  <path d="M38 48V34H65" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>
+  <path d="M122 48V34H95" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>
+  <path d="M38 112V126H65" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>
+  <path d="M122 112V126H95" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>
+  <path d="M84.6 31.5C89.8 49.8 102.8 57.9 112.6 70.2C123.8 84.4 121.8 105.8 104.2 116.9C88.4 126.9 65 122.4 53.6 107.3C45.2 96.2 45.9 80.8 54.8 69.6C61.7 60.9 72.6 55.2 74.1 38.9C75.1 28.4 80.9 24 84.6 31.5Z" fill="white"/>
+  <path d="M82.3 63.1C89.4 74.8 101.4 80.4 101.4 93.6C101.4 105 91.6 112.5 80.3 112.5C68.1 112.5 59.2 104.9 59.2 94.6C59.2 85 65.2 78.8 71.4 73.5C76.7 68.9 80.1 64.4 82.3 63.1Z" fill="url(#innerFlame)"/>
+  <rect x="67" y="84" width="8" height="8" rx="2" fill="white" opacity=".9"/>
+  <rect x="81" y="84" width="8" height="8" rx="2" fill="white" opacity=".9"/>
+  <rect x="74" y="98" width="8" height="8" rx="2" fill="white" opacity=".9"/>
+  <defs>
+    <linearGradient id="markBg" x1="24" y1="18" x2="140" y2="148" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF421C"/>
+      <stop offset=".52" stop-color="#FF7A16"/>
+      <stop offset="1" stop-color="#F8B84D"/>
+    </linearGradient>
+    <linearGradient id="innerFlame" x1="61" y1="66" x2="100" y2="113" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6B1A"/>
+      <stop offset="1" stop-color="#FFC94A"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,50 @@
+.mascot-card {
+  display: flex;
+  align-items: center;
+  gap: 26rpx;
+  padding: 26rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #fff0d2 0%, #ffffff 86%);
+}
+
+.mascot {
+  flex: 0 0 auto;
+  width: 156rpx;
+  height: 176rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.mascot-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.mascot-title {
+  color: #1f1f23;
+  font-size: 38rpx;
+  font-weight: 900;
+}
+
+.mascot-text {
+  color: #696a72;
+  font-size: 25rpx;
+  line-height: 1.62;
+}
+
+.compact {
+  gap: 16rpx;
+  padding: 20rpx;
+}
+
+.compact .mascot {
+  width: 108rpx;
+  height: 128rpx;
+}
+
+.compact .mascot-title {
+  font-size: 31rpx;
+}

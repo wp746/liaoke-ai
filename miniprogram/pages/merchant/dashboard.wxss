@@ -1,0 +1,73 @@
+.dash-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.screen-title {
+  color: #1f1f23;
+  font-size: 45rpx;
+  font-weight: 900;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+}
+
+.stat-card {
+  display: flex;
+  min-height: 170rpx;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10rpx;
+  padding: 26rpx;
+  border-radius: 30rpx;
+  background: #ffffff;
+  box-shadow: 0 14rpx 34rpx rgba(82, 54, 24, 0.07);
+}
+
+.stat-card text:first-child {
+  color: #ff4b1b;
+  font-size: 52rpx;
+  font-weight: 900;
+}
+
+.stat-card text:last-child {
+  color: #696a72;
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+.records {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 30rpx;
+}
+
+.record-title {
+  margin-bottom: 14rpx;
+  color: #1f1f23;
+  font-size: 31rpx;
+  font-weight: 900;
+}
+
+.record-row {
+  display: flex;
+  gap: 24rpx;
+  padding: 20rpx 0;
+  border-top: 1rpx solid #f0e7dc;
+}
+
+.record-row > text {
+  color: #ff4b1b;
+  font-weight: 900;
+}
+
+.record-row view {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}

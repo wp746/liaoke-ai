@@ -1,0 +1,95 @@
+.reward-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 38rpx;
+  border-radius: 42rpx;
+  background: linear-gradient(135deg, #1f1f23 0%, #5b2a16 62%, #ff6b1a 100%);
+  color: #ffffff;
+}
+
+.reward-hero view {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.reward-hero .tiny-label,
+.reward-hero .muted {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.points {
+  font-size: 84rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.reward-hero image {
+  width: 188rpx;
+  height: 210rpx;
+}
+
+.progress-card {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+  padding: 28rpx;
+}
+
+.progress-title {
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.progress-track {
+  height: 20rpx;
+  overflow: hidden;
+  border-radius: 999rpx;
+  background: #f1e8da;
+}
+
+.progress-track view {
+  width: 64%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff4b1b, #f8b84d);
+}
+
+.task-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+}
+
+.task-card {
+  display: flex;
+  min-height: 226rpx;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26rpx;
+  border-radius: 32rpx;
+  background: #ffffff;
+  box-shadow: 0 14rpx 34rpx rgba(82, 54, 24, 0.07);
+}
+
+.task-title {
+  color: #1f1f23;
+  font-size: 29rpx;
+  font-weight: 900;
+}
+
+.task-points {
+  color: #ff4b1b;
+  font-size: 40rpx;
+  font-weight: 900;
+}
+
+.task-card button {
+  padding: 16rpx 20rpx;
+  border-radius: 999rpx;
+  background: #fff8ec;
+  color: #ff4b1b;
+  font-size: 24rpx;
+  font-weight: 800;
+}

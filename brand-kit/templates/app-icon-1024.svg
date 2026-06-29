@@ -1,0 +1,19 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="燎客 AI 小程序图标">
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect x="72" y="72" width="880" height="880" rx="210" fill="url(#inner)" fill-opacity=".22"/>
+  <path d="M568 117C528 263 437 349 276 411C415 445 492 525 532 694C572 548 662 462 824 400C685 366 609 286 568 117Z" fill="white"/>
+  <path d="M425 252C305 326 209 427 144 562C284 512 395 524 490 605C465 484 488 371 425 252Z" fill="white" fill-opacity=".95"/>
+  <path d="M671 572C636 670 568 738 467 781C580 792 678 767 764 703C720 668 690 626 671 572Z" fill="white" fill-opacity=".9"/>
+  <path d="M745 182C728 245 688 284 625 300C687 316 726 355 742 417C758 355 798 316 861 300C799 284 760 245 745 182Z" fill="#FFF7D8"/>
+  <defs>
+    <linearGradient id="bg" x1="192" y1="84" x2="916" y2="948" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4B1B"/>
+      <stop offset=".52" stop-color="#FF8A12"/>
+      <stop offset="1" stop-color="#F9C845"/>
+    </linearGradient>
+    <linearGradient id="inner" x1="72" y1="72" x2="952" y2="952" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
