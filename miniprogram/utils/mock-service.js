@@ -11,6 +11,17 @@ const state = {
   store: { ...mockStore },
   member: { ...mockMember },
   coupons: mockCoupons.map((item) => ({ ...item })),
+  referralCoupons: [
+    {
+      coupon_id: "RFC202607050001",
+      face_value: 10,
+      min_order_amount: 30,
+      effective_time: "2026-07-06 19:30:00",
+      expire_time: "2026-08-05 23:59:59",
+      trigger_order_id: "ORD202607050088",
+      status: "active"
+    }
+  ],
   rewards: mockRewards.map((item) => ({ ...item })),
   posters: []
 };
@@ -153,7 +164,45 @@ function mockRequest({ url, data = {} }) {
       coupon.status = "used";
       return ok({
         coupon,
-        verified_at: new Date().toISOString()
+        verified_at: new Date().toISOString(),
+        referral_coupon: {
+          triggered: true,
+          coupon_id: `RFC${Date.now()}`,
+          status: "pending",
+          effective_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        }
+      });
+    }
+
+    case "/api/user/referral-coupons":
+      return ok({
+        pending: state.referralCoupons.filter((item) => item.status === "pending"),
+        active: state.referralCoupons.filter((item) => item.status === "active"),
+        used: state.referralCoupons.filter((item) => item.status === "used"),
+        expired: state.referralCoupons.filter((item) => item.status === "expired")
+      });
+
+    case "/api/store/verify/referral-coupon": {
+      const coupon = state.referralCoupons.find((item) => item.coupon_id === data.coupon_id);
+      if (!coupon || ["used", "expired", "cancelled"].includes(coupon.status)) {
+        return fail(8001, "该券不存在或已过期");
+      }
+      if (coupon.status === "pending") {
+        return fail(8004, "该券明日起生效，请明天再来使用");
+      }
+      if (Number(data.order_amount || 0) < coupon.min_order_amount) {
+        return fail(8002, `消费满${coupon.min_order_amount}元才可使用此券`);
+      }
+      coupon.status = "used";
+      coupon.used_order_id = data.order_id || `ORD${Date.now()}`;
+      coupon.used_time = new Date().toISOString();
+      return ok({
+        coupon_id: coupon.coupon_id,
+        deduction_amount: coupon.face_value,
+        order_amount: Number(data.order_amount || 0),
+        final_amount: Number((Number(data.order_amount || 0) - coupon.face_value).toFixed(2)),
+        status: coupon.status,
+        used_time: coupon.used_time
       });
     }
 

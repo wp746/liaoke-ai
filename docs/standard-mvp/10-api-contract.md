@@ -74,6 +74,10 @@ X-Idempotency-Key: idem_xxx
 | 51000 | AI 服务失败 |
 | 51001 | AI 内容安全未通过 |
 | 51002 | AI 配额不足 |
+| 8001 | 老带新抵扣券不存在、已过期、已使用或已取消 |
+| 8002 | 老带新抵扣券未满最低消费金额 |
+| 8003 | 老带新抵扣券不属于本门店 |
+| 8004 | 老带新抵扣券尚未生效 |
 
 ## 10.3 鉴权
 
@@ -109,6 +113,8 @@ MVP 可用两种方案：
 | AI | POST | `/api/ai/image` | 图片增强 |
 | 海报 | POST | `/api/poster/generate` | 生成海报 |
 | 邀请 | POST | `/api/invite/bind` | 绑定邀请 |
+| 老带新抵扣券 | GET | `/api/user/referral-coupons` | 查询我的老带新抵扣券 |
+| 老带新抵扣券 | POST | `/api/store/verify/referral-coupon` | 商家核销老带新抵扣券 |
 | 钱包 | GET | `/api/wallet/balance` | 查询返现余额 |
 | 钱包 | GET | `/api/wallet/transactions` | 查询余额流水 |
 | 钱包 | POST | `/api/wallet/spend` | 核销时抵扣余额 |
@@ -313,10 +319,12 @@ GET /api/merchant/verify/preview?coupon_code=8827639401&store_id=STORE001
     "discount_amount": 38.40,
     "final_amount": 217.60,
     "verified_time": "2026-06-27 20:13:22",
-    "invite_reward": {
+    "referral_coupon": {
       "triggered": true,
       "inviter_member_id": "MEM202606260045",
-      "reward_coupon_id": "CPN202606270089"
+      "coupon_id": "RFC202607050001",
+      "status": "pending",
+      "effective_time": "2026-06-28 20:13:22"
     }
   }
 }
@@ -504,6 +512,92 @@ GET /api/merchant/verify/preview?coupon_code=8827639401&store_id=STORE001
 - 自己不能邀请自己。
 - 同一门店同一 invitee 只绑定一次。
 - 邀请奖励只在新客完成首次核销后发放。
+- v3.0 起，老带新奖励不再写入余额或微信分账，而是创建一张次日生效的老带新抵扣券。
+
+### GET `/api/user/referral-coupons`
+
+请求：
+
+```http
+GET /api/user/referral-coupons?store_id=STORE001&member_id=MEM202606270001&status=active
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "pending": [
+      {
+        "coupon_id": "RFC202607050001",
+        "face_value": 10.00,
+        "min_order_amount": 30.00,
+        "effective_time": "2026-07-06 19:30:00",
+        "expire_time": "2026-08-05 23:59:59",
+        "trigger_order_id": "ORD202607050088",
+        "status": "pending"
+      }
+    ],
+    "active": [],
+    "used": [],
+    "expired": []
+  }
+}
+```
+
+规则：
+
+- `pending` 表示已发放但尚未生效，默认 T+24 小时后生效。
+- `active` 才能被核销。
+- 每张券只能在发放门店使用。
+- 每单最多使用一张老带新抵扣券。
+
+### POST `/api/store/verify/referral-coupon`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "operator_id": "OP202606270001",
+  "coupon_id": "RFC202607050001",
+  "order_id": "ORD202607080016",
+  "order_amount": 88.00
+}
+```
+
+请求头必须包含：
+
+```http
+X-Idempotency-Key: referral_coupon_verify_STORE001_RFC202607050001_ORD202607080016
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "coupon_id": "RFC202607050001",
+    "deduction_amount": 10.00,
+    "order_amount": 88.00,
+    "final_amount": 78.00,
+    "status": "used",
+    "used_time": "2026-07-08 20:15:00"
+  }
+}
+```
+
+规则：
+
+- 券不存在、过期、已使用或已取消，返回 `8001`。
+- 订单未满最低消费金额，返回 `8002`。
+- 券不属于本门店，返回 `8003`。
+- 券未到生效时间，返回 `8004`。
+- 核销成功后写入 `used_order_id`，重复请求返回同一结果，不重复抵扣。
 
 ### GET `/api/wallet/balance`
 
@@ -535,7 +629,7 @@ GET /api/wallet/balance?store_id=STORE001&member_id=MEM202606270001
 
 - 余额不能提现、不可转赠。
 - 余额只能在本门店或商家配置的适用门店抵扣。
-- 余额来源必须能追溯到消费返现、邀请奖励或手动调整。
+- 余额来源必须能追溯到消费返现或手动调整。v3.0 起老带新奖励通过抵扣券承接，不写入余额。
 
 ### GET `/api/wallet/transactions`
 
@@ -559,7 +653,7 @@ GET /api/wallet/transactions?store_id=STORE001&member_id=MEM202606270001&page=1&
       {
         "transaction_id": "WTX202606270001",
         "transaction_type": "earn",
-        "source_type": "invite_reward",
+        "source_type": "order_cashback",
         "amount": 10.00,
         "balance_after": 28.80,
         "status": "succeeded",

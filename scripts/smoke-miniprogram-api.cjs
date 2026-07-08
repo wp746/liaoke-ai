@@ -94,6 +94,20 @@ async function main() {
     amount: 256
   });
 
+  const referralCoupons = await api.listReferralCoupons({
+    store_id: login.store.id,
+    member_id: login.member.id
+  });
+
+  const referralCoupon = referralCoupons.active[0];
+  const referralVerify = await api.verifyReferralCoupon({
+    store_id: login.store.id,
+    operator_id: "STAFF001",
+    coupon_id: referralCoupon.coupon_id,
+    order_id: "ORD_MINI_SMOKE_REFERRAL",
+    order_amount: 88
+  });
+
   const stats = await api.getDailyStats({ store_id: login.store.id });
 
   const failures = [];
@@ -107,6 +121,9 @@ async function main() {
   if (!groupClick.accepted) failures.push("trackGroupJoin");
   if (preview.code !== issued.code) failures.push("previewVerify");
   if (!verify.verified_at) failures.push("verifyCoupon");
+  if (!verify.referral_coupon?.triggered) failures.push("referralCouponTrigger");
+  if (!referralCoupons.active.length) failures.push("listReferralCoupons");
+  if (referralVerify.status !== "used") failures.push("verifyReferralCoupon");
   if (!stats.scanCount) failures.push("getDailyStats");
 
   if (failures.length) {
@@ -122,6 +139,7 @@ async function main() {
   console.log(`poster=${poster.post_id}`);
   console.log(`groupJoinTracked=${groupClick.accepted}`);
   console.log(`verifiedAt=${verify.verified_at}`);
+  console.log(`referralCouponFinalAmount=${referralVerify.final_amount}`);
 }
 
 main().catch((error) => {

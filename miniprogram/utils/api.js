@@ -123,6 +123,23 @@ function verifyCoupon(data) {
   });
 }
 
+function listReferralCoupons(params) {
+  return request({
+    method: "GET",
+    url: "/api/user/referral-coupons",
+    data: params
+  });
+}
+
+function verifyReferralCoupon(data) {
+  return request({
+    method: "POST",
+    url: "/api/store/verify/referral-coupon",
+    data,
+    idempotent: true
+  });
+}
+
 function getDailyStats(params) {
   return request({
     method: "GET",
@@ -154,6 +171,8 @@ module.exports = {
   merchantLogin,
   previewVerify,
   verifyCoupon,
+  listReferralCoupons,
+  verifyReferralCoupon,
   getDailyStats,
   trackEvent
 };
