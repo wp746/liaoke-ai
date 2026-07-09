@@ -40,6 +40,14 @@ CREATE TABLE stores (
   referral_coupon_valid_days INT UNSIGNED NOT NULL DEFAULT 30 COMMENT 'v3.0 老带新抵扣券有效期',
   referral_coupon_monthly_limit INT UNSIGNED NOT NULL DEFAULT 10 COMMENT 'v3.0 每人每月可获得老带新抵扣券上限',
   referral_coupon_min_order_amount DECIMAL(10,2) NOT NULL DEFAULT 30.00 COMMENT 'v3.0 老带新抵扣券最低消费门槛',
+  points_enabled BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'v3.1 是否启用积分兑换赠品模块',
+  points_per_yuan DECIMAL(8,2) NOT NULL DEFAULT 1.00 COMMENT '每消费 1 元获得多少积分',
+  points_sign_in_value INT UNSIGNED NOT NULL DEFAULT 5 COMMENT '每日签到积分',
+  points_ai_share_value INT UNSIGNED NOT NULL DEFAULT 50 COMMENT 'AI 晒圈成功积分',
+  points_profile_complete_value INT UNSIGNED NOT NULL DEFAULT 100 COMMENT '完善资料一次性积分',
+  points_birthday_value INT UNSIGNED NOT NULL DEFAULT 200 COMMENT '生日当月奖励积分',
+  points_expire_days INT UNSIGNED NOT NULL DEFAULT 365 COMMENT '积分默认有效期，0 表示永久有效',
+  points_expire_notice_days INT UNSIGNED NOT NULL DEFAULT 7 COMMENT '积分到期前提醒天数',
   is_paused BOOLEAN NOT NULL DEFAULT FALSE COMMENT '门店是否暂停营业，暂停期间不可核销并顺延余额有效期',
   pause_start_at DATETIME NULL,
   pause_expected_resume_at DATETIME NULL,
@@ -331,7 +339,102 @@ CREATE TABLE referral_coupons (
   CONSTRAINT fk_referral_coupons_post FOREIGN KEY (source_post_id) REFERENCES generated_posts(id)
 ) COMMENT='v3.0 老带新抵扣券表，替代微信支付分账老带新返利';
 
--- 6. 返现余额、店长等级与风控
+-- 6. 积分兑换赠品模块（v3.1）
+
+CREATE TABLE points_accounts (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  account_code VARCHAR(32) NOT NULL UNIQUE COMMENT '积分账户编码，如 PACC202607090001',
+  store_id BIGINT UNSIGNED NOT NULL,
+  member_id BIGINT UNSIGNED NOT NULL,
+  available_points INT UNSIGNED NOT NULL DEFAULT 0,
+  total_earned_points INT UNSIGNED NOT NULL DEFAULT 0,
+  total_used_points INT UNSIGNED NOT NULL DEFAULT 0,
+  total_expired_points INT UNSIGNED NOT NULL DEFAULT 0,
+  expire_at DATETIME NULL COMMENT '整体积分过期时间；精细过期以流水 expire_at 为准',
+  status ENUM('active','frozen','closed') NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_points_member_store (store_id, member_id),
+  KEY idx_points_store_available (store_id, available_points),
+  CONSTRAINT fk_points_accounts_store FOREIGN KEY (store_id) REFERENCES stores(id),
+  CONSTRAINT fk_points_accounts_member FOREIGN KEY (member_id) REFERENCES members(id)
+) COMMENT='v3.1 积分账户表，积分不可提现、不可转让、不可抵扣现金';
+
+CREATE TABLE points_transactions (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  transaction_code VARCHAR(32) NOT NULL UNIQUE,
+  account_id BIGINT UNSIGNED NOT NULL,
+  store_id BIGINT UNSIGNED NOT NULL,
+  member_id BIGINT UNSIGNED NOT NULL,
+  transaction_type ENUM('earn','redeem','expire','adjust','rollback') NOT NULL,
+  source_type ENUM('consume_earn','sign_in','ai_share','profile_complete','birthday','redemption','manual','system') NOT NULL,
+  source_id VARCHAR(64) NULL,
+  points_delta INT NOT NULL COMMENT '正数为获得，负数为消耗或过期',
+  points_before INT UNSIGNED NOT NULL,
+  points_after INT UNSIGNED NOT NULL,
+  expire_at DATETIME NULL COMMENT '本笔获得积分的到期时间',
+  remark VARCHAR(255) NULL,
+  idempotency_key VARCHAR(96) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_points_tx_idempotency (idempotency_key),
+  KEY idx_points_tx_member_created (member_id, created_at),
+  KEY idx_points_tx_source (source_type, source_id),
+  KEY idx_points_tx_expire (expire_at),
+  CONSTRAINT fk_points_transactions_account FOREIGN KEY (account_id) REFERENCES points_accounts(id),
+  CONSTRAINT fk_points_transactions_store FOREIGN KEY (store_id) REFERENCES stores(id),
+  CONSTRAINT fk_points_transactions_member FOREIGN KEY (member_id) REFERENCES members(id)
+) COMMENT='v3.1 积分流水表';
+
+CREATE TABLE points_products (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  product_code VARCHAR(32) NOT NULL UNIQUE,
+  store_id BIGINT UNSIGNED NOT NULL,
+  product_name VARCHAR(128) NOT NULL COMMENT '如酸梅汤一杯、小菜一份、优先排队一次',
+  product_type ENUM('drink','side_dish','snack','service','other') NOT NULL DEFAULT 'other',
+  points_price INT UNSIGNED NOT NULL,
+  cash_required DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'v3.1 默认不启用积分+现金，保留字段用于后续评估',
+  stock_quantity INT NOT NULL DEFAULT 9999 COMMENT '9999 表示近似无限库存',
+  max_redeem_per_member_month INT UNSIGNED NOT NULL DEFAULT 1,
+  image_url VARCHAR(512) NULL,
+  description VARCHAR(255) NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  status ENUM('active','disabled','sold_out') NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_points_products_store_status (store_id, status, sort_order),
+  CONSTRAINT fk_points_products_store FOREIGN KEY (store_id) REFERENCES stores(id)
+) COMMENT='v3.1 积分可兑换商品/服务表';
+
+CREATE TABLE points_redemptions (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  redemption_code VARCHAR(32) NOT NULL UNIQUE COMMENT '积分兑换码，可生成二维码给店员核销',
+  store_id BIGINT UNSIGNED NOT NULL,
+  member_id BIGINT UNSIGNED NOT NULL,
+  account_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  operator_id BIGINT UNSIGNED NULL,
+  points_cost INT UNSIGNED NOT NULL,
+  cash_required DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  status ENUM('pending','used','expired','cancelled') NOT NULL DEFAULT 'pending',
+  redeemed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expire_at DATETIME NOT NULL,
+  used_at DATETIME NULL,
+  cancelled_at DATETIME NULL,
+  cancel_reason VARCHAR(64) NULL,
+  idempotency_key VARCHAR(96) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_points_redemption_idem (idempotency_key),
+  KEY idx_points_redemptions_member_status (member_id, status),
+  KEY idx_points_redemptions_store_status (store_id, status, redeemed_at),
+  KEY idx_points_redemptions_expire (status, expire_at),
+  CONSTRAINT fk_points_redemptions_store FOREIGN KEY (store_id) REFERENCES stores(id),
+  CONSTRAINT fk_points_redemptions_member FOREIGN KEY (member_id) REFERENCES members(id),
+  CONSTRAINT fk_points_redemptions_account FOREIGN KEY (account_id) REFERENCES points_accounts(id),
+  CONSTRAINT fk_points_redemptions_product FOREIGN KEY (product_id) REFERENCES points_products(id)
+) COMMENT='v3.1 积分兑换记录表';
+
+-- 7. 返现余额、店长等级与风控
 
 CREATE TABLE wallet_accounts (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -473,12 +576,16 @@ CREATE TABLE tracking_events (
     'ai_image',
     'poster_generate',
     'poster_save',
-  'group_click',
-  'invite_bind',
+    'group_click',
+    'invite_bind',
     'referral_coupon_issue',
     'referral_coupon_activate',
     'referral_coupon_verify',
     'referral_coupon_expire',
+    'points_earn',
+    'points_redeem',
+    'points_verify',
+    'points_expire',
     'wallet_earn',
     'wallet_spend',
     'level_upgrade',

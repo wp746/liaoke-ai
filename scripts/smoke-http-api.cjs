@@ -141,6 +141,43 @@ async function main() {
       order_amount: 88
     });
 
+    const pointsAccount = await request("GET", "/api/points/account", {
+      store_id: login.store.id,
+      member_id: login.member.id
+    });
+
+    const pointsProducts = await request("GET", "/api/points/products", {
+      store_id: login.store.id,
+      member_id: login.member.id
+    });
+
+    const signIn = await request("POST", "/api/points/sign-in", {
+      store_id: login.store.id,
+      member_id: login.member.id
+    });
+
+    const pointsRedemption = await request("POST", "/api/points/redeem", {
+      store_id: login.store.id,
+      member_id: login.member.id,
+      product_id: pointsProducts.list[0].product_id
+    });
+
+    const pointsRedemptions = await request("GET", "/api/points/redemptions", {
+      store_id: login.store.id,
+      member_id: login.member.id
+    });
+
+    const pointsVerify = await request("POST", "/api/store/verify/points-redemption", {
+      store_id: login.store.id,
+      operator_id: "STAFF001",
+      redemption_code: pointsRedemption.redemption_code
+    });
+
+    const pointsTransactions = await request("GET", "/api/points/transactions", {
+      store_id: login.store.id,
+      member_id: login.member.id
+    });
+
     const stats = await request("GET", "/api/stats/daily", {
       store_id: login.store.id
     });
@@ -158,6 +195,13 @@ async function main() {
     if (!verify.referral_coupon?.triggered) failures.push("referral coupon trigger");
     if (!referralCoupons.active.length) failures.push("referral coupon list");
     if (referralVerify.status !== "used") failures.push("referral coupon verify");
+    if (!pointsAccount.account_id) failures.push("points account");
+    if (!pointsProducts.list.length) failures.push("points products");
+    if (!signIn.earned_points) failures.push("points sign in");
+    if (!pointsRedemption.redemption_code) failures.push("points redeem");
+    if (!pointsRedemptions.pending.length) failures.push("points redemptions");
+    if (pointsVerify.status !== "used") failures.push("points verify");
+    if (!pointsTransactions.list.length) failures.push("points transactions");
     if (!stats.issuedCount) failures.push("daily stats");
 
     if (failures.length) {
@@ -172,6 +216,8 @@ async function main() {
     console.log(`groupJoinTracked=${groupEvent.accepted}`);
     console.log(`finalAmount=${verify.final_amount}`);
     console.log(`referralCouponFinalAmount=${referralVerify.final_amount}`);
+    console.log(`pointsAfterRedeem=${pointsRedemption.points_after}`);
+    console.log(`pointsRedemption=${pointsVerify.product_name}/${pointsVerify.status}`);
   } finally {
     child.kill();
     if (process.env.DEBUG_SMOKE_API) {

@@ -140,6 +140,65 @@ function verifyReferralCoupon(data) {
   });
 }
 
+function getPointsAccount(params) {
+  return request({
+    method: "GET",
+    url: "/api/points/account",
+    data: params
+  });
+}
+
+function listPointsTransactions(params) {
+  return request({
+    method: "GET",
+    url: "/api/points/transactions",
+    data: params
+  });
+}
+
+function listPointsProducts(params) {
+  return request({
+    method: "GET",
+    url: "/api/points/products",
+    data: params
+  });
+}
+
+function redeemPointsProduct(data) {
+  return request({
+    method: "POST",
+    url: "/api/points/redeem",
+    data,
+    idempotent: true
+  });
+}
+
+function listPointsRedemptions(params) {
+  return request({
+    method: "GET",
+    url: "/api/points/redemptions",
+    data: params
+  });
+}
+
+function signInForPoints(data) {
+  return request({
+    method: "POST",
+    url: "/api/points/sign-in",
+    data,
+    idempotent: true
+  });
+}
+
+function verifyPointsRedemption(data) {
+  return request({
+    method: "POST",
+    url: "/api/store/verify/points-redemption",
+    data,
+    idempotent: true
+  });
+}
+
 function getDailyStats(params) {
   return request({
     method: "GET",
@@ -173,6 +232,13 @@ module.exports = {
   verifyCoupon,
   listReferralCoupons,
   verifyReferralCoupon,
+  getPointsAccount,
+  listPointsTransactions,
+  listPointsProducts,
+  redeemPointsProduct,
+  listPointsRedemptions,
+  signInForPoints,
+  verifyPointsRedemption,
   getDailyStats,
   trackEvent
 };

@@ -34,6 +34,58 @@ const state = {
     points: 128,
     avatarText: "燎"
   },
+  pointsAccount: {
+    account_id: "PACC202607090001",
+    available_points: 1250,
+    total_earned_points: 1880,
+    total_used_points: 630,
+    total_expired_points: 0,
+    expire_soon_points: 120,
+    expire_soon_date: "2026-08-01",
+    rules: {
+      points_per_yuan: 1,
+      sign_in_value: 5,
+      ai_share_value: 50,
+      profile_complete_value: 100,
+      birthday_value: 200,
+      expire_days: 365
+    }
+  },
+  pointsTransactions: [
+    {
+      transaction_id: "PTX202607090001",
+      transaction_type: "earn",
+      source_type: "consume_earn",
+      points_delta: 80,
+      points_after: 1250,
+      created_at: "2026-07-09 12:20:00",
+      expire_at: "2027-07-09 23:59:59"
+    }
+  ],
+  pointsProducts: [
+    {
+      product_id: "PPRD202607090001",
+      product_name: "酸梅汤一杯",
+      product_type: "drink",
+      points_price: 300,
+      stock_quantity: 99,
+      max_redeem_per_member_month: 2,
+      can_redeem: true,
+      description: "到店堂食可兑换"
+    },
+    {
+      product_id: "PPRD202607090002",
+      product_name: "开胃小菜一份",
+      product_type: "side_dish",
+      points_price: 500,
+      stock_quantity: 50,
+      max_redeem_per_member_month: 1,
+      can_redeem: true,
+      description: "每桌限兑一份"
+    }
+  ],
+  pointsRedemptions: [],
+  pointsSignedDates: new Set(),
   coupons: [
     {
       id: "CPN202606270001",
@@ -194,6 +246,7 @@ function dailyStats() {
     posters: state.posters.length || 7,
     newCustomers: 3,
     groupClicks: 12,
+    pointsRedeemed: state.pointsRedemptions.filter((item) => item.status === "used").length,
     records: [
       { time: "12:31", title: "今日吃肉券", amount: "¥256", status: "已核销" },
       { time: "12:44", title: "老客奖励券", amount: "手切嫩肉", status: "已核销" },
@@ -389,6 +442,126 @@ async function route(req, res) {
       final_amount: Number((orderAmount - coupon.face_value).toFixed(2)),
       status: coupon.status,
       used_time: coupon.used_time
+    });
+    return;
+  }
+
+  if (url.pathname === "/api/points/account" && req.method === "GET") {
+    ok(res, state.pointsAccount);
+    return;
+  }
+
+  if (url.pathname === "/api/points/transactions" && req.method === "GET") {
+    ok(res, {
+      page: Number(data.page || 1),
+      page_size: Number(data.page_size || 20),
+      total: state.pointsTransactions.length,
+      list: state.pointsTransactions
+    });
+    return;
+  }
+
+  if (url.pathname === "/api/points/products" && req.method === "GET") {
+    const type = data.type || "";
+    const list = state.pointsProducts
+      .filter((item) => !type || item.product_type === type)
+      .map((item) => ({
+        ...item,
+        can_redeem: state.pointsAccount.available_points >= item.points_price && item.stock_quantity !== 0
+      }));
+    ok(res, {
+      available_points: state.pointsAccount.available_points,
+      list
+    });
+    return;
+  }
+
+  if (url.pathname === "/api/points/redeem" && req.method === "POST") {
+    const product = state.pointsProducts.find((item) => item.product_id === data.product_id);
+    if (!product || product.stock_quantity === 0) {
+      fail(res, 9003, "积分商品不存在、已下架或售罄");
+      return;
+    }
+    if (state.pointsAccount.available_points < product.points_price) {
+      fail(res, 9002, "积分不足");
+      return;
+    }
+    const redemption = {
+      redemption_id: `PRDM${Date.now()}`,
+      redemption_code: `PNT${Math.floor(100000 + Math.random() * 899999)}`,
+      product_id: product.product_id,
+      product_name: product.product_name,
+      points_cost: product.points_price,
+      points_after: state.pointsAccount.available_points - product.points_price,
+      status: "pending",
+      expire_time: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    };
+    state.pointsAccount.available_points = redemption.points_after;
+    state.pointsAccount.total_used_points += product.points_price;
+    product.stock_quantity = Math.max(0, product.stock_quantity - 1);
+    state.pointsRedemptions.unshift(redemption);
+    state.pointsTransactions.unshift({
+      transaction_id: `PTX${Date.now()}`,
+      transaction_type: "redeem",
+      source_type: "redemption",
+      points_delta: -product.points_price,
+      points_after: state.pointsAccount.available_points,
+      created_at: new Date().toISOString(),
+      redemption_id: redemption.redemption_id
+    });
+    ok(res, redemption);
+    return;
+  }
+
+  if (url.pathname === "/api/points/redemptions" && req.method === "GET") {
+    ok(res, {
+      pending: state.pointsRedemptions.filter((item) => item.status === "pending"),
+      used: state.pointsRedemptions.filter((item) => item.status === "used"),
+      expired: state.pointsRedemptions.filter((item) => item.status === "expired")
+    });
+    return;
+  }
+
+  if (url.pathname === "/api/points/sign-in" && req.method === "POST") {
+    const key = `${data.store_id || state.store.id}:${data.member_id || state.member.id}:${new Date().toISOString().slice(0, 10)}`;
+    if (state.pointsSignedDates.has(key)) {
+      fail(res, 9007, "今日已签到");
+      return;
+    }
+    const earned = state.pointsAccount.rules.sign_in_value;
+    state.pointsSignedDates.add(key);
+    state.pointsAccount.available_points += earned;
+    state.pointsAccount.total_earned_points += earned;
+    state.pointsTransactions.unshift({
+      transaction_id: `PTX${Date.now()}`,
+      transaction_type: "earn",
+      source_type: "sign_in",
+      points_delta: earned,
+      points_after: state.pointsAccount.available_points,
+      created_at: new Date().toISOString()
+    });
+    ok(res, {
+      earned_points: earned,
+      available_points: state.pointsAccount.available_points,
+      signed_at: new Date().toISOString()
+    });
+    return;
+  }
+
+  if (url.pathname === "/api/store/verify/points-redemption" && req.method === "POST") {
+    const redemption = state.pointsRedemptions.find((item) => item.redemption_code === data.redemption_code);
+    if (!redemption || redemption.status !== "pending") {
+      fail(res, 9005, "积分兑换码不存在或不可核销");
+      return;
+    }
+    redemption.status = "used";
+    redemption.used_time = new Date().toISOString();
+    ok(res, {
+      redemption_id: redemption.redemption_id,
+      redemption_code: redemption.redemption_code,
+      product_name: redemption.product_name,
+      status: redemption.status,
+      used_time: redemption.used_time
     });
     return;
   }

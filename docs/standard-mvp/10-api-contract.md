@@ -78,6 +78,14 @@ X-Idempotency-Key: idem_xxx
 | 8002 | 老带新抵扣券未满最低消费金额 |
 | 8003 | 老带新抵扣券不属于本门店 |
 | 8004 | 老带新抵扣券尚未生效 |
+| 9001 | 积分账户不存在或已冻结 |
+| 9002 | 积分不足 |
+| 9003 | 积分商品不存在、已下架或售罄 |
+| 9004 | 超过积分商品兑换上限 |
+| 9005 | 积分兑换码不存在、已使用、已过期或已取消 |
+| 9006 | 积分规则未启用 |
+| 9007 | 今日已签到 |
+| 9008 | 积分不可抵扣现金、提现或转让 |
 
 ## 10.3 鉴权
 
@@ -115,6 +123,13 @@ MVP 可用两种方案：
 | 邀请 | POST | `/api/invite/bind` | 绑定邀请 |
 | 老带新抵扣券 | GET | `/api/user/referral-coupons` | 查询我的老带新抵扣券 |
 | 老带新抵扣券 | POST | `/api/store/verify/referral-coupon` | 商家核销老带新抵扣券 |
+| 积分 | GET | `/api/points/account` | 查询积分账户与概览 |
+| 积分 | GET | `/api/points/transactions` | 查询积分流水 |
+| 积分 | GET | `/api/points/products` | 查询积分商城商品 |
+| 积分 | POST | `/api/points/redeem` | 用户兑换积分商品 |
+| 积分 | GET | `/api/points/redemptions` | 查询我的积分兑换记录 |
+| 积分 | POST | `/api/points/sign-in` | 用户每日签到领积分 |
+| 积分 | POST | `/api/store/verify/points-redemption` | 商家核销积分兑换码 |
 | 钱包 | GET | `/api/wallet/balance` | 查询返现余额 |
 | 钱包 | GET | `/api/wallet/transactions` | 查询余额流水 |
 | 钱包 | POST | `/api/wallet/spend` | 核销时抵扣余额 |
@@ -598,6 +613,210 @@ X-Idempotency-Key: referral_coupon_verify_STORE001_RFC202607050001_ORD2026070800
 - 券不属于本门店，返回 `8003`。
 - 券未到生效时间，返回 `8004`。
 - 核销成功后写入 `used_order_id`，重复请求返回同一结果，不重复抵扣。
+
+### GET `/api/points/account`
+
+请求：
+
+```http
+GET /api/points/account?store_id=STORE001&member_id=MEM202606270001
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "account_id": "PACC202607090001",
+    "available_points": 1250,
+    "total_earned_points": 1880,
+    "total_used_points": 630,
+    "expire_soon_points": 120,
+    "expire_soon_date": "2026-08-01",
+    "rules": {
+      "points_per_yuan": 1,
+      "sign_in_value": 5,
+      "ai_share_value": 50,
+      "expire_days": 365
+    }
+  }
+}
+```
+
+规则：
+
+- 积分只用于兑换门店配置的赠品或服务，不得抵扣现金、提现、转让。
+- 积分账户按 `store_id + member_id` 唯一。
+- 门店关闭积分功能时返回 `9006`。
+
+### GET `/api/points/products`
+
+请求：
+
+```http
+GET /api/points/products?store_id=STORE001&member_id=MEM202606270001&type=drink
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "available_points": 1250,
+    "list": [
+      {
+        "product_id": "PPRD202607090001",
+        "product_name": "酸梅汤一杯",
+        "product_type": "drink",
+        "points_price": 300,
+        "stock_quantity": 99,
+        "can_redeem": true,
+        "description": "到店堂食可兑换"
+      }
+    ]
+  }
+}
+```
+
+### POST `/api/points/redeem`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "member_id": "MEM202606270001",
+  "product_id": "PPRD202607090001"
+}
+```
+
+请求头必须包含：
+
+```http
+X-Idempotency-Key: points_redeem_STORE001_MEM202606270001_PPRD202607090001_20260709
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "redemption_id": "PRDM202607090001",
+    "redemption_code": "PNT839201",
+    "product_name": "酸梅汤一杯",
+    "points_cost": 300,
+    "points_after": 950,
+    "status": "pending",
+    "expire_time": "2026-07-16 23:59:59"
+  }
+}
+```
+
+规则：
+
+- 积分不足返回 `9002`。
+- 商品下架、售罄或不存在返回 `9003`。
+- 超过每人每月兑换上限返回 `9004`。
+- 兑换成功后扣减积分、生成兑换码，重复请求返回同一结果。
+
+### GET `/api/points/redemptions`
+
+请求：
+
+```http
+GET /api/points/redemptions?store_id=STORE001&member_id=MEM202606270001&status=pending
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "pending": [
+      {
+        "redemption_id": "PRDM202607090001",
+        "redemption_code": "PNT839201",
+        "product_name": "酸梅汤一杯",
+        "points_cost": 300,
+        "status": "pending",
+        "expire_time": "2026-07-16 23:59:59"
+      }
+    ],
+    "used": [],
+    "expired": []
+  }
+}
+```
+
+### POST `/api/points/sign-in`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "member_id": "MEM202606270001"
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "earned_points": 5,
+    "available_points": 1255,
+    "signed_at": "2026-07-09 12:30:00"
+  }
+}
+```
+
+规则：
+
+- 同一门店同一会员每天只能签到一次，重复签到返回 `9007`。
+
+### POST `/api/store/verify/points-redemption`
+
+请求：
+
+```json
+{
+  "store_id": "STORE001",
+  "operator_id": "OP202606270001",
+  "redemption_code": "PNT839201"
+}
+```
+
+返回：
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "redemption_id": "PRDM202607090001",
+    "redemption_code": "PNT839201",
+    "product_name": "酸梅汤一杯",
+    "status": "used",
+    "used_time": "2026-07-09 19:20:00"
+  }
+}
+```
+
+规则：
+
+- 兑换码不存在、已使用、已过期或已取消，返回 `9005`。
+- 核销动作只交付赠品/服务，不产生现金抵扣。
 
 ### GET `/api/wallet/balance`
 

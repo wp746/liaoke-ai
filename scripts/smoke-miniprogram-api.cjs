@@ -108,6 +108,43 @@ async function main() {
     order_amount: 88
   });
 
+  const pointsAccount = await api.getPointsAccount({
+    store_id: login.store.id,
+    member_id: login.member.id
+  });
+
+  const pointsProducts = await api.listPointsProducts({
+    store_id: login.store.id,
+    member_id: login.member.id
+  });
+
+  const signIn = await api.signInForPoints({
+    store_id: login.store.id,
+    member_id: login.member.id
+  });
+
+  const pointsRedemption = await api.redeemPointsProduct({
+    store_id: login.store.id,
+    member_id: login.member.id,
+    product_id: pointsProducts.list[0].product_id
+  });
+
+  const pointsRedemptions = await api.listPointsRedemptions({
+    store_id: login.store.id,
+    member_id: login.member.id
+  });
+
+  const pointsVerify = await api.verifyPointsRedemption({
+    store_id: login.store.id,
+    operator_id: "STAFF001",
+    redemption_code: pointsRedemption.redemption_code
+  });
+
+  const pointsTransactions = await api.listPointsTransactions({
+    store_id: login.store.id,
+    member_id: login.member.id
+  });
+
   const stats = await api.getDailyStats({ store_id: login.store.id });
 
   const failures = [];
@@ -124,6 +161,13 @@ async function main() {
   if (!verify.referral_coupon?.triggered) failures.push("referralCouponTrigger");
   if (!referralCoupons.active.length) failures.push("listReferralCoupons");
   if (referralVerify.status !== "used") failures.push("verifyReferralCoupon");
+  if (!pointsAccount.account_id) failures.push("getPointsAccount");
+  if (!pointsProducts.list.length) failures.push("listPointsProducts");
+  if (!signIn.earned_points) failures.push("signInForPoints");
+  if (!pointsRedemption.redemption_code) failures.push("redeemPointsProduct");
+  if (!pointsRedemptions.pending.length) failures.push("listPointsRedemptions");
+  if (pointsVerify.status !== "used") failures.push("verifyPointsRedemption");
+  if (!pointsTransactions.list.length) failures.push("listPointsTransactions");
   if (!stats.scanCount) failures.push("getDailyStats");
 
   if (failures.length) {
@@ -140,6 +184,8 @@ async function main() {
   console.log(`groupJoinTracked=${groupClick.accepted}`);
   console.log(`verifiedAt=${verify.verified_at}`);
   console.log(`referralCouponFinalAmount=${referralVerify.final_amount}`);
+  console.log(`pointsAfterRedeem=${pointsRedemption.points_after}`);
+  console.log(`pointsRedemption=${pointsVerify.product_name}/${pointsVerify.status}`);
 }
 
 main().catch((error) => {
