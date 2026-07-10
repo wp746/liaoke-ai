@@ -1,0 +1,9 @@
+:root {
+  --ember-600:#ff4b1b; --ember-500:#ff6b1a; --gold-400:#f8b84d;
+  --cream-100:#fff8ec; --ivory:#f7f6f3; --ink-900:#1f1f23;
+  --ink-600:#5f6068; --line:#e8e1d5; --ai-cyan:#00c2ff;
+  --brand-gradient:linear-gradient(135deg,#ff4b1b 0%,#ff8a12 52%,#f9c845 100%);
+  --radius-button:999px; --radius-card:24px; --radius-panel:32px;
+  --shadow-soft:0 18px 56px rgba(88,55,24,.08);
+  --font-zh:"PingFang SC","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;
+}
