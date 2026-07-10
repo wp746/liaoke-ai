@@ -26,6 +26,9 @@ const navigation = [
 
 export function AdminFrame({ role, activeRoute, onNavigate, children }) {
   const readonly = role === "platform_admin";
+  const roleLabel = role === "super_admin"
+    ? "超级管理员"
+    : readonly ? "只读运营视图" : "角色未配置";
 
   return (
     <section className="admin-frame" data-frame="admin">
@@ -60,7 +63,7 @@ export function AdminFrame({ role, activeRoute, onNavigate, children }) {
           </label>
           <div className="admin-topbar__actions">
             <span className={readonly ? "admin-role is-readonly" : "admin-role"}>
-              {readonly ? "只读运营视图" : "超级管理员"}
+              {roleLabel}
             </span>
             <button type="button" className="admin-icon-button" aria-label="通知"><Bell size={18} /></button>
             <span className="admin-avatar">WP</span>

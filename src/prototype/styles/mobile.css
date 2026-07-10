@@ -30,7 +30,7 @@
   overflow: hidden;
   border-radius: 39px;
   background:
-    radial-gradient(circle at 88% 7%, rgba(0, 194, 255, .07), transparent 26%),
+    radial-gradient(circle at 88% 7%, rgba(248, 184, 77, .09), transparent 26%),
     linear-gradient(180deg, #fffdf8, var(--ivory));
 }
 

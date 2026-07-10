@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BarChart3, Gift, Home, Sparkles, UserRound } from "lucide-react";
 import { getRoute, getRoutesForSurface, SURFACES } from "./routeRegistry.js";
-import { SCENARIOS } from "./scenarioStore.js";
+import { merchantTabs } from "./permissions.js";
+import { createScenarioState, SCENARIOS, transition } from "./scenarioStore.js";
 import { PrototypeShell } from "./components/PrototypeShell.jsx";
 import { MiniProgramFrame } from "./components/MiniProgramFrame.jsx";
 import { AdminFrame } from "./components/AdminFrame.jsx";
@@ -15,6 +16,41 @@ const surfaceDefaults = {
   admin: "admin-overview",
 };
 
+const surfaceRoleDefaults = {
+  customer: null,
+  merchant: "owner",
+  admin: "super_admin",
+};
+
+const surfaceRoles = {
+  customer: [],
+  merchant: ["owner", "manager", "staff"],
+  admin: ["super_admin", "platform_admin"],
+};
+
+const surfaceRendererPaths = {
+  customer: "./customer/CustomerApp.jsx",
+  merchant: "./merchant/MerchantApp.jsx",
+  admin: "./admin/AdminApp.jsx",
+};
+
+const surfaceRendererNames = {
+  customer: "CustomerApp",
+  merchant: "MerchantApp",
+  admin: "AdminApp",
+};
+
+const surfaceModules = import.meta.glob(
+  ["./customer/CustomerApp.jsx", "./merchant/MerchantApp.jsx", "./admin/AdminApp.jsx"],
+  { eager: true },
+);
+
+function normalizeRole(surface, requestedRole) {
+  return surfaceRoles[surface].includes(requestedRole)
+    ? requestedRole
+    : surfaceRoleDefaults[surface];
+}
+
 const customerTabs = [
   { id: "home", label: "首页", icon: Home },
   { id: "benefits", label: "权益", icon: Gift },
@@ -23,25 +59,13 @@ const customerTabs = [
   { id: "me", label: "我的", icon: UserRound },
 ];
 
-const merchantTabsByRole = {
-  owner: [
-    { id: "merchant-dashboard", label: "经营" },
-    { id: "verify-hub", label: "核销" },
-    { id: "members", label: "会员" },
-    { id: "activities", label: "运营" },
-    { id: "merchant-export", label: "我的" },
-  ],
-  manager: [
-    { id: "merchant-dashboard", label: "经营" },
-    { id: "verify-hub", label: "核销" },
-    { id: "members", label: "会员" },
-    { id: "verify-history", label: "记录" },
-  ],
-  staff: [
-    { id: "verify-hub", label: "核销" },
-    { id: "verify-history", label: "记录" },
-    { id: "merchant-export", label: "我的" },
-  ],
+const merchantTabPresentation = {
+  "merchant-dashboard": { label: "经营", icon: BarChart3 },
+  "verify-hub": { label: "核销", icon: Home },
+  members: { label: "会员", icon: UserRound },
+  activities: { label: "运营", icon: Gift },
+  "verify-history": { label: "记录", icon: BarChart3 },
+  "merchant-export": { label: "我的", icon: UserRound },
 };
 
 function SurfacePreview({ surface, routeId, role, onNavigate }) {
@@ -50,7 +74,7 @@ function SurfacePreview({ surface, routeId, role, onNavigate }) {
       <AdminFrame role={role} activeRoute={routeId} onNavigate={onNavigate}>
         <div className="prototype-placeholder prototype-placeholder--admin">
           <div>
-            <StatusPill status="ai">全局经营指挥台</StatusPill>
+            <StatusPill status="plain">全局经营指挥台</StatusPill>
             <h2>平台经营一屏掌握</h2>
             <p>门店、风险、AI 配额与系统任务将在这里形成统一运营视图。</p>
           </div>
@@ -65,7 +89,9 @@ function SurfacePreview({ surface, routeId, role, onNavigate }) {
   }
 
   const merchant = surface === "merchant";
-  const tabs = merchant ? merchantTabsByRole[role] ?? merchantTabsByRole.owner : customerTabs;
+  const tabs = merchant
+    ? merchantTabs(role).map((tab) => ({ ...tab, ...merchantTabPresentation[tab.id] }))
+    : customerTabs;
 
   return (
     <MiniProgramFrame
@@ -109,32 +135,45 @@ export default function PrototypeApp() {
   const initialScenario = SCENARIOS.some(({ id }) => id === requestedScenario)
     ? requestedScenario
     : "returning-customer";
+  const initialRole = normalizeRole(initialSurface, query.get("role"));
 
   const [surface, setSurface] = useState(initialSurface);
   const [routeId, setRouteId] = useState(initialRoute);
   const [scenarioId, setScenarioId] = useState(initialScenario);
-  const [role, setRole] = useState(query.get("role") || "owner");
+  const [role, setRole] = useState(initialRole);
+  const [state, setState] = useState(() => createScenarioState(initialScenario));
+
+  const dispatch = useCallback((event) => {
+    setState((current) => transition(current, event));
+  }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams({ surface, route: routeId, scenario: scenarioId, role });
+    const params = new URLSearchParams({ surface, route: routeId, scenario: scenarioId });
+    if (role) params.set("role", role);
     window.history.replaceState(null, "", `${window.location.pathname}?${params}`);
   }, [role, routeId, scenarioId, surface]);
 
   const handleSurfaceChange = (nextSurface) => {
     setSurface(nextSurface);
     setRouteId(surfaceDefaults[nextSurface]);
-    if (nextSurface === "merchant" && !["owner", "manager", "staff"].includes(role)) {
-      setRole("owner");
-    }
-    if (nextSurface === "admin" && !["super_admin", "platform_admin"].includes(role)) {
-      setRole("super_admin");
-    }
+    setRole(normalizeRole(nextSurface, role));
   };
 
   const handleRoleChange = (nextRole) => {
-    setRole(nextRole);
-    if (surface === "merchant" && nextRole === "staff") setRouteId("verify-hub");
+    const normalizedRole = normalizeRole(surface, nextRole);
+    setRole(normalizedRole);
+    if (surface === "merchant" && normalizedRole === "staff") setRouteId("verify-hub");
   };
+
+  const handleScenarioChange = (nextScenarioId) => {
+    setScenarioId(nextScenarioId);
+    setState(createScenarioState(nextScenarioId));
+  };
+
+  const surfaceModule = surfaceModules[surfaceRendererPaths[surface]];
+  const SurfaceRenderer = surfaceModule?.default
+    ?? surfaceModule?.[surfaceRendererNames[surface]];
+  const rendererProps = { routeId, role, state, dispatch, onNavigate: setRouteId };
 
   return (
     <PrototypeShell
@@ -145,15 +184,12 @@ export default function PrototypeApp() {
       routes={getRoutesForSurface(surface)}
       onSurfaceChange={handleSurfaceChange}
       onRouteChange={setRouteId}
-      onScenarioChange={setScenarioId}
+      onScenarioChange={handleScenarioChange}
       onRoleChange={handleRoleChange}
     >
-      <SurfacePreview
-        surface={surface}
-        routeId={routeId}
-        role={role}
-        onNavigate={setRouteId}
-      />
+      {SurfaceRenderer
+        ? <SurfaceRenderer {...rendererProps} />
+        : <SurfacePreview surface={surface} {...rendererProps} />}
     </PrototypeShell>
   );
 }
