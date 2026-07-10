@@ -7,6 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "dev:api": "node server/mock-api.cjs",
     "build": "vite build",
+    "test": "node --test tests/unit/*.test.js",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
     "config:miniprogram:mock": "node scripts/configure-miniprogram-env.cjs mock",
     "config:miniprogram:local": "node scripts/configure-miniprogram-env.cjs localHttpMock",
     "config:miniprogram:test": "node scripts/configure-miniprogram-env.cjs test",
@@ -20,6 +23,7 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
+    "@galacean/effects": "^2.9.3",
     "@vitejs/plugin-react": "^4.3.4",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
@@ -27,6 +31,7 @@
     "vite": "^6.0.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "playwright": "^1.61.1"
   }
 }
