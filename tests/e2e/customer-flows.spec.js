@@ -40,15 +40,25 @@ test("creates and saves a referral poster", async ({ page }) => {
   await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create");
   await expect(page.getByLabel("上传用餐照片")).toHaveAttribute("multiple", "");
   await expect(page.getByLabel("今天的真实感受")).toHaveAttribute("maxlength", "50");
+  await expect(page.getByRole("button", { name: "生成我的海报" })).toBeDisabled();
   for (const style of ["烟火食刻", "质感大片", "漫画趣味", "简约清新"]) {
     await expect(page.getByRole("button", { name: style, exact: true })).toBeVisible();
   }
 
+  await page.getByLabel("上传用餐照片").setInputFiles({
+    name: "meal.png",
+    mimeType: "image/png",
+    buffer: Buffer.from("prototype-image"),
+  });
   await page.getByLabel("今天的真实感受").fill("吊龙很嫩，朋友聚餐很舒服");
+  await page.getByRole("button", { name: "漫画趣味", exact: true }).click();
   await page.getByRole("button", { name: "生成我的海报" }).click();
   await expect(page.getByText("燎小星正在点亮这张照片")).toBeVisible();
+  await page.getByRole("button", { name: "继续生成图片" }).click();
+  await expect(page.getByText("正在为照片调出烟火质感")).toBeVisible();
   await page.getByRole("button", { name: "查看生成结果" }).click();
   await expect(page.getByRole("button", { name: "选这版" })).toHaveCount(3);
+  await expect(page.getByText("已使用「漫画趣味」效果，你还可以重新创作。")).toBeVisible();
   await page.getByRole("button", { name: "选这版" }).first().click();
   await expect(page.getByRole("heading", { name: "海报已生成" })).toBeVisible();
   await expect(page.getByText("专属推荐码")).toBeVisible();
@@ -83,4 +93,44 @@ test("limits an AI creation to three uploaded images", async ({ page }) => {
     })),
   );
   await expect(page.getByText("最多上传 3 张照片")).toBeVisible();
+  await expect(page.getByRole("button", { name: "生成我的海报" })).toBeDisabled();
+  await expect(page.getByText("燎小星正在点亮这张照片")).toHaveCount(0);
+});
+
+test("does not start AI generation without an image", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create");
+  await page.getByLabel("今天的真实感受").fill("吊龙很嫩");
+  await expect(page.getByRole("button", { name: "生成我的海报" })).toBeDisabled();
+  await expect(page.getByText("燎小星正在点亮这张照片")).toHaveCount(0);
+  await expect(page).toHaveURL(/route=ai-create/);
+});
+
+test("renders fallback and rejection from stateful upstream outcomes", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create&variant=fallback");
+  await page.getByLabel("上传用餐照片").setInputFiles({ name: "meal.png", mimeType: "image/png", buffer: Buffer.from("image") });
+  await page.getByRole("button", { name: "生成我的海报" }).click();
+  await page.getByRole("button", { name: "继续生成图片" }).click();
+  await page.getByRole("button", { name: "查看生成结果" }).click();
+  await expect(page.getByText("先给你精选版")).toBeVisible();
+  await page.getByRole("button", { name: "查看生成结果" }).click();
+  await expect(page.getByRole("button", { name: "选这版" })).toHaveCount(3);
+
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create&variant=rejected");
+  await page.getByLabel("上传用餐照片").setInputFiles({ name: "meal.png", mimeType: "image/png", buffer: Buffer.from("image") });
+  await page.getByLabel("今天的真实感受").fill("需保留的真实感受");
+  await page.getByRole("button", { name: "简约清新", exact: true }).click();
+  await page.getByRole("button", { name: "生成我的海报" }).click();
+  await expect(page.getByText("照片不符合要求，请更换")).toBeVisible();
+  await page.getByRole("button", { name: "返回更换照片" }).click();
+  await expect(page.getByRole("heading", { name: "把这一桌，拍成会发光的记忆" })).toBeVisible();
+  await expect(page.getByLabel("今天的真实感受")).toHaveValue("需保留的真实感受");
+  await expect(page.getByRole("button", { name: "简约清新", exact: true })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("guards AI result routes while generation state is idle", async ({ page }) => {
+  for (const route of ["ai-select", "poster-preview"]) {
+    await page.goto(`/?surface=customer&scenario=returning-customer&route=${route}`);
+    await expect(page.getByRole("heading", { name: "把这一桌，拍成会发光的记忆" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "选这版" })).toHaveCount(0);
+  }
 });

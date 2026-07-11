@@ -5,7 +5,7 @@ import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { Balance, Benefits, CouponClaim, CouponCode, DeductionCode } from "./BenefitPages.jsx";
 import { EntryConsent, EntryUnavailable } from "./EntryPages.jsx";
-import { AiCreate, AiProgress, AiSelect, PosterPreview } from "./AiPages.jsx";
+import { AI_PROGRESS_VARIANTS, AiCreate, AiProgress, AiSelect, PosterPreview } from "./AiPages.jsx";
 import "../styles/customer.css";
 
 const tabs = [
@@ -62,6 +62,9 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
     onNavigate("coupon-code");
   };
   const pageProps = { state, dispatch, onNavigate };
+  const progressOverride = AI_PROGRESS_VARIANTS.includes(new URLSearchParams(window.location.search).get("variant"));
+  const aiStarted = state.ai.status !== "idle";
+  const aiReady = ["done", "fallback"].includes(state.ai.status);
   const pages = {
     "entry-consent": <EntryConsent {...pageProps} />,
     "entry-unavailable": <EntryUnavailable {...pageProps} />,
@@ -70,9 +73,9 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
     benefits: <Benefits {...pageProps} onSelectCoupon={openCoupon} />,
     "coupon-code": <CouponCode {...pageProps} selectedCouponId={selectedCouponId} />,
     "ai-create": <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
-    "ai-progress": <AiProgress {...pageProps} />,
-    "ai-select": <AiSelect {...pageProps} draft={aiDraft} onSelect={setSelectedAiCopy} />,
-    "poster-preview": <PosterPreview {...pageProps} selectedCopy={selectedAiCopy} />,
+    "ai-progress": aiStarted || progressOverride ? <AiProgress {...pageProps} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
+    "ai-select": aiReady ? <AiSelect {...pageProps} draft={aiDraft} onSelect={setSelectedAiCopy} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
+    "poster-preview": aiReady ? <PosterPreview {...pageProps} selectedCopy={selectedAiCopy} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
     balance: <Balance {...pageProps} />,
     "deduction-code": <DeductionCode {...pageProps} />,
   };

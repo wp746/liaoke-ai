@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Check, Copy, ImagePlus, QrCode, RefreshCw, Save, Sparkles } from "lucide-react";
+import { Check, Copy, ImagePlus, QrCode, RefreshCw, Save } from "lucide-react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 
 export const AI_STYLES = ["烟火食刻", "质感大片", "漫画趣味", "简约清新"];
+export const AI_PROGRESS_VARIANTS = ["copy", "image", "fallback", "rejected"];
 
 export const COPY_CANDIDATES = [
   "吊龙刚涮到最嫩的那一秒，朋友正好都在。今晚的快乐，有热气也有笑声。",
@@ -58,13 +59,19 @@ function AiStyleTag({ children }) {
 export function AiCreate({ dispatch, onNavigate, draft, onDraftChange }) {
   const [photoCount, setPhotoCount] = useState(0);
   const [photoError, setPhotoError] = useState("");
+  const [outcome] = useState(() => {
+    const requested = new URLSearchParams(window.location.search).get("variant");
+    return ["fallback", "rejected"].includes(requested) ? requested : "done";
+  });
   const updatePhotos = (event) => {
     const count = event.target.files?.length ?? 0;
-    setPhotoCount(Math.min(count, 3));
+    setPhotoCount(count > 3 ? 0 : count);
     setPhotoError(count > 3 ? "最多上传 3 张照片" : "");
   };
+  const canStart = photoCount >= 1 && photoCount <= 3 && !photoError;
   const start = () => {
-    dispatch({ type: "START_AI" });
+    if (!canStart) return;
+    dispatch({ type: "START_AI", outcome });
     onNavigate("ai-progress");
   };
 
@@ -94,26 +101,34 @@ export function AiCreate({ dispatch, onNavigate, draft, onDraftChange }) {
             {AI_STYLES.map((style) => <button type="button" key={style} aria-pressed={draft.style === style} onClick={() => onDraftChange({ ...draft, style })}>{style}</button>)}
           </div>
         </section>
-        <PrimaryButton onClick={start}>生成我的海报</PrimaryButton>
+        <PrimaryButton onClick={start} disabled={!canStart}>生成我的海报</PrimaryButton>
       </main>
     </AiStyleTag>
   );
 }
 
 const progressViews = {
-  copy: { title: "燎小星正在点亮这张照片", body: "正在理解你的真实感受", action: "查看生成结果" },
+  copy: { title: "燎小星正在点亮这张照片", body: "正在理解你的真实感受", action: "继续生成图片" },
   image: { title: "画面正在冒出香气", body: "正在为照片调出烟火质感", action: "查看生成结果" },
   fallback: { title: "图片保留了原始质感", body: "先给你精选版", detail: "已为你生成文案版海报。", action: "查看生成结果" },
   rejected: { title: "这张照片暂时不能使用", body: "照片不符合要求，请更换", detail: "换一张清晰的用餐照片再试试。", action: "返回更换照片" },
 };
 
-export function AiProgress({ dispatch, onNavigate }) {
+export function AiProgress({ state, dispatch, onNavigate }) {
   const requested = new URLSearchParams(window.location.search).get("variant");
-  const variant = progressViews[requested] ? requested : "copy";
+  const variant = progressViews[requested] ? requested : progressViews[state.ai.stage] ? state.ai.stage : "copy";
   const view = progressViews[variant];
   const proceed = () => {
     if (variant === "rejected") return onNavigate("ai-create");
-    dispatch({ type: "COMPLETE_AI", fallback: variant === "fallback" });
+    if (variant === "copy") {
+      dispatch({ type: "ADVANCE_AI" });
+      return;
+    }
+    if (variant === "image") {
+      dispatch({ type: "COMPLETE_AI" });
+      if (state.ai.outcome !== "fallback") onNavigate("ai-select");
+      return;
+    }
     onNavigate("ai-select");
   };
   return (

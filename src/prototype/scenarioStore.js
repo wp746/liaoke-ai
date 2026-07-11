@@ -1,7 +1,7 @@
 import { fixtures } from "./fixtures.js";
 
 export const EVENTS = [
-  "ACCEPT_CONSENT", "CLAIM_COUPON", "START_AI", "COMPLETE_AI",
+  "ACCEPT_CONSENT", "CLAIM_COUPON", "START_AI", "ADVANCE_AI", "COMPLETE_AI",
   "CREATE_REFERRAL_COUPON", "ACTIVATE_REFERRAL_COUPON", "REDEEM_POINTS",
   "VERIFY_CODE", "PAUSE_STORE", "RESUME_STORE", "SET_ROLE",
 ];
@@ -76,9 +76,32 @@ export function transition(state, event) {
     case "CLAIM_COUPON":
       return { ...state, coupons: state.coupons.map((coupon, index) => index === 0 ? { ...coupon, status: "active" } : coupon) };
     case "START_AI":
-      return { ...state, ai: { ...state.ai, status: "processing", stage: "copy" } };
-    case "COMPLETE_AI":
-      return { ...state, ai: { ...state.ai, status: event.fallback ? "fallback" : "done", stage: "poster" } };
+      if (event.outcome === "rejected") {
+        return { ...state, ai: { status: "rejected", stage: "rejected", outcome: "rejected" } };
+      }
+      return {
+        ...state,
+        ai: {
+          status: "processing",
+          stage: "copy",
+          outcome: event.outcome === "fallback" ? "fallback" : "done",
+        },
+      };
+    case "ADVANCE_AI":
+      if (state.ai.status !== "processing" || state.ai.stage !== "copy") return state;
+      return { ...state, ai: { ...state.ai, stage: "image" } };
+    case "COMPLETE_AI": {
+      if (state.ai.status !== "processing" || state.ai.stage !== "image") return state;
+      const outcome = event.fallback ? "fallback" : state.ai.outcome;
+      return {
+        ...state,
+        ai: {
+          status: outcome === "fallback" ? "fallback" : "done",
+          stage: outcome === "fallback" ? "fallback" : "select",
+          outcome: outcome === "fallback" ? "fallback" : "done",
+        },
+      };
+    }
     case "CREATE_REFERRAL_COUPON":
       return { ...state, referralCoupons: [{ id: "RC-20260710-01", status: "pending", value: 10 }, ...state.referralCoupons] };
     case "ACTIVATE_REFERRAL_COUPON":
