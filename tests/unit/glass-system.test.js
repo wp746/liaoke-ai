@@ -64,6 +64,17 @@ test("glyphs expose every kind and state-specific assistive text", async () => {
   } finally { await vite.close(); }
 });
 
+test("balance RewardGlyph owns droplets reservoir and water-level semantics", async () => {
+  const { vite, module } = await loadGlass();
+  try {
+    const html = renderToStaticMarkup(React.createElement(module.RewardGlyph, { kind: "balance", state: "active" }));
+    assert.match(html, /lucide-droplets/);
+    assert.doesNotMatch(html, /lucide-ticket-check/);
+    assert.match(html, /class="reward-glyph__reservoir"/);
+    assert.match(html, /class="reward-glyph__water-level"/);
+  } finally { await vite.close(); }
+});
+
 test("glass CSS preserves fallback, palette, focus, and motion contracts", async () => {
   const css = await loadGlassCss();
 
@@ -74,6 +85,8 @@ test("glass CSS preserves fallback, palette, focus, and motion contracts", async
   assert.match(css, /\.reward-glyph--store\s*\{[^}]*color:\s*var\(--ember-600\)/s);
   assert.match(css, /\.reward-glyph--points,\.reward-glyph--referral\s*\{[^}]*color:\s*var\(--gold-400\)/s);
   assert.match(css, /\.reward-glyph--ai\s*\{[^}]*color:\s*var\(--ai-cyan\)/s);
+  assert.match(css, /\.reward-glyph__reservoir\s*\{[^}]*overflow:\s*hidden[^}]*border-radius:/s);
+  assert.match(css, /\.reward-glyph__water-level\s*\{[^}]*height:\s*24px[^}]*background-image:\s*linear-gradient/s);
   assert.match(css, /\.reward-glyph--used,\.reward-glyph--expired,\.reward-glyph--paused\s*\{[^}]*color:\s*var\(--ink-600\)/s);
 
   assert.match(css, /\.glass-surface\.is-interactive:focus-visible,\.liquid-lens:focus-visible\s*\{/);

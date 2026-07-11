@@ -49,10 +49,11 @@ test("points and balance have distinct glyphs without list mascots", async ({ pa
   await expect(balanceGlyph).toHaveCount(1);
   await expect(balanceGlyph.locator(".lucide-droplets")).toHaveCount(1);
   await expect(balanceGlyph.locator(".lucide-ticket-check")).toHaveCount(0);
-  const reservoir = balanceGlyph.locator(".customer-balance-glyph__reservoir");
+  const reservoir = balanceGlyph.locator(".reward-glyph__reservoir");
   await expect(reservoir).toBeVisible();
-  await expect(reservoir.locator("i")).toHaveCSS("height", "24px");
-  await expect(reservoir.locator("i")).not.toHaveCSS("background-image", "none");
+  const waterLevel = reservoir.locator(".reward-glyph__water-level");
+  await expect(waterLevel).toHaveCSS("height", "24px");
+  await expect(waterLevel).not.toHaveCSS("background-image", "none");
 });
 
 test("AI and referral flows expose their own glyph families without row mascots", async ({ page }) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronRight, Clock3, Coins, Droplets, Gift, QrCode } from "lucide-react";
+import { ChevronRight, Clock3, Coins, Gift, QrCode } from "lucide-react";
 import { GlassSurface, LiaoxiaoxingMoment, LiquidLens, RewardGlyph, SparkTrail } from "../components/Glass.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
@@ -29,15 +29,6 @@ function CouponRow({ coupon, onOpen }) {
       </span>
       <ChevronRight aria-hidden="true" size={18} />
     </button>
-  );
-}
-
-function BalanceGlyph() {
-  return (
-    <span className="reward-glyph reward-glyph--balance reward-glyph--active customer-balance-glyph" data-glyph-kind="balance" data-glyph-state="active">
-      <Droplets aria-hidden="true" size={16} />
-      <span className="customer-balance-glyph__reservoir" aria-hidden="true"><i /></span>
-    </span>
   );
 }
 
@@ -154,7 +145,7 @@ export function Balance({ state, onNavigate }) {
     <main className="customer-page">
       <header className="customer-page__header"><span>返现余额</span><h1>¥{state.customer.balance.toFixed(2)}</h1></header>
       <GlassSurface level="acrylic" className="customer-balance-vessel">
-        <BalanceGlyph />
+        <RewardGlyph kind="balance" state="active" />
         <strong>结账时可出示抵扣码</strong>
         <p>抵扣结果以门店核销页显示为准。</p>
         <PrimaryButton onClick={() => onNavigate("deduction-code")}>生成抵扣码</PrimaryButton>

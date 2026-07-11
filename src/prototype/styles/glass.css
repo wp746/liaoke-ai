@@ -25,6 +25,10 @@
 .reward-glyph--dish { border-radius: 48% 42% 52% 38%; background: rgba(255,121,68,.13); }
 .reward-glyph--group { border-radius: 46% 54% 56% 44%; background: rgba(116,118,126,.10); }
 .reward-glyph--drink { border-radius: 54% 46% 58% 42%; background: rgba(248,184,77,.14); }
+.reward-glyph--balance { position: relative; display: block; border-radius: 48% 52% 45% 55%; background: linear-gradient(145deg,rgba(255,105,29,.16),rgba(248,184,77,.09)); color: var(--ember-600); }
+.reward-glyph--balance > .lucide-droplets { position: absolute; top: 5px; right: 4px; z-index: 2; }
+.reward-glyph__reservoir { position: absolute; right: 8px; bottom: 5px; left: 8px; height: 34px; overflow: hidden; border: 2px solid currentColor; border-top-color: rgba(255,105,29,.42); border-radius: 9px 9px 14px 14px; }
+.reward-glyph__water-level { position: absolute; right: 0; bottom: 0; left: 0; height: 24px; background-image: linear-gradient(180deg,rgba(248,184,77,.42),rgba(255,105,29,.72)); border-radius: 7px 7px 11px 11px; }
 .reward-glyph--points,.reward-glyph--referral { color: var(--gold-400); }
 .reward-glyph--ai { color: var(--ai-cyan); }
 .reward-glyph--used,.reward-glyph--expired,.reward-glyph--paused { color: var(--ink-600); filter: saturate(.15); }
