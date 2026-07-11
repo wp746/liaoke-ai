@@ -40,7 +40,7 @@ export function CouponClaim({ state, onNavigate }) {
   );
 }
 
-export function Benefits({ state, dispatch, onNavigate, onSelectCoupon }) {
+export function Benefits({ state, onNavigate, onSelectCoupon }) {
   const [tab, setTab] = useState("到店券");
   return (
     <main className="customer-page">
@@ -73,7 +73,6 @@ export function Benefits({ state, dispatch, onNavigate, onSelectCoupon }) {
             <Gift size={24} />
             <strong>朋友到店后，推荐券会自动生效</strong>
             <p>状态会随着好友到店和使用进度更新。</p>
-            <PrimaryButton onClick={() => dispatch({ type: "CREATE_REFERRAL_COUPON" })}>生成推荐券</PrimaryButton>
           </SurfaceCard>
           {state.referralCoupons.length > 0 ? (
             <div className="customer-referral-list">

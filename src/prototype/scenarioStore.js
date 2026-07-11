@@ -24,7 +24,12 @@ export function createScenarioState(scenarioId) {
     store: data.store,
     customer: data.customer,
     coupons: data.coupons,
-    referralCoupons: [],
+    referralCoupons: scenarioId === "returning-customer" ? [
+      { id: "RC-20260710-PENDING", status: "pending", value: 10 },
+      { id: "RC-20260708-ACTIVE", status: "active", value: 10 },
+      { id: "RC-20260701-USED", status: "used", value: 10 },
+      { id: "RC-20260618-EXPIRED", status: "expired", value: 10 },
+    ] : [],
     points: {
       balance: 1250,
       redemptions: [],

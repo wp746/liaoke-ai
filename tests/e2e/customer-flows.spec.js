@@ -25,10 +25,13 @@ test("coupon detail keeps the coupon selected from benefits", async ({ page }) =
   await expect(page.getByText("有效期至 2026-08-10 23:59:59")).toBeVisible();
 });
 
-test("referral tab renders referral coupon records and their state", async ({ page }) => {
+test("referral tab renders upstream records without a self-service issuance control", async ({ page }) => {
   await page.goto("/?surface=customer&scenario=returning-customer&route=benefits");
   await page.getByRole("tab", { name: "推荐券" }).click();
-  await page.getByRole("button", { name: "生成推荐券" }).click();
-  await expect(page.getByText("RC-20260710-01")).toBeVisible();
+  await expect(page.getByRole("button", { name: "生成推荐券" })).toHaveCount(0);
+  await expect(page.getByText("RC-20260710-PENDING")).toBeVisible();
   await expect(page.getByText("待生效", { exact: true })).toBeVisible();
+  await expect(page.getByText("可使用", { exact: true })).toBeVisible();
+  await expect(page.getByText("已使用", { exact: true })).toBeVisible();
+  await expect(page.getByText("已过期", { exact: true })).toBeVisible();
 });
