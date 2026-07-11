@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BarChart3, Gift, History, ScanLine, UserRound, UsersRound } from "lucide-react";
+import { BarChart3, Download, Gift, History, ScanLine, Store, UserRound, UsersRound } from "lucide-react";
 import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { canMerchant, merchantTabs } from "../permissions.js";
@@ -21,7 +21,7 @@ const operationRoutes = new Set(["activities", "activity-editor", "benefit-polic
 const pointsRoutes = new Set(["points-products", "points-product-editor", "points-rules"]);
 
 function canAccessRoute(role, routeId) {
-  if (routeId === "merchant-login" || routeId === "merchant-export") return true;
+  if (routeId === "merchant-login") return true;
   if (routeId === "merchant-dashboard") return canMerchant(role, "members:read");
   if (verificationRoutes.has(routeId)) return canMerchant(role, "verify");
   if (memberRoutes.has(routeId)) return canMerchant(role, "members:read");
@@ -30,6 +30,31 @@ function canAccessRoute(role, routeId) {
   if (routeId === "employees" || routeId === "merchant-plan") return canMerchant(role, "employee:write");
   if (routeId === "store-settings") return canMerchant(role, "store:update");
   return false;
+}
+
+const accountRoleLabels = { owner: "老板", manager: "店长", staff: "店员" };
+
+function MerchantAccount({ role, state }) {
+  const canExport = canMerchant(role, "export");
+
+  return (
+    <main className="merchant-page merchant-account">
+      <div><StatusPill status="success">账号安全</StatusPill><h1>我的账号</h1><p>账号与门店身份信息</p></div>
+      <SurfaceCard tone="warm">
+        <span className="merchant-eyebrow"><Store size={14} /> 当前门店</span>
+        <strong>{state.store.name}</strong>
+        <span>{accountRoleLabels[role]}账号 · 已登录</span>
+      </SurfaceCard>
+      {canExport ? (
+        <SurfaceCard tone="plain">
+          <span className="merchant-eyebrow"><Download size={14} /> 老板权限</span>
+          <h2>数据导出</h2>
+          <p>导出门店经营数据前将记录操作账号与时间。</p>
+          <button type="button" className="merchant-secondary-action">导出经营数据</button>
+        </SurfaceCard>
+      ) : <small className="merchant-readonly">数据导出仅老板账号可用</small>}
+    </main>
+  );
 }
 
 function PermissionState({ onNavigate }) {
@@ -65,7 +90,8 @@ export function MerchantApp({ routeId, role, state, dispatch, onNavigate }) {
   }, [directRouteRequested, onNavigate, role, routeId]);
 
   let page;
-  if (!canAccessRoute(role, routeId)) page = <PermissionState onNavigate={onNavigate} />;
+  if (routeId === "merchant-export") page = <MerchantAccount role={role} state={state} />;
+  else if (!canAccessRoute(role, routeId)) page = <PermissionState onNavigate={onNavigate} />;
   else if (routeId === "merchant-login") page = <MerchantLogin role={role} state={state} onNavigate={onNavigate} />;
   else if (routeId === "merchant-dashboard") page = <MerchantDashboard role={role} state={state} dispatch={dispatch} onNavigate={onNavigate} />;
   else page = <RoutePlaceholder routeId={routeId} />;

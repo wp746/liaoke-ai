@@ -91,6 +91,10 @@ function StoreStatus({ role, state, dispatch }) {
 export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
   const [days, setDays] = useState(7);
   const trend = trendData[days];
+  const rightsCostRate = state.store.monthlyRightsCostRate ?? 0.086;
+  const costAlertThreshold = state.store.monthlyCostAlert ?? 0.12;
+  const costAlertGap = Math.max(costAlertThreshold - rightsCostRate, 0);
+  const percent = (value) => (value * 100).toFixed(1).replace(/\.0$/, "");
 
   return (
     <main className="merchant-page merchant-dashboard">
@@ -133,7 +137,7 @@ export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
 
       <section className="merchant-cost-warning" aria-label="权益成本提醒">
         <ShieldAlert size={19} />
-        <div><strong>权益成本接近预警线</strong><span>本月权益成本率 8.6%，距离 10% 预警线还有 1.4%。</span></div>
+        <div><strong>权益成本接近预警线</strong><span>本月权益成本率 {percent(rightsCostRate)}%，距离 {percent(costAlertThreshold)}% 预警线还有 {percent(costAlertGap)}%。</span></div>
       </section>
 
       <section className="merchant-suggestion">

@@ -33,6 +33,7 @@ test("owner dashboard shows the PRD operating picture and opens scanning", async
   await expect(page.getByRole("button", { name: "近30天" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText("门店营业中")).toBeVisible();
   await expect(page.getByText("权益成本接近预警线", { exact: true })).toBeVisible();
+  await expect(page.getByText("本月权益成本率 8.6%，距离 12% 预警线还有 3.4%。", { exact: true })).toBeVisible();
   await expect(page.getByText("本月有3位铁杆会员生日，发张生日券试试")).toBeVisible();
   await expect(page.getByRole("heading", { name: "最近核销" })).toBeVisible();
 
@@ -56,4 +57,19 @@ test("merchant login identifies the owner and enters the dashboard", async ({ pa
   await expect(page.getByText("牛里牛气潮汕牛肉火锅")).toBeVisible();
   await page.getByRole("button", { name: "进入经营工作台" }).click();
   await expect(page).toHaveURL(/route=merchant-dashboard/);
+});
+
+test("merchant account keeps data export exclusive to the owner", async ({ page }) => {
+  for (const role of ["manager", "staff"]) {
+    await page.goto(`/?surface=merchant&role=${role}&route=merchant-export`);
+    await expect(page.getByRole("heading", { name: "我的账号" })).toBeVisible();
+    await expect(page.getByText("账号与门店身份信息", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "导出经营数据" })).toHaveCount(0);
+    await expect(page.getByText("当前角色已通过权限校验。", { exact: true })).toHaveCount(0);
+  }
+
+  await page.goto("/?surface=merchant&role=owner&route=merchant-export");
+  await expect(page.getByRole("heading", { name: "我的账号" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "数据导出" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "导出经营数据" })).toBeVisible();
 });

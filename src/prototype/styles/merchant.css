@@ -73,6 +73,13 @@
 .merchant-permission-state p { color: var(--ink-600); font-size: 12px; line-height: 1.7; }
 .merchant-route-placeholder { align-content: center; justify-items: center; text-align: center; }
 .merchant-route-placeholder p { color: var(--ink-600); font-size: 12px; }
+.merchant-account > div:first-child { display: grid; gap: 7px; }
+.merchant-account > div:first-child .status-pill { margin-bottom: 2px; }
+.merchant-account > div:first-child p, .merchant-account .ui-card p { color: var(--ink-600); font-size: 11px; line-height: 1.6; }
+.merchant-account .ui-card { display: grid; gap: 8px; }
+.merchant-account .ui-card > strong { font-size: 14px; }
+.merchant-account .ui-card > span:last-child { color: var(--ink-600); font-size: 10px; }
+.merchant-account .merchant-readonly { padding: 12px 14px; border-radius: 14px; background: var(--ivory); }
 
 @media (max-width: 380px) {
   .merchant-page { padding-inline: 13px; }
