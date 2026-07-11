@@ -2,6 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { createServer } from "vite";
 import { sparkSuccessScene } from "../../src/prototype/motion/sparkSuccessScene.js";
 
 const sceneUrl = new URL("../../src/prototype/motion/sparkSuccessScene.js", import.meta.url);
@@ -45,5 +48,17 @@ test("motion stages are mounted once at each approved customer node only", () =>
   for (const path of ["merchant", "admin"]) {
     const appSource = readFileSync(fileURLToPath(new URL(`${path}/${path === "merchant" ? "MerchantApp" : "AdminApp"}.jsx`, prototypeUrl)), "utf8");
     assert.doesNotMatch(appSource, /GalaceanStage/);
+  }
+});
+
+test("an inactive Galacean stage renders inactive on its initial frame", async () => {
+  const root = fileURLToPath(new URL("../..", import.meta.url));
+  const vite = await createServer({ root, configFile: false, appType: "custom", logLevel: "silent", server: { middlewareMode: true } });
+  try {
+    const { GalaceanStage } = await vite.ssrLoadModule("/src/prototype/motion/GalaceanStage.jsx");
+    const html = renderToStaticMarkup(React.createElement(GalaceanStage, { kind: "claim", active: false }));
+    assert.match(html, /data-motion-mode="inactive"/);
+  } finally {
+    await vite.close();
   }
 });

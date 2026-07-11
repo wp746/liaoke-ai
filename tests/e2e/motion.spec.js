@@ -46,3 +46,14 @@ test("lists, verification confirmation, and admin settings mount no motion stage
     await expect(page.locator(".galacean-stage")).toHaveCount(0);
   }
 });
+
+test("member upgrade motion mounts only for an explicit just-upgraded state", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/?surface=customer&scenario=returning-customer&route=member-level");
+  await expect(page.locator(".galacean-stage")).toHaveCount(0);
+
+  await page.goto("/?surface=customer&scenario=returning-customer&route=member-level&variant=just-upgraded");
+  const stage = page.locator('.galacean-stage[data-kind="upgrade"]');
+  await expect(stage).toHaveCount(1);
+  await expect(stage).toHaveAttribute("data-motion-mode", "reduced");
+});
