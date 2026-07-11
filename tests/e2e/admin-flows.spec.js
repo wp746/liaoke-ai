@@ -147,3 +147,46 @@ test("tablet admin navigation collapses to an accessible icon rail", async ({ pa
   await expect(sidebar.getByRole("button", { name: "平台总览" })).toBeVisible();
   await expect(page.getByRole("table", { name: "平台门店列表" })).toBeVisible();
 });
+
+test("platform admin opens an AI failure while retry remains super-admin only", async ({ page }) => {
+  await page.goto("/?surface=admin&role=platform_admin&route=ai-failures");
+  await page.getByRole("button", { name: "查看任务 AI-20260710-038" }).click();
+  await expect(page.getByText("通义万相超时，已降级为文案海报")).toBeVisible();
+  await expect(page.getByRole("button", { name: "重新执行" })).toHaveCount(0);
+});
+
+test("super admin retries an AI failure and the task state persists", async ({ page }) => {
+  await page.goto("/?surface=admin&role=super_admin&route=ai-failures");
+  await page.getByRole("button", { name: "查看任务 AI-20260710-038" }).click();
+  await page.getByRole("button", { name: "重新执行" }).click();
+  await expect(page.getByRole("status")).toHaveText("任务 AI-20260710-038 已进入重试队列。");
+  await expect(page.getByRole("row").filter({ hasText: "AI-20260710-038" })).toContainText("等待重试");
+  await page.getByRole("navigation", { name: "平台模块导航" }).getByRole("button", { name: "AI / 提示词" }).click();
+  await page.getByRole("button", { name: "查看失败任务" }).click();
+  await expect(page.getByRole("row").filter({ hasText: "AI-20260710-038" })).toContainText("等待重试");
+});
+
+test("system pages expose the complete operational data contract", async ({ page }) => {
+  await page.goto("/?surface=admin&role=super_admin&route=benefit-templates");
+  for (const preset of ["优惠券预设", "返现预设", "推荐奖励预设", "积分预设"]) await expect(page.getByText(preset, { exact: true })).toBeVisible();
+
+  await page.goto("/?surface=admin&role=super_admin&route=ai-quota");
+  await expect(page.getByRole("table", { name: "门店 AI 配额" })).toContainText("已用");
+  await expect(page.getByRole("table", { name: "门店 AI 配额" })).toContainText("预算");
+  await expect(page.getByRole("table", { name: "门店 AI 配额" })).toContainText("成本");
+
+  await page.goto("/?surface=admin&role=super_admin&route=prompt-versions");
+  await expect(page.getByRole("table", { name: "提示词版本" })).toContainText("草稿");
+  await expect(page.getByRole("table", { name: "提示词版本" })).toContainText("生效中");
+  await expect(page.getByRole("table", { name: "提示词版本" })).toContainText("已退役");
+  await expect(page.getByRole("button", { name: "复制提示词 v3.2" })).toBeVisible();
+
+  await page.goto("/?surface=admin&role=super_admin&route=risk-center");
+  for (const risk of ["员工自核销", "核销频率突增", "核销金额异常", "AI 超预算", "定时任务失败"]) await expect(page.getByText(risk, { exact: true })).toBeVisible();
+
+  await page.goto("/?surface=admin&role=super_admin&route=contracts");
+  for (const field of ["套餐", "开始日期", "结束日期", "续费状态", "负责人", "金额"]) await expect(page.getByRole("columnheader", { name: field })).toBeVisible();
+
+  await page.goto("/?surface=admin&role=super_admin&route=system-logs");
+  for (const field of ["操作人", "角色", "门店", "操作", "结果", "时间"]) await expect(page.getByRole("columnheader", { name: field, exact: true })).toBeVisible();
+});
