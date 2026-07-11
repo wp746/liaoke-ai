@@ -510,10 +510,10 @@ git commit -m "feat: add professional glass hierarchy to admin"
 - [ ] **Step 1: Add failing fallback, layer-budget, and reduced-motion tests**
 
 ```js
-test("glass fallback has opaque readable surfaces", async ({ page }) => {
+test("glass surfaces keep a visible background layer and readable ink", async ({ page }) => {
   await page.goto("/?surface=customer&route=benefits&scenario=returning-customer");
-  const style = await page.locator(".customer-coupon-sheet").evaluate((element) => ({ background: getComputedStyle(element).backgroundColor, color: getComputedStyle(element).color }));
-  expect(style.background).not.toBe("rgba(0, 0, 0, 0)");
+  const style = await page.locator(".customer-coupon-sheet").evaluate((element) => ({ background: getComputedStyle(element).backgroundImage, color: getComputedStyle(element).color }));
+  expect(style.background).not.toBe("none");
   expect(style.color).not.toBe("rgba(0, 0, 0, 0)");
 });
 test("each surface stays within two large acrylic layers", async ({ page }) => {
@@ -528,6 +528,17 @@ test("reduced motion keeps selected state without trail movement", async ({ page
   await page.getByRole("tab", { name: "推荐券" }).click();
   await expect(page.getByRole("tab", { name: "推荐券" })).toHaveAttribute("aria-selected", "true");
   await expect(page.locator(".spark-trail.is-active")).toHaveCSS("animation-name", "none");
+});
+```
+
+Append this source-level fallback assertion to `tests/unit/glass-system.test.js`:
+
+```js
+import { readFileSync } from "node:fs";
+test("glass CSS includes a solid warm fallback", () => {
+  const css = readFileSync(new URL("../../src/prototype/styles/glass.css", import.meta.url), "utf8");
+  assert.match(css, /@supports not/);
+  assert.match(css, /rgba\(255,253,248,\.96\)/);
 });
 ```
 
