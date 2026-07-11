@@ -9,13 +9,10 @@ const platformMetrics = [
   { label: "AI 任务成功率", value: "97.8%", detail: "12 个任务待处理", icon: Sparkles },
 ];
 
-const stores = [
-  { id: "STORE001", name: "牛里牛气潮汕牛肉火锅", city: "广州·天河", plan: "成长版 Pro", members: "12,680", risk: "2 项", status: "营业中" },
-  { id: "STORE018", name: "薪火小馆·珠江新城", city: "广州·天河", plan: "基础版", members: "4,208", risk: "无", status: "营业中" },
-  { id: "STORE027", name: "岭南清汤牛肉", city: "佛山·禅城", plan: "成长版 Pro", members: "7,916", risk: "1 项", status: "暂停营业" },
-];
+const planLabels = { basic: "基础版", pro: "成长版 Pro", enterprise: "企业版" };
+const statusLabels = { active: "营业中", paused: "暂停营业", disabled: "已停用" };
 
-export function StoreTable({ onNavigate, compact = false }) {
+export function StoreTable({ stores, onOpenStore, compact = false, emptyMessage = "没有符合条件的门店" }) {
   return (
     <div className="admin-table-wrap">
       <table className="admin-store-table" aria-label="平台门店列表">
@@ -24,13 +21,14 @@ export function StoreTable({ onNavigate, compact = false }) {
           {stores.slice(0, compact ? 2 : stores.length).map((store) => (
             <tr key={store.id}>
               <td><strong>{store.name}</strong><small>{store.id} · {store.city}</small></td>
-              <td>{store.plan}</td><td>{store.members}</td><td>{store.risk}</td>
-              <td><span className={`admin-state ${store.status === "营业中" ? "is-live" : ""}`}>{store.status}</span></td>
-              <td><button type="button" className="admin-text-action" onClick={() => onNavigate("store-detail")}>
-                {store.id === "STORE001" ? "查看牛里牛气" : "查看详情"}<ArrowUpRight size={14} />
+              <td>{planLabels[store.plan]}</td><td>{store.members}</td><td>{store.risk}</td>
+              <td><span className={`admin-state ${store.status === "active" ? "is-live" : ""}`}>{statusLabels[store.status]}</span></td>
+              <td><button type="button" className="admin-text-action" onClick={() => onOpenStore(store.id)}>
+                查看{store.name}<ArrowUpRight size={14} />
               </button></td>
             </tr>
           ))}
+          {!stores.length && <tr><td colSpan="6" className="admin-table-empty">{emptyMessage}</td></tr>}
         </tbody>
       </table>
     </div>
@@ -55,12 +53,12 @@ export function AdminLoginPage({ role, onNavigate }) {
   );
 }
 
-export function AdminOverviewPage({ permissions, onNavigate }) {
+export function AdminOverviewPage({ permissions, onNavigate, adminState, onOpenStore, onCreateStore }) {
   return (
     <main className="admin-page">
       <header className="admin-page-heading">
         <div><span className="admin-eyebrow">全局经营指挥台</span><h1>平台经营总览</h1><p>2026 年 7 月 11 日 · 数据截至 14:40</p></div>
-        {permissions.canWrite && <button type="button" className="admin-primary-action" onClick={() => onNavigate("store-editor")}>创建门店</button>}
+        {permissions.canWrite && <button type="button" className="admin-primary-action" onClick={onCreateStore}>创建门店</button>}
       </header>
 
       <section className="admin-kpi-grid" aria-label="平台核心指标">
@@ -86,13 +84,13 @@ export function AdminOverviewPage({ permissions, onNavigate }) {
       <div className="admin-overview-bottom">
         <section className="admin-panel admin-store-panel">
           <div className="admin-panel-heading"><div><span className="admin-eyebrow">STORE NETWORK</span><h2>重点门店</h2></div><button type="button" className="admin-text-action" onClick={() => onNavigate("stores")}>全部门店 <ArrowUpRight size={14} /></button></div>
-          <StoreTable onNavigate={onNavigate} compact />
+          <StoreTable stores={adminState.stores} onOpenStore={onOpenStore} compact />
         </section>
         <aside className="admin-panel admin-context-drawer">
           <span className="admin-eyebrow">CONTEXT DRAWER</span><h2>上下文助手</h2>
           <p>当前风险主要集中在核销频率和 AI 失败重试。</p>
           <div className="admin-insight"><strong>建议先查看牛里牛气</strong><span>该店近 2 小时核销量高于平台基线 2.4 倍。</span></div>
-          <button type="button" className="admin-secondary-action" onClick={() => onNavigate("store-detail")}>打开单店视图</button>
+          <button type="button" className="admin-secondary-action" onClick={() => onOpenStore("STORE001")}>打开单店视图</button>
         </aside>
       </div>
     </main>

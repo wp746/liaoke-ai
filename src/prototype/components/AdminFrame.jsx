@@ -24,11 +24,24 @@ const navigation = [
   { id: "system-logs", label: "系统审计", icon: Settings2 },
 ];
 
-export function AdminFrame({ role, activeRoute, onNavigate, children }) {
+export function AdminFrame({
+  role,
+  activeRoute,
+  onNavigate,
+  children,
+  searchValue = "",
+  onSearchChange,
+  searchStores = [],
+  onOpenSearchResult,
+}) {
   const readonly = role === "platform_admin";
   const roleLabel = role === "super_admin"
     ? "超级管理员"
     : readonly ? "只读运营视图" : "角色未配置";
+  const normalizedSearch = searchValue.trim().toLocaleLowerCase("zh-CN");
+  const searchResults = normalizedSearch
+    ? searchStores.filter((store) => `${store.name} ${store.id} ${store.city}`.toLocaleLowerCase("zh-CN").includes(normalizedSearch))
+    : [];
 
   return (
     <section className="admin-frame" data-frame="admin">
@@ -56,11 +69,28 @@ export function AdminFrame({ role, activeRoute, onNavigate, children }) {
 
       <div className="admin-frame__main">
         <header className="admin-topbar">
-          <label className="admin-search">
+          <div className="admin-search">
             <Search size={16} />
-            <span className="sr-only">全局搜索</span>
-            <input type="search" placeholder="搜索门店、任务或订单" />
-          </label>
+            <label className="sr-only" htmlFor="admin-global-search">全局搜索</label>
+            <input
+              id="admin-global-search"
+              type="search"
+              placeholder="搜索门店、任务或订单"
+              value={searchValue}
+              onChange={(event) => onSearchChange?.(event.target.value)}
+              aria-expanded={Boolean(normalizedSearch)}
+              aria-controls="admin-global-search-results"
+            />
+            {normalizedSearch && (
+              <div className="admin-search-results" id="admin-global-search-results">
+                {searchResults.length ? searchResults.map((store) => (
+                  <button type="button" key={store.id} onClick={() => onOpenSearchResult?.(store.id)}>
+                    <strong>打开{store.name}</strong><small>{store.id} · {store.city}</small>
+                  </button>
+                )) : <p>没有找到匹配的门店</p>}
+              </div>
+            )}
+          </div>
           <div className="admin-topbar__actions">
             <span className={readonly ? "admin-role is-readonly" : "admin-role"}>
               {roleLabel}
