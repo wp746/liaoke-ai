@@ -1,13 +1,37 @@
 import { expect, test } from "@playwright/test";
 
+test("verification modes render as five distinct legible controls", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=staff&route=verify-hub");
+
+  const controls = page.locator(".merchant-verify-grid > button");
+  await expect(controls).toHaveCount(5);
+  for (const control of await controls.all()) {
+    await expect(control).toHaveCSS("display", "grid");
+    await expect(control).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await expect(control.locator("strong")).toBeVisible();
+    await expect(control.locator("span")).toBeVisible();
+  }
+});
+
 test("captures the two merchant handoff screenshots", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const [route, role, filename] of [
     ["merchant-dashboard", "owner", "merchant-dashboard.png"],
     ["verify-hub", "staff", "merchant-verification.png"],
   ]) {
-    await page.goto(`/?surface=merchant&role=${role}&route=${route}`);
+    await page.goto(`/?surface=merchant&role=${role}&route=${route}`, { waitUntil: "networkidle" });
     await expect(page.locator(`[data-route-id="${route}"]`)).toBeVisible();
+    await expect(page.getByText("实时检查器", { exact: true })).toBeVisible();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
+    if (route === "verify-hub") {
+      await expect(page.getByRole("heading", { name: "核销工作台" })).toBeVisible();
+      await expect(page.locator(".merchant-verify-grid > button")).toHaveCount(5);
+    }
     await page.screenshot({ path: `artifacts/screenshots/prototype/${filename}`, fullPage: true });
   }
 });
