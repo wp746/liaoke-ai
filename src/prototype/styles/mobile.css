@@ -158,11 +158,18 @@
   width: 38px;
   height: 38px;
   margin-top: -18px;
-  border: 4px solid #fff;
+  border: 3px solid rgba(255, 255, 255, .88);
   border-radius: 50%;
+  background: rgba(255, 249, 239, .94);
+  color: var(--ember-600);
+  box-shadow: 0 5px 12px rgba(73, 43, 18, .10);
+}
+
+.mini-program-tabs--glass button.is-featured .liquid-lens[data-lens-active="true"] {
+  border-width: 4px;
   background: var(--brand-gradient);
   color: #fff;
-  box-shadow: 0 8px 18px rgba(255, 75, 27, .22);
+  box-shadow: 0 9px 20px rgba(255, 75, 27, .22);
 }
 
 .prototype-placeholder {

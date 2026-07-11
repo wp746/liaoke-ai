@@ -3,6 +3,7 @@ import { BatteryMedium, MoreHorizontal, Signal, Wifi } from "lucide-react";
 import { LiquidLens } from "./Glass.jsx";
 
 export function MiniProgramFrame({ title, tabs, activeRoute, onNavigate, children }) {
+  const aiLensActive = ["ai-create", "ai-progress", "ai-select", "poster-preview"].includes(activeRoute);
   return (
     <section className="mini-program-frame" data-frame="mini-program" data-route-id={activeRoute}>
       <div className="mini-program-frame__speaker" aria-hidden="true" />
@@ -32,7 +33,7 @@ export function MiniProgramFrame({ title, tabs, activeRoute, onNavigate, childre
                 aria-current={active ? "page" : undefined}
                 onClick={() => onNavigate(tab.id)}
               >
-                <LiquidLens active={active || tab.featured} className="mini-program-tabs__icon">
+                <LiquidLens active={active || (tab.featured && aiLensActive)} className="mini-program-tabs__icon">
                   {Icon ? <Icon size={18} strokeWidth={2.2} /> : tab.label.slice(0, 1)}
                 </LiquidLens>
                 <span>{tab.label}</span>

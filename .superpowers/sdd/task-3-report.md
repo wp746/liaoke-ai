@@ -125,3 +125,57 @@ Exact result: exit code 0.
 - The screenshot tests rewrite tracked handoff PNGs and create `artifacts/playwright/`; all such generated changes were restored/removed after verification because Task 3 does not own those artifacts.
 - Parallel screenshot capture briefly produced black compositor regions in generated review PNGs. Stable serial captures after fonts and two animation frames were clean; no screenshot artifact is included in this commit.
 - `customer-flows.spec.js` did not need modification: it already contained the required clipboard, download, points-gate, URL, and customer-flow regression coverage. New visual/semantic contracts live in `glass-redesign.spec.js`.
+
+## Review Fixes
+
+### Findings addressed
+
+1. Replaced the balance object's inherited `TicketCheck` rendering with a dedicated liquid-reservoir composition: a Lucide `Droplets` cue, a rounded storage vessel, and a visible 24px orange-gold water level. The balance page contains no ticket glyph or ticket silhouette.
+2. Split the featured AI orb into two visual states. Non-AI routes retain a restrained warm-white featured marker with a shallow shadow; `ai-create`, `ai-progress`, `ai-select`, and completed `poster-preview` routes activate the orange-gold gradient and stronger glow.
+3. Made the E2E contracts inspect rendered visual evidence, not only semantic data: the balance test requires the `Droplets` SVG, forbids `TicketCheck`, requires a visible reservoir and gradient water level, while the dock test verifies both `data-lens-active` and computed `background-image` across home and AI routes.
+
+### Review RED evidence
+
+Command:
+
+```bash
+npx playwright test tests/e2e/glass-redesign.spec.js --grep "customer nav|points and balance"
+```
+
+Exact result before the fix: exit code 1, `2 failed`.
+
+- Home AI lens received `data-lens-active="true"` instead of `false`.
+- Balance contained `0` `.lucide-droplets` elements instead of `1`.
+
+After the state prop was corrected, a stronger CSS-level contract was added and run separately:
+
+```bash
+npx playwright test tests/e2e/glass-redesign.spec.js --grep "customer nav"
+```
+
+Exact result: exit code 1, `1 failed`. The resting home orb still computed to the full orange-gold `linear-gradient(...)` instead of `background-image: none`, proving the unconditional featured CSS remained too strong.
+
+### Review GREEN evidence
+
+Focused command:
+
+```bash
+npx playwright test tests/e2e/glass-redesign.spec.js --grep "customer nav|points and balance"
+```
+
+Exact result: exit code 0, `2 passed`.
+
+Fresh final brief command after the CSS state split:
+
+```bash
+npm test && npx playwright test tests/e2e/customer-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/motion.spec.js
+```
+
+Exact result: exit code 0; Node `30 passed, 0 failed`; Playwright `30 passed, 0 failed (9.6s)`.
+
+### Review visual and behavior self-check
+
+- Stable serial captures after fonts and two animation frames show the home AI orb as a quiet warm-white marker and the AI progress orb as the stronger orange-gold state.
+- The balance glyph reads as a filled reservoir with a liquid droplet cue; it no longer resembles a coupon, ticket, or verification slip.
+- Balance amount, deduction-code navigation, AI navigation, all five dock labels, focus order, points gates, clipboard/download branches, 20 customer routes, and the six approved Galacean mount kinds remain unchanged and covered by the final command.
+- Test-generated tracked screenshots and `artifacts/playwright/` were restored/removed after the final run; no artifact file is part of the review-fix commit.

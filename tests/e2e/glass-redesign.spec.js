@@ -27,8 +27,16 @@ test("customer nav is a floating glass dock with one AI lens", async ({ page }) 
   await page.goto("/?surface=customer&route=home&scenario=returning-customer");
   const nav = page.getByRole("navigation", { name: "燎客 AI主导航" });
   await expect(nav).toHaveClass(/mini-program-tabs--glass/);
-  await expect(nav.locator(".is-featured .liquid-lens")).toHaveCount(1);
+  const restingAiLens = nav.locator(".is-featured .liquid-lens");
+  await expect(restingAiLens).toHaveCount(1);
+  await expect(restingAiLens).toHaveAttribute("data-lens-active", "false");
+  await expect(restingAiLens).toHaveCSS("background-image", "none");
   await expect(nav.getByRole("button")).toHaveText(["首页", "权益", "AI创作", "积分", "我的"]);
+
+  await page.goto("/?surface=customer&route=ai-progress&scenario=returning-customer&variant=copy");
+  const activeAiLens = page.locator(".mini-program-tabs .is-featured .liquid-lens");
+  await expect(activeAiLens).toHaveAttribute("data-lens-active", "true");
+  await expect(activeAiLens).not.toHaveCSS("background-image", "none");
 });
 
 test("points and balance have distinct glyphs without list mascots", async ({ page }) => {
@@ -37,7 +45,14 @@ test("points and balance have distinct glyphs without list mascots", async ({ pa
   await expect(page.locator(".customer-product-list .brand-mascot")).toHaveCount(0);
 
   await page.goto("/?surface=customer&route=balance&scenario=returning-customer");
-  await expect(page.locator('[data-glyph-kind="balance"]')).toHaveCount(1);
+  const balanceGlyph = page.locator('[data-glyph-kind="balance"]');
+  await expect(balanceGlyph).toHaveCount(1);
+  await expect(balanceGlyph.locator(".lucide-droplets")).toHaveCount(1);
+  await expect(balanceGlyph.locator(".lucide-ticket-check")).toHaveCount(0);
+  const reservoir = balanceGlyph.locator(".customer-balance-glyph__reservoir");
+  await expect(reservoir).toBeVisible();
+  await expect(reservoir.locator("i")).toHaveCSS("height", "24px");
+  await expect(reservoir.locator("i")).not.toHaveCSS("background-image", "none");
 });
 
 test("AI and referral flows expose their own glyph families without row mascots", async ({ page }) => {
