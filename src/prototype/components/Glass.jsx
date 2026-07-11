@@ -3,6 +3,7 @@ import { Coins, Droplets, Drumstick, Flame, ShieldAlert, Sparkles, TicketCheck, 
 import { BrandMascot } from "./Brand.jsx";
 
 const icons = { store: Flame, dish: Drumstick, group: UsersRound, drink: Droplets, balance: TicketCheck, points: Sparkles, referral: UsersRound, risk: ShieldAlert, ai: Sparkles };
+const stateLabels = { used: "已使用", expired: "已过期", paused: "已暂停" };
 
 export function GlassSurface({ as: Tag = "section", level = "acrylic", interactive = false, className = "", children, ...props }) {
   return <Tag className={`glass-surface glass-surface--${level}${interactive ? " is-interactive" : ""} ${className}`.trim()} data-glass-level={level} {...props}>{children}</Tag>;
@@ -14,8 +15,7 @@ export function LiquidLens({ active = false, className = "", children }) {
 
 export function RewardGlyph({ kind, state = "active", value, className = "" }) {
   const Icon = icons[kind] ?? Coins;
-  const inactive = ["used", "expired", "paused"].includes(state);
-  return <span className={`reward-glyph reward-glyph--${kind} reward-glyph--${state} ${className}`.trim()} data-glyph-kind={kind} data-glyph-state={state} aria-label={inactive ? `${value ?? kind}，已使用` : undefined}><Icon aria-hidden="true" size={18} /><strong>{value}</strong><i aria-hidden="true" /></span>;
+  return <span className={`reward-glyph reward-glyph--${kind} reward-glyph--${state} ${className}`.trim()} data-glyph-kind={kind} data-glyph-state={state}><Icon aria-hidden="true" size={18} /><strong>{value}</strong>{stateLabels[state] && <span className="sr-only">{stateLabels[state]}</span>}<i aria-hidden="true" /></span>;
 }
 
 export function SparkTrail({ active = false, className = "" }) {
