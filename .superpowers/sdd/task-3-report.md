@@ -179,3 +179,23 @@ Exact result: exit code 0; Node `30 passed, 0 failed`; Playwright `30 passed, 0 
 - The balance glyph reads as a filled reservoir with a liquid droplet cue; it no longer resembles a coupon, ticket, or verification slip.
 - Balance amount, deduction-code navigation, AI navigation, all five dock labels, focus order, points gates, clipboard/download branches, 20 customer routes, and the six approved Galacean mount kinds remain unchanged and covered by the final command.
 - Test-generated tracked screenshots and `artifacts/playwright/` were restored/removed after the final run; no artifact file is part of the review-fix commit.
+
+## Review Fixes — Shared Primitive Ownership
+
+### Finding addressed
+
+Moved the balance reservoir from the page-local `BalanceGlyph` into the shared `RewardGlyph` implementation. `RewardGlyph kind="balance"` now owns the `Droplets` cue, reservoir, and water-level markup; `BenefitPages.jsx` is declarative again and the page-specific reservoir CSS was removed. This closes the contradictory shared `TicketCheck` mapping and restores the component boundary required by design spec section 9.
+
+### RED evidence
+
+Before production changes, the new unit contract rendering `RewardGlyph kind="balance"` failed because the shared primitive produced `TicketCheck` and contained neither `.reward-glyph__reservoir` nor `.reward-glyph__water-level`.
+
+### GREEN evidence
+
+Fresh command run by the primary agent after taking over the interrupted worker turn:
+
+```bash
+node --test tests/unit/glass-system.test.js && npx playwright test tests/e2e/glass-redesign.spec.js --grep "customer nav|points and balance" && npm test && npx playwright test tests/e2e/customer-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/motion.spec.js && git diff --check
+```
+
+Exact result: exit code 0; focused glass unit `5 passed`; focused E2E `2 passed`; complete unit suite `31 passed`; complete customer/glass/motion E2E suite `30 passed`; diff check clean. Test-generated tracked screenshots and `artifacts/playwright/` were restored/removed after the run.
