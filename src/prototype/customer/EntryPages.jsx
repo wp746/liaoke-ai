@@ -1,0 +1,50 @@
+import React from "react";
+import { BrandMascot } from "../components/Brand.jsx";
+import { EmptyState, PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+
+export function EntryConsent({ dispatch, onNavigate }) {
+  const accept = () => {
+    dispatch({ type: "ACCEPT_CONSENT" });
+    onNavigate("home");
+  };
+
+  return (
+    <main className="customer-page customer-entry">
+      <SurfaceCard tone="hero">
+        <div>
+          <StatusPill status="reward">牛里牛气 · A12桌</StatusPill>
+          <h1>这一桌的星火，等你点亮</h1>
+          <p>授权手机号后，可领取到店权益，并在权益中心查看使用记录。</p>
+          <label className="customer-consent">
+            <input type="checkbox" defaultChecked />
+            <span>我已阅读并同意用户服务与隐私说明</span>
+          </label>
+          <PrimaryButton onClick={accept}>同意并继续</PrimaryButton>
+        </div>
+        <BrandMascot kind="welcome" />
+      </SurfaceCard>
+    </main>
+  );
+}
+
+const unavailableCopy = {
+  "invalid-code": ["桌码没有认出来", "请确认桌码来自门店，或请店员协助重新扫码。"],
+  "inactive-store": ["这家门店还未开放", "门店正在准备服务，请稍后再来看看。"],
+  "paused-store": ["门店服务暂时休息", "当前无法领取和使用权益，请留意门店恢复通知。"],
+};
+
+export function EntryUnavailable() {
+  const variant = new URLSearchParams(window.location.search).get("variant") ?? "invalid-code";
+  const [title, body] = unavailableCopy[variant] ?? unavailableCopy["invalid-code"];
+
+  return (
+    <main className="customer-page customer-unavailable">
+      <EmptyState
+        image="/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-empty-error.png"
+        title={title}
+        body={body}
+        action={<PrimaryButton onClick={() => window.location.reload()}>重新扫码</PrimaryButton>}
+      />
+    </main>
+  );
+}
