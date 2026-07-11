@@ -122,8 +122,8 @@ test("owner administration transitions employees and plan state", () => {
   const removed = transition(invalidRole, { type: "REMOVE_EMPLOYEE", actorRole: "owner", employeeId });
   assert.equal(removed.operations.employees.some(({ id }) => id === employeeId), false);
   const renewed = transition(start, { type: "RENEW_PLAN", actorRole: "owner" });
-  assert.equal(renewed.operations.plan.remainingDays, start.operations.plan.remainingDays + 365);
   assert.equal(renewed.operations.plan.expireDate, "2028-06-30");
+  assert.equal(renewed.operations.plan.remainingDays, 720);
   const upgraded = transition(renewed, { type: "UPGRADE_PLAN", actorRole: "owner" });
   assert.equal(upgraded.operations.plan.name, "旗舰版 Enterprise");
 });

@@ -56,6 +56,12 @@ function addPlanYear(expireDate) {
   return `${year + 1}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
+function daysFromPrototypeDate(expireDate) {
+  const prototypeToday = Date.UTC(2026, 6, 11);
+  const [year, month, day] = expireDate.split("-").map(Number);
+  return Math.ceil((Date.UTC(year, month - 1, day) - prototypeToday) / 86_400_000);
+}
+
 export function createScenarioState(scenarioId) {
   const data = cloneFixtures();
   const state = {
@@ -271,7 +277,10 @@ export function transition(state, event) {
     case "REMOVE_EMPLOYEE":
       return ownerMutation(state, event, () => ({ ...state, operations: { ...state.operations, employees: state.operations.employees.filter((employee) => employee.id !== event.employeeId || employee.role === "owner"), feedback: "员工已移除", feedbackKind: "success" } }));
     case "RENEW_PLAN":
-      return ownerMutation(state, event, () => ({ ...state, operations: { ...state.operations, plan: { ...state.operations.plan, expireDate: addPlanYear(state.operations.plan.expireDate), remainingDays: state.operations.plan.remainingDays + 365 }, feedback: "已续费 1 年", feedbackKind: "success" } }));
+      return ownerMutation(state, event, () => {
+        const expireDate = addPlanYear(state.operations.plan.expireDate);
+        return { ...state, operations: { ...state.operations, plan: { ...state.operations.plan, expireDate, remainingDays: daysFromPrototypeDate(expireDate) }, feedback: "已续费 1 年", feedbackKind: "success" } };
+      });
     case "UPGRADE_PLAN":
       return ownerMutation(state, event, () => ({ ...state, operations: { ...state.operations, plan: { ...state.operations.plan, name: "旗舰版 Enterprise", price: 699 }, feedback: "套餐已升级", feedbackKind: "success" } }));
     case "SUBMIT_EXPORT":

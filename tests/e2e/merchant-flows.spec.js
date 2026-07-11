@@ -306,6 +306,7 @@ test("employee and plan actions transition state while staff is gated", async ({
   await page.goto("/?surface=merchant&role=owner&route=merchant-plan");
   await page.getByRole("button", { name: "续费" }).click();
   await expect(page.getByRole("status")).toHaveText("已续费 1 年");
+  await expect(page.getByText("¥399 / 月 · 2028-06-30 到期 · 剩余 720 天", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "升级套餐" }).click();
   await expect(page.getByText("当前套餐：旗舰版 Enterprise", { exact: true })).toBeVisible();
 
