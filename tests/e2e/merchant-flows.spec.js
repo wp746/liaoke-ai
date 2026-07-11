@@ -161,6 +161,86 @@ test("merchant account keeps data export exclusive to the owner", async ({ page 
   await page.goto("/?surface=merchant&role=owner&route=merchant-export");
   await expect(page.getByRole("heading", { name: "我的账号" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "数据导出" })).toBeVisible();
-  await page.getByRole("button", { name: "导出经营数据" }).click();
-  await expect(page.getByText("导出申请已记录（原型演示，不会生成真实文件）", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "生成报表" }).click();
+  await expect(page.getByRole("status")).toHaveText("排队中");
+  await page.getByRole("button", { name: "开始生成" }).click();
+  await expect(page.getByRole("status")).toHaveText("生成中");
+  await page.getByRole("button", { name: "模拟完成" }).click();
+  await expect(page.getByRole("status")).toHaveText("可下载");
+  await expect(page.getByRole("link", { name: "下载报表" })).toBeVisible();
+});
+
+test("only owner can publish points rules", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=manager&route=points-rules");
+  await expect(page.getByText("老板权限才能修改积分规则")).toBeVisible();
+  await expect(page.getByRole("button", { name: "保存积分规则" })).toHaveCount(0);
+
+  await page.goto("/?surface=merchant&role=owner&route=points-rules");
+  await expect(page.getByRole("button", { name: "保存积分规则" })).toBeEnabled();
+  for (const [label, value] of [["每消费 1 元", "10"], ["每日到店签到", "5"], ["AI 晒圈成功", "50"], ["完善个人资料", "100"], ["生日当月到店", "200"]]) {
+    await expect(page.getByLabel(label)).toHaveValue(value);
+  }
+  await expect(page.getByLabel("积分有效期")).toHaveValue("365");
+});
+
+test("activities expose the four PRD templates and their editor", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=activities");
+  for (const template of ["老带新奖励（常驻）", "生日礼", "工作日福利", "晒圈送券"]) {
+    await expect(page.getByRole("button", { name: new RegExp(template) })).toBeVisible();
+  }
+  await page.getByRole("button", { name: /工作日福利/ }).click();
+  await expect(page).toHaveURL(/route=activity-editor/);
+  await expect(page.getByRole("heading", { name: "活动编辑" })).toBeVisible();
+  await expect(page.getByLabel("活动模板")).toHaveValue("weekday");
+  await expect(page.getByRole("button", { name: "发布活动" })).toBeEnabled();
+});
+
+test("benefit policy enforces the PRD ranges and defaults", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=benefit-policy");
+  await expect(page.getByLabel("消费返现比例")).toHaveAttribute("min", "3");
+  await expect(page.getByLabel("消费返现比例")).toHaveAttribute("max", "15");
+  await expect(page.getByLabel("老带新抵扣券面值")).toHaveAttribute("min", "5");
+  await expect(page.getByLabel("老带新抵扣券面值")).toHaveAttribute("max", "20");
+  await expect(page.getByLabel("抵扣券有效期").getByRole("option")).toHaveText(["30 天", "45 天", "60 天"]);
+  await expect(page.getByLabel("每人每月领取上限")).toHaveAttribute("min", "1");
+  await expect(page.getByLabel("每人每月领取上限")).toHaveAttribute("max", "20");
+  await expect(page.getByLabel("新客首单优惠券面值")).toHaveAttribute("min", "0");
+  await expect(page.getByLabel("新客首单优惠券面值")).toHaveAttribute("max", "30");
+  await expect(page.getByLabel("成本预警阈值")).toHaveValue("12");
+});
+
+test("points product editor exposes fulfillment and publishing fields", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=points-products");
+  await expect(page.getByRole("heading", { name: "积分商品" })).toBeVisible();
+  await page.getByRole("button", { name: "新建积分商品" }).click();
+  for (const label of ["商品图片", "商品分类", "所需积分", "库存", "每人每月上限", "上架状态"]) {
+    await expect(page.getByLabel(label)).toBeVisible();
+  }
+});
+
+test("owner controls employees store availability and plan while other roles remain read only", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=employees");
+  await expect(page.getByRole("button", { name: "添加员工" })).toBeEnabled();
+
+  await page.goto("/?surface=merchant&role=owner&route=store-settings");
+  await page.getByRole("button", { name: "暂停营业" }).click();
+  await expect(page.getByText("门店已暂停营业", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "恢复营业" }).click();
+  await expect(page.getByText("门店正常营业", { exact: true })).toBeVisible();
+
+  await page.goto("/?surface=merchant&role=manager&route=merchant-plan");
+  await expect(page.getByText("当前套餐：成长版 Pro", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "续费" })).toHaveCount(0);
+  await page.goto("/?surface=merchant&role=owner&route=merchant-plan");
+  await expect(page.getByRole("button", { name: "续费" })).toBeEnabled();
+});
+
+test("export job can enter failed state and retry to queued", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=merchant-export");
+  await page.getByRole("button", { name: "生成报表" }).click();
+  await page.getByRole("button", { name: "开始生成" }).click();
+  await page.getByRole("button", { name: "模拟失败" }).click();
+  await expect(page.getByRole("status")).toHaveText("生成失败");
+  await page.getByRole("button", { name: "重试" }).click();
+  await expect(page.getByRole("status")).toHaveText("排队中");
 });
