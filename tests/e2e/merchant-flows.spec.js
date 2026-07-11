@@ -71,5 +71,6 @@ test("merchant account keeps data export exclusive to the owner", async ({ page 
   await page.goto("/?surface=merchant&role=owner&route=merchant-export");
   await expect(page.getByRole("heading", { name: "我的账号" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "数据导出" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "导出经营数据" })).toBeVisible();
+  await page.getByRole("button", { name: "导出经营数据" }).click();
+  await expect(page.getByText("导出申请已记录（原型演示，不会生成真实文件）", { exact: true })).toBeVisible();
 });

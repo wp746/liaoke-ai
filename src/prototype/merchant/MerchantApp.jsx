@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BarChart3, Download, Gift, History, ScanLine, Store, UserRound, UsersRound } from "lucide-react";
 import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
@@ -36,6 +36,7 @@ const accountRoleLabels = { owner: "老板", manager: "店长", staff: "店员" 
 
 function MerchantAccount({ role, state }) {
   const canExport = canMerchant(role, "export");
+  const [exportRequested, setExportRequested] = useState(false);
 
   return (
     <main className="merchant-page merchant-account">
@@ -50,7 +51,8 @@ function MerchantAccount({ role, state }) {
           <span className="merchant-eyebrow"><Download size={14} /> 老板权限</span>
           <h2>数据导出</h2>
           <p>导出门店经营数据前将记录操作账号与时间。</p>
-          <button type="button" className="merchant-secondary-action">导出经营数据</button>
+          <button type="button" className="merchant-secondary-action" onClick={() => setExportRequested(true)}>导出经营数据</button>
+          {exportRequested && <p className="merchant-prototype-feedback" role="status">导出申请已记录（原型演示，不会生成真实文件）</p>}
         </SurfaceCard>
       ) : <small className="merchant-readonly">数据导出仅老板账号可用</small>}
     </main>
