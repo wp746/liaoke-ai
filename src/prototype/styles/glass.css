@@ -1,0 +1,33 @@
+:root {
+  --glass-ivory: rgba(255,253,248,.76);
+  --glass-solid: rgba(255,253,248,.96);
+  --glass-line: rgba(90,55,24,.10);
+  --glass-shadow: 0 14px 32px rgba(73,43,18,.10);
+  --glass-shadow-hover: 0 22px 44px rgba(73,43,18,.15);
+  --glass-spring: 280ms cubic-bezier(.2,.9,.24,1.18);
+}
+
+.glass-surface { position: relative; isolation: isolate; border: 1px solid var(--glass-line); background: var(--glass-solid); box-shadow: var(--glass-shadow); }
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-surface--acrylic { border-color: rgba(255,255,255,.64); background: linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,249,239,.62)); backdrop-filter: blur(18px) saturate(1.08); }
+  .glass-surface--lens,.liquid-lens { backdrop-filter: blur(24px) saturate(1.15); }
+}
+
+.glass-surface.is-interactive { transition: transform var(--glass-spring),box-shadow var(--glass-spring); }
+.glass-surface.is-interactive:hover { transform: translateY(-2px); box-shadow: var(--glass-shadow-hover); }
+.glass-surface.is-interactive:active { transform: scale(.987); box-shadow: 0 8px 18px rgba(73,43,18,.10); }
+.liquid-lens { display: grid; place-items: center; border-radius: inherit; }
+.liquid-lens.is-active { background: rgba(255,255,255,.78); box-shadow: inset 0 1px 0 #fff,0 8px 22px rgba(255,104,20,.13); }
+.reward-glyph { display: grid; width: 60px; height: 60px; place-items: center; color: var(--ember-600); }
+.reward-glyph--store { border-radius: 48% 52% 46% 54%; background: rgba(255,105,29,.16); }
+.reward-glyph--dish { border-radius: 48% 42% 52% 38%; background: rgba(255,121,68,.13); }
+.reward-glyph--group { border-radius: 46% 54% 56% 44%; background: rgba(116,118,126,.10); }
+.reward-glyph--drink { border-radius: 54% 46% 58% 42%; background: rgba(248,184,77,.14); }
+.reward-glyph--used,.reward-glyph--expired { color: #8a8b92; filter: saturate(.15); }
+.spark-trail { width: 26px; height: 2px; opacity: 0; background: linear-gradient(90deg,transparent,var(--gold-400),transparent); }
+.spark-trail.is-active { opacity: 1; animation: spark-trail-glide 280ms ease-out; }
+
+@keyframes spark-trail-glide { from { transform: translateX(-14px) scaleX(.3); } to { transform: none; } }
+
+@media (prefers-reduced-motion: reduce) { .glass-surface.is-interactive,.spark-trail.is-active { animation: none; transition: none; transform: none; } }
