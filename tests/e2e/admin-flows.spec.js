@@ -1,5 +1,17 @@
 import { expect, test } from "@playwright/test";
 
+test("captures the two admin handoff screenshots", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 900 });
+  for (const [route, filename] of [
+    ["admin-overview", "admin-overview.png"],
+    ["store-detail", "admin-store-detail.png"],
+  ]) {
+    await page.goto(`/?surface=admin&role=super_admin&route=${route}`);
+    await expect(page.locator(`[data-route-id="${route}"]`)).toBeVisible();
+    await page.screenshot({ path: `artifacts/screenshots/prototype/${filename}`, fullPage: true });
+  }
+});
+
 test("platform admin gets a complete read-only command center", async ({ page }) => {
   await page.goto("/?surface=admin&role=platform_admin&route=admin-overview");
 

@@ -1,5 +1,17 @@
 import { expect, test } from "@playwright/test";
 
+test("captures the two merchant handoff screenshots", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  for (const [route, role, filename] of [
+    ["merchant-dashboard", "owner", "merchant-dashboard.png"],
+    ["verify-hub", "staff", "merchant-verification.png"],
+  ]) {
+    await page.goto(`/?surface=merchant&role=${role}&route=${route}`);
+    await expect(page.locator(`[data-route-id="${route}"]`)).toBeVisible();
+    await page.screenshot({ path: `artifacts/screenshots/prototype/${filename}`, fullPage: true });
+  }
+});
+
 test("staff lands on verification and cannot see owner operations", async ({ page }) => {
   await page.goto("/?surface=merchant&role=staff&route=verify-hub");
   const navigation = page.getByRole("navigation", { name: "燎客商家主导航" });

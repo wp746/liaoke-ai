@@ -1,5 +1,34 @@
 import { expect, test } from "@playwright/test";
 
+test("captures the four customer handoff screenshots", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
+  for (const [route, filename] of [
+    ["home", "customer-home.png"],
+    ["benefits", "customer-benefits.png"],
+    ["points-store", "customer-points-store.png"],
+  ]) {
+    await page.goto(`/?surface=customer&scenario=returning-customer&route=${route}`);
+    await expect(page.locator(`[data-route-id="${route}"]`)).toBeVisible();
+    await page.screenshot({ path: `artifacts/screenshots/prototype/${filename}`, fullPage: true });
+  }
+
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create");
+  await page.getByLabel("上传用餐照片").setInputFiles({
+    name: "meal.png",
+    mimeType: "image/png",
+    buffer: Buffer.from("prototype-image"),
+  });
+  await page.getByLabel("今天的真实感受").fill("吊龙很嫩，朋友聚餐很舒服");
+  await page.getByRole("button", { name: "生成我的海报" }).click();
+  await page.getByRole("button", { name: "继续生成图片" }).click();
+  await page.getByRole("button", { name: "查看生成结果" }).click();
+  await page.getByRole("button", { name: "选这版" }).first().click();
+  await expect(page.getByRole("heading", { name: "海报已生成" })).toBeVisible();
+  await page.screenshot({ path: "artifacts/screenshots/prototype/customer-ai-poster.png", fullPage: true });
+});
+
 test("redeems a points gift and opens its code", async ({ page }) => {
   await page.goto("/?surface=customer&scenario=returning-customer&route=points-store");
   await page.getByRole("button", { name: "查看酸梅汤一杯" }).click();

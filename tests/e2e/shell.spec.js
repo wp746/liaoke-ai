@@ -1,4 +1,45 @@
 import { test, expect } from "@playwright/test";
+import { ROUTES } from "../../src/prototype/routeRegistry.js";
+
+for (const route of ROUTES) {
+  test(`renders ${route.surface}/${route.id}`, async ({ page }) => {
+    await page.goto(`/?surface=${route.surface}&route=${route.id}`);
+    await expect(page.locator(`[data-route-id="${route.id}"]`)).toBeVisible();
+    await expect(page.locator("h1,h2,h3").first()).toBeVisible();
+  });
+}
+
+for (const surface of ["customer", "merchant"]) {
+  test(`${surface} has no horizontal overflow at 390x844`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/?surface=${surface}`);
+
+    const dimensions = await page.evaluate(() => ({
+      documentClientWidth: document.documentElement.clientWidth,
+      documentScrollWidth: document.documentElement.scrollWidth,
+      bodyClientWidth: document.body.clientWidth,
+      bodyScrollWidth: document.body.scrollWidth,
+    }));
+    expect(dimensions.documentScrollWidth).toBeLessThanOrEqual(dimensions.documentClientWidth);
+    expect(dimensions.bodyScrollWidth).toBeLessThanOrEqual(dimensions.bodyClientWidth);
+  });
+}
+
+test("admin sidebar and store table are visible at 1366x900", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 900 });
+  await page.goto("/?surface=admin&role=super_admin&route=stores");
+
+  await expect(page.locator(".admin-sidebar")).toBeVisible();
+  await expect(page.getByRole("table", { name: "平台门店列表" })).toBeVisible();
+});
+
+test("reduced motion exposes a visible fallback without an active Galacean stage", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-progress&variant=copy");
+
+  await expect(page.locator('[data-galacean-active="true"]')).toHaveCount(0);
+  await expect(page.locator(".spark-fallback")).toBeVisible();
+});
 
 test("switches between all three surfaces", async ({ page }) => {
   await page.goto("/");

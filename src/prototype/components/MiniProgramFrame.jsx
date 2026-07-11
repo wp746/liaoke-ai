@@ -3,7 +3,7 @@ import { BatteryMedium, MoreHorizontal, Signal, Wifi } from "lucide-react";
 
 export function MiniProgramFrame({ title, tabs, activeRoute, onNavigate, children }) {
   return (
-    <section className="mini-program-frame" data-frame="mini-program">
+    <section className="mini-program-frame" data-frame="mini-program" data-route-id={activeRoute}>
       <div className="mini-program-frame__speaker" aria-hidden="true" />
       <div className="mini-program-frame__screen">
         <div className="mini-program-status" aria-hidden="true">

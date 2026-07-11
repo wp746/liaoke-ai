@@ -44,7 +44,7 @@ export function AdminFrame({
     : [];
 
   return (
-    <section className="admin-frame" data-frame="admin">
+    <section className="admin-frame" data-frame="admin" data-route-id={activeRoute}>
       <aside className="admin-sidebar">
         <BrandMark compact />
         <nav aria-label="平台模块导航">
