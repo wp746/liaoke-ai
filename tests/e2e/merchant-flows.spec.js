@@ -10,6 +10,80 @@ test("staff lands on verification and cannot see owner operations", async ({ pag
   await expect(page.getByRole("heading", { name: "核销工作台" })).toBeVisible();
 });
 
+test("staff verifies a points gift without cash fields", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=staff&scenario=points-verification&route=verify-hub");
+  await page.getByRole("button", { name: "积分兑换核销" }).click();
+  await page.getByRole("button", { name: "模拟扫描" }).click();
+  await expect(page.getByText("酸梅汤一杯")).toBeVisible();
+  await expect(page.getByText("500 积分")).toBeVisible();
+  await expect(page.getByText("应收金额")).toHaveCount(0);
+  await page.getByRole("button", { name: "确认已交付赠品" }).click();
+  await expect(page.getByText("核销成功")).toBeVisible();
+});
+
+test("all five verification modes share scan, manual, processing, and timeout-safe states", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=staff&route=verify-hub");
+  for (const label of ["扫码核销", "手动核销", "余额核销", "老带新抵扣券核销", "积分兑换核销"]) {
+    await expect(page.getByRole("button", { name: new RegExp(label) })).toBeVisible();
+  }
+
+  await page.getByRole("button", { name: /扫码核销/ }).click();
+  await page.getByRole("button", { name: "手动输入" }).click();
+  await expect(page.getByLabel("核销码")).toBeVisible();
+  await page.getByRole("button", { name: "查询权益" }).click();
+  await page.getByLabel("演示结果").selectOption("timeout-query");
+  await page.getByRole("button", { name: "确认核销" }).click();
+  await expect(page.getByRole("status")).toContainText("正在校验");
+  await expect(page.getByText("正在查询核销结果", { exact: true })).toBeVisible();
+  await expect(page.getByText("查询状态：未核销", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "重新核销" })).toBeVisible();
+});
+
+test("manager searches and filters members then opens the member 360 view", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=manager&route=members");
+  await expect(page.getByRole("heading", { name: "会员管理" })).toBeVisible();
+  await page.getByLabel("搜索会员").fill("3208");
+  await expect(page.getByText("陈一川", { exact: true })).toBeVisible();
+  await expect(page.getByText("林小满", { exact: true })).toHaveCount(0);
+  await page.getByLabel("搜索会员").fill("");
+  await page.getByLabel("会员等级").selectOption("Lv2 熟客");
+  await expect(page.getByText("林小满", { exact: true })).toBeVisible();
+  await page.getByLabel("最近到店").selectOption("7");
+  await page.getByLabel("老带新人数").selectOption("3");
+  await page.getByRole("button", { name: /林小满/ }).click();
+  await expect(page.getByRole("heading", { name: "林小满" })).toBeVisible();
+  for (const section of ["基本资料", "等级成长", "消费记录", "AI 晒圈", "当前权益", "积分记录", "老带新抵扣券记录"]) {
+    await expect(page.getByRole("heading", { name: section })).toBeVisible();
+  }
+});
+
+test("staff cannot access member profiles", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=staff&route=member-detail");
+  await expect(page.getByRole("heading", { name: "当前角色无法访问" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "基本资料" })).toHaveCount(0);
+});
+
+test("verification outcomes are explicit and history respects the signed-in role", async ({ page }) => {
+  const outcomes = {
+    duplicate: "该兑换码已使用",
+    "wrong-store": "非本门店权益",
+    pending: "权益暂未生效",
+    "minimum-spend": "未满足最低消费",
+  };
+  for (const [outcome, title] of Object.entries(outcomes)) {
+    await page.goto(`/?surface=merchant&role=staff&route=verify-result&outcome=${outcome}`);
+    await expect(page.getByRole("heading", { name: title })).toBeVisible();
+  }
+
+  await page.goto("/?surface=merchant&role=manager&route=verify-result&outcome=success");
+  await expect(page.getByText("陈店长", { exact: true })).toBeVisible();
+  await expect(page.getByText("2026-07-11 14:32:08", { exact: true })).toBeVisible();
+
+  await page.goto("/?surface=merchant&role=staff&route=verify-history");
+  await expect(page.getByText("李店员 · 2026-07-11 14:32:08", { exact: true })).toBeVisible();
+  await expect(page.getByText(/陈店长/)).toHaveCount(0);
+});
+
 test("inaccessible merchant routes show permission state instead of target content", async ({ page }) => {
   await page.goto("/?surface=merchant&role=staff&route=points-rules");
 

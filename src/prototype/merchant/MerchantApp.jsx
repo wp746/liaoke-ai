@@ -4,6 +4,8 @@ import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { canMerchant, merchantTabs } from "../permissions.js";
 import { MerchantDashboard, MerchantLogin } from "./DashboardPages.jsx";
+import { VerificationPages } from "./VerificationPages.jsx";
+import { MemberPages } from "./MemberPages.jsx";
 import "../styles/merchant.css";
 
 const tabPresentation = {
@@ -96,6 +98,8 @@ export function MerchantApp({ routeId, role, state, dispatch, onNavigate }) {
   else if (!canAccessRoute(role, routeId)) page = <PermissionState onNavigate={onNavigate} />;
   else if (routeId === "merchant-login") page = <MerchantLogin role={role} state={state} onNavigate={onNavigate} />;
   else if (routeId === "merchant-dashboard") page = <MerchantDashboard role={role} state={state} dispatch={dispatch} onNavigate={onNavigate} />;
+  else if (verificationRoutes.has(routeId)) page = <VerificationPages routeId={routeId} role={role} state={state} dispatch={dispatch} onNavigate={onNavigate} />;
+  else if (memberRoutes.has(routeId)) page = <MemberPages routeId={routeId} members={state.members} onNavigate={onNavigate} />;
   else page = <RoutePlaceholder routeId={routeId} />;
 
   return <MiniProgramFrame title="燎客商家" tabs={tabs} activeRoute={routeId} onNavigate={onNavigate}>{page}</MiniProgramFrame>;
