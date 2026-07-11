@@ -1,5 +1,34 @@
 import { expect, test } from "@playwright/test";
 
+test("redeems a points gift and opens its code", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=points-store");
+  await page.getByRole("button", { name: "查看酸梅汤一杯" }).click();
+  await page.getByRole("button", { name: "立即兑换" }).click();
+  await page.getByRole("button", { name: "确认消耗 500 积分" }).click();
+  await expect(page.getByText("兑换成功")).toBeVisible();
+  await expect(page.getByText("AB7X3K2Q")).toBeVisible();
+});
+
+test("renders every points and profile route with required customer content", async ({ page }) => {
+  const routes = [
+    ["points", "每日签到 +5 积分"],
+    ["points-store", "积分商城"],
+    ["points-product", "酸梅汤一杯"],
+    ["points-redemption", "确认消耗 500 积分"],
+    ["referrals", "推荐进度"],
+    ["member-level", "1,280 / 2,000 成长值"],
+    ["me", "林小满"],
+    ["privacy-data", "撤回隐私同意"],
+  ];
+  for (const [route, copy] of routes) {
+    await page.goto(`/?surface=customer&scenario=returning-customer&route=${route}`);
+    await expect(page.getByText(copy, { exact: false }).first()).toBeVisible();
+  }
+  await page.goto("/?surface=customer&scenario=returning-customer&route=points-store");
+  for (const category of ["热门", "饮品", "小菜", "小吃", "服务"]) await expect(page.getByRole("tab", { name: category })).toBeVisible();
+  await expect(page.getByRole("button", { name: /优先排队一次/ })).toBeDisabled();
+});
+
 test("new customer accepts consent and claims the daily benefit", async ({ page }) => {
   await page.goto("/?surface=customer&scenario=new-customer&route=entry-consent");
   await page.getByRole("button", { name: "同意并继续" }).click();

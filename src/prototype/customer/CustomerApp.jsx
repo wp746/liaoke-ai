@@ -6,6 +6,8 @@ import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { Balance, Benefits, CouponClaim, CouponCode, DeductionCode } from "./BenefitPages.jsx";
 import { EntryConsent, EntryUnavailable } from "./EntryPages.jsx";
 import { AI_PROGRESS_VARIANTS, AiCreate, AiProgress, AiSelect, PosterPreview } from "./AiPages.jsx";
+import { MemberLevel, Me, Points, PointsProduct, PointsRedemption, PointsStore, PrivacyData, Referrals } from "./PointsProfilePages.jsx";
+import { fixtures } from "../fixtures.js";
 import "../styles/customer.css";
 
 const tabs = [
@@ -57,6 +59,7 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
   const [selectedCouponId, setSelectedCouponId] = useState(null);
   const [aiDraft, setAiDraft] = useState({ feeling: "", style: "质感大片" });
   const [selectedAiCopy, setSelectedAiCopy] = useState("");
+  const [selectedProductId, setSelectedProductId] = useState("drink-suanmei");
   const openCoupon = (couponId) => {
     setSelectedCouponId(couponId);
     onNavigate("coupon-code");
@@ -78,6 +81,14 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
     "poster-preview": aiReady ? <PosterPreview {...pageProps} selectedCopy={selectedAiCopy} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
     balance: <Balance {...pageProps} />,
     "deduction-code": <DeductionCode {...pageProps} />,
+    points: <Points {...pageProps} />,
+    "points-store": <PointsStore {...pageProps} products={fixtures.pointsProducts} onSelect={setSelectedProductId} />,
+    "points-product": <PointsProduct {...pageProps} product={fixtures.pointsProducts.find(({id}) => id === selectedProductId)} />,
+    "points-redemption": <PointsRedemption {...pageProps} product={fixtures.pointsProducts.find(({id}) => id === selectedProductId)} />,
+    referrals: <Referrals {...pageProps} />,
+    "member-level": <MemberLevel {...pageProps} />,
+    me: <Me {...pageProps} />,
+    "privacy-data": <PrivacyData {...pageProps} />,
   };
 
   return (
