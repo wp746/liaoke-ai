@@ -16,6 +16,7 @@
 - 标准版开发附件：[`docs/standard-mvp/README.md`](docs/standard-mvp/README.md)
 - 品牌与 IP 资产：[`docs/brand-ip/README.md`](docs/brand-ip/README.md)
 - 微信小程序核心代码：[`miniprogram/README.md`](miniprogram/README.md)
+- 三端交互原型使用与交接指南：[`docs/prototype/liaoke-three-surface-prototype-guide.md`](docs/prototype/liaoke-three-surface-prototype-guide.md)
 
 ## 开发附件
 
@@ -25,8 +26,29 @@
 - 原型页面：[`docs/standard-mvp/09-prototype-pages.md`](docs/standard-mvp/09-prototype-pages.md)
 - 接口文档：[`docs/standard-mvp/10-api-contract.md`](docs/standard-mvp/10-api-contract.md)
 
+## 三端交互原型
+
+当前 React/Vite 原型覆盖顾客端 20 个、商家端 20 个、平台后台 16 个页面，共 56 个可直达路由。它用于评审三端信息架构、业务场景和角色权限；顾客端没有角色，商家端默认 `owner`，平台后台默认 `super_admin`，`platform_admin` 为只读运营视图。
+
+```bash
+npm install
+npm run dev
+```
+
+开发服务器启动后打开 <http://localhost:5173/>。可直接进入以下评审状态：
+
+- 顾客新客同意页：<http://localhost:5173/?surface=customer&scenario=new-customer&route=entry-consent>
+- 店员积分核销台：<http://localhost:5173/?surface=merchant&role=staff&scenario=points-verification&route=verify-hub>
+- 平台运营只读总览：<http://localhost:5173/?surface=admin&role=platform_admin&route=admin-overview>
+
+完整的端、页面、场景、角色切换方法和截图索引见[三端交互原型使用与交接指南](docs/prototype/liaoke-three-surface-prototype-guide.md)。
+
 ## 本地验证
 
 ```bash
+npm test
+npm run test:e2e
 npm run verify:all
 ```
+
+本交付物是经批准用于交互评审的 React 原型。用户签字确认后，下一阶段才会把顾客端和商家端同步到 `miniprogram/`；本阶段不混入原生小程序同步。
