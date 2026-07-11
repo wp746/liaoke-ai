@@ -5,6 +5,7 @@ import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { Balance, Benefits, CouponClaim, CouponCode, DeductionCode } from "./BenefitPages.jsx";
 import { EntryConsent, EntryUnavailable } from "./EntryPages.jsx";
+import { AiCreate, AiProgress, AiSelect, PosterPreview } from "./AiPages.jsx";
 import "../styles/customer.css";
 
 const tabs = [
@@ -54,6 +55,8 @@ function Placeholder({ routeId }) {
 
 export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
   const [selectedCouponId, setSelectedCouponId] = useState(null);
+  const [aiDraft, setAiDraft] = useState({ feeling: "", style: "质感大片" });
+  const [selectedAiCopy, setSelectedAiCopy] = useState("");
   const openCoupon = (couponId) => {
     setSelectedCouponId(couponId);
     onNavigate("coupon-code");
@@ -66,6 +69,10 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
     "coupon-claim": <CouponClaim {...pageProps} />,
     benefits: <Benefits {...pageProps} onSelectCoupon={openCoupon} />,
     "coupon-code": <CouponCode {...pageProps} selectedCouponId={selectedCouponId} />,
+    "ai-create": <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
+    "ai-progress": <AiProgress {...pageProps} />,
+    "ai-select": <AiSelect {...pageProps} draft={aiDraft} onSelect={setSelectedAiCopy} />,
+    "poster-preview": <PosterPreview {...pageProps} selectedCopy={selectedAiCopy} />,
     balance: <Balance {...pageProps} />,
     "deduction-code": <DeductionCode {...pageProps} />,
   };

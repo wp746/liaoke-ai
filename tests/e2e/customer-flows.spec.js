@@ -35,3 +35,52 @@ test("referral tab renders upstream records without a self-service issuance cont
   await expect(page.getByText("已使用", { exact: true })).toBeVisible();
   await expect(page.getByText("已过期", { exact: true })).toBeVisible();
 });
+
+test("creates and saves a referral poster", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create");
+  await expect(page.getByLabel("上传用餐照片")).toHaveAttribute("multiple", "");
+  await expect(page.getByLabel("今天的真实感受")).toHaveAttribute("maxlength", "50");
+  for (const style of ["烟火食刻", "质感大片", "漫画趣味", "简约清新"]) {
+    await expect(page.getByRole("button", { name: style, exact: true })).toBeVisible();
+  }
+
+  await page.getByLabel("今天的真实感受").fill("吊龙很嫩，朋友聚餐很舒服");
+  await page.getByRole("button", { name: "生成我的海报" }).click();
+  await expect(page.getByText("燎小星正在点亮这张照片")).toBeVisible();
+  await page.getByRole("button", { name: "查看生成结果" }).click();
+  await expect(page.getByRole("button", { name: "选这版" })).toHaveCount(3);
+  await page.getByRole("button", { name: "选这版" }).first().click();
+  await expect(page.getByRole("heading", { name: "海报已生成" })).toBeVisible();
+  await expect(page.getByText("专属推荐码")).toBeVisible();
+  await expect(page.getByText("牛里牛气潮汕牛肉火锅")).toBeVisible();
+  await expect(page.getByRole("button", { name: "保存海报" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "复制文案" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "再生成一次" })).toBeVisible();
+  await expect(page.getByText(/强制分享/)).toHaveCount(0);
+});
+
+test("shows deterministic AI progress fallback and rejection states", async ({ page }) => {
+  const states = [
+    ["copy", "正在理解你的真实感受"],
+    ["image", "正在为照片调出烟火质感"],
+    ["fallback", "先给你精选版"],
+    ["rejected", "照片不符合要求，请更换"],
+  ];
+
+  for (const [variant, copy] of states) {
+    await page.goto(`/?surface=customer&scenario=returning-customer&route=ai-progress&variant=${variant}`);
+    await expect(page.getByText(copy)).toBeVisible();
+  }
+});
+
+test("limits an AI creation to three uploaded images", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create");
+  await page.getByLabel("上传用餐照片").setInputFiles(
+    [1, 2, 3, 4].map((index) => ({
+      name: `meal-${index}.png`,
+      mimeType: "image/png",
+      buffer: Buffer.from("prototype-image"),
+    })),
+  );
+  await expect(page.getByText("最多上传 3 张照片")).toBeVisible();
+});
