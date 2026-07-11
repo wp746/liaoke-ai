@@ -21,6 +21,22 @@ test("staff verifies a points gift without cash fields", async ({ page }) => {
   await expect(page.getByText("核销成功")).toBeVisible();
 });
 
+test("manual verification keeps the submitted code and appends an auditable history record", async ({ page }) => {
+  const submittedCode = "HAND-9Z77";
+  await page.goto("/?surface=merchant&role=staff&route=verify-hub");
+  await page.getByRole("button", { name: /手动核销/ }).click();
+  await page.getByLabel("核销码").fill(submittedCode);
+  await page.getByRole("button", { name: "查询权益" }).click();
+  await expect(page.getByText(`核销码 ${submittedCode}`, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "确认核销" }).click();
+  await expect(page.getByRole("heading", { name: "核销成功" })).toBeVisible();
+  await page.getByRole("navigation", { name: "燎客商家主导航" }).getByRole("button", { name: "记录" }).click();
+  const record = page.getByRole("article").filter({ hasText: submittedCode });
+  await expect(record).toContainText("手动券码");
+  await expect(record).toContainText("李店员");
+  await expect(record).toContainText("2026-07-11 14:32:08");
+});
+
 test("all five verification modes share scan, manual, processing, and timeout-safe states", async ({ page }) => {
   await page.goto("/?surface=merchant&role=staff&route=verify-hub");
   for (const label of ["扫码核销", "手动核销", "余额核销", "老带新抵扣券核销", "积分兑换核销"]) {

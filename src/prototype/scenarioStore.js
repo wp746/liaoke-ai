@@ -41,6 +41,10 @@ export function createScenarioState(scenarioId) {
     verification: {
       status: "idle",
       code: null,
+      records: [
+        { code: "AB7X3K2H", type: "points_redemption", item: "酸梅汤一杯", value: "500 积分", verifierRole: "staff", verifierName: "李店员", timestamp: "2026-07-11 14:32:08", status: "success" },
+        { code: "RC-20260711-0019", type: "referral_coupon", item: "老带新抵扣券", value: "¥10", verifierRole: "manager", verifierName: "陈店长", timestamp: "2026-07-11 13:18:22", status: "success" },
+      ],
     },
     members: data.members,
     riskEvents: data.riskEvents,
@@ -58,6 +62,7 @@ export function createScenarioState(scenarioId) {
     return {
       ...state,
       verification: {
+        ...state.verification,
         status: "ready",
         code: "AB7X3K2Q",
         type: "points_redemption",
@@ -122,8 +127,22 @@ export function transition(state, event) {
       };
       return { ...state, lastError: null, points: { ...state.points, balance: state.points.balance - product.points, redemptions: [redemption, ...state.points.redemptions] } };
     }
-    case "VERIFY_CODE":
-      return { ...state, verification: { ...state.verification, status: event.result ?? "success", code: event.code } };
+    case "VERIFY_CODE": {
+      const records = state.verification.records ?? [];
+      const duplicate = (event.result ?? "success") === "success" && records.some((record) => record.code === event.code && record.status === "success");
+      const status = duplicate ? "duplicate" : event.result ?? "success";
+      const record = status === "success" ? {
+        code: event.code,
+        type: event.verificationType,
+        item: event.item,
+        value: event.value,
+        verifierRole: event.verifierRole,
+        verifierName: event.verifierName,
+        timestamp: event.timestamp,
+        status,
+      } : null;
+      return { ...state, verification: { ...state.verification, status, code: event.code, records: record ? [record, ...records] : records } };
+    }
     case "PAUSE_STORE":
       return { ...state, store: { ...state.store, paused: true } };
     case "RESUME_STORE":

@@ -51,13 +51,13 @@ function CodeEntry({ type, manual, code, setCode, onNavigate }) {
   );
 }
 
-function ConfirmVerification({ type, outcome, setOutcome, processing, onConfirm }) {
+function ConfirmVerification({ type, code, outcome, setOutcome, processing, onConfirm }) {
   const item = verificationTypes[type];
   const points = type === "points_redemption";
   return (
     <main className="merchant-page merchant-verify merchant-confirm">
       <div className="merchant-page-heading"><StatusPill status="success">权益有效</StatusPill><h1>确认核销信息</h1><p>请与顾客核对权益内容后再确认。</p></div>
-      <SurfaceCard tone="warm"><span className="merchant-eyebrow">{item.label}</span><h2>{item.title}</h2><strong className="merchant-verify-value">{item.value}</strong><small>核销码 {item.code}</small>{!points && <div className="merchant-cash-row"><span>应收金额</span><strong>{item.cash}</strong></div>}</SurfaceCard>
+      <SurfaceCard tone="warm"><span className="merchant-eyebrow">{item.label}</span><h2>{item.title}</h2><strong className="merchant-verify-value">{item.value}</strong><small>核销码 {code}</small>{!points && <div className="merchant-cash-row"><span>应收金额</span><strong>{item.cash}</strong></div>}</SurfaceCard>
       <label className="merchant-demo-select">演示结果<select value={outcome} onChange={(event) => setOutcome(event.target.value)}>{Object.keys(outcomeCopy).map((id) => <option value={id} key={id}>{outcomeCopy[id].title}</option>)}</select></label>
       <PrimaryButton disabled={processing} onClick={onConfirm}>{processing ? "核销处理中…" : points ? "确认已交付赠品" : "确认核销"}</PrimaryButton>
       {processing && <p role="status" className="merchant-processing"><Clock3 size={16} /> 正在校验并写入核销记录</p>}
@@ -65,7 +65,7 @@ function ConfirmVerification({ type, outcome, setOutcome, processing, onConfirm 
   );
 }
 
-function VerificationResult({ outcome, role, onNavigate }) {
+function VerificationResult({ outcome, role, record, onNavigate }) {
   const result = outcomeCopy[outcome] ?? outcomeCopy.success;
   const success = outcome === "success";
   return (
@@ -73,19 +73,16 @@ function VerificationResult({ outcome, role, onNavigate }) {
       <CheckCircle2 size={58} aria-hidden="true" />
       <StatusPill status={result.status}>{success ? "已完成" : "核销提示"}</StatusPill>
       <h1>{result.title}</h1><p>{result.body}</p>
-      {success && <SurfaceCard tone="plain"><span>核销员工</span><strong>{verifierNames[role]}</strong><span>核销时间</span><strong>2026-07-11 14:32:08</strong></SurfaceCard>}
+      {success && <SurfaceCard tone="plain"><span>核销员工</span><strong>{record?.verifierName ?? verifierNames[role]}</strong><span>核销时间</span><strong>{record?.timestamp ?? "2026-07-11 14:32:08"}</strong></SurfaceCard>}
       {outcome === "timeout-query" && <SurfaceCard tone="warm"><strong>查询状态：未核销</strong><span>查询单号 VER-20260711-143208</span><span>若查询仍未完成，可安全重试；服务端会保持幂等。</span></SurfaceCard>}
       <PrimaryButton onClick={() => onNavigate(outcome === "timeout-query" ? "verify-confirm" : "verify-hub")}>{outcome === "timeout-query" ? "重新核销" : "继续核销"}</PrimaryButton>
     </main>
   );
 }
 
-function VerificationHistory({ role }) {
-  const records = [
-    { role: "staff", icon: Gift, title: "酸梅汤一杯 · 500 积分", audit: "李店员 · 2026-07-11 14:32:08" },
-    { role: "manager", icon: Ticket, title: "老带新抵扣券 · ¥10", audit: "陈店长 · 2026-07-11 13:18:22" },
-  ].filter((record) => role === "owner" || record.role === role);
-  return <main className="merchant-page merchant-verify"><div className="merchant-page-heading"><StatusPill status="plain">仅展示权限范围内记录</StatusPill><h1>核销记录</h1><p>{role === "owner" ? "全店最近核销" : "当前账号最近核销"}</p></div><div className="merchant-verification-list">{records.map((record) => { const Icon = record.icon; return <article key={record.audit}><div className="merchant-verification-icon"><Icon size={15} /></div><div><strong>{record.title}</strong><span>{record.audit}</span></div><b>成功</b></article>; })}</div></main>;
+function VerificationHistory({ role, records }) {
+  const visibleRecords = records.filter((record) => role === "owner" || record.verifierRole === role);
+  return <main className="merchant-page merchant-verify"><div className="merchant-page-heading"><StatusPill status="plain">仅展示权限范围内记录</StatusPill><h1>核销记录</h1><p>{role === "owner" ? "全店最近核销" : "当前账号最近核销"}</p></div><div className="merchant-verification-list">{visibleRecords.map((record, index) => { const Icon = verificationTypes[record.type]?.icon ?? Ticket; return <article key={`${record.code}-${record.timestamp}-${index}`}><div className="merchant-verification-icon"><Icon size={15} /></div><div><strong>{record.item} · {record.value}</strong><span>{record.code}</span><span>{record.verifierName} · {record.timestamp}</span></div><b>{record.status === "success" ? "成功" : record.status}</b></article>; })}</div></main>;
 }
 
 export function VerificationPages({ routeId, role, state, dispatch, onNavigate }) {
@@ -100,7 +97,10 @@ export function VerificationPages({ routeId, role, state, dispatch, onNavigate }
   const confirm = () => {
     setProcessing(true);
     window.__liaokeVerificationTimer = window.setTimeout(() => {
-      dispatch({ type: "VERIFY_CODE", code, result: outcome });
+      const duplicate = outcome === "success" && (state.verification.records ?? []).some((record) => record.code === code && record.status === "success");
+      const result = duplicate ? "duplicate" : outcome;
+      setOutcome(result);
+      dispatch({ type: "VERIFY_CODE", code, result, verificationType: type, item: verificationTypes[type].title, value: verificationTypes[type].value, verifierRole: role, verifierName: verifierNames[role], timestamp: "2026-07-11 14:32:08" });
       setProcessing(false);
       onNavigate("verify-result");
     }, 180);
@@ -109,7 +109,7 @@ export function VerificationPages({ routeId, role, state, dispatch, onNavigate }
   if (routeId === "verify-hub") return <VerificationHub onChoose={choose} onNavigate={onNavigate} />;
   if (routeId === "verify-scan") return <CodeEntry type={type} code={code} setCode={setCode} onNavigate={onNavigate} />;
   if (routeId === "verify-manual") return <CodeEntry type={type} manual code={code} setCode={setCode} onNavigate={onNavigate} />;
-  if (routeId === "verify-confirm") return <ConfirmVerification type={type} outcome={outcome} setOutcome={setOutcome} processing={processing} onConfirm={confirm} />;
-  if (routeId === "verify-result") return <VerificationResult outcome={outcome} role={role} onNavigate={onNavigate} />;
-  return <VerificationHistory role={role} />;
+  if (routeId === "verify-confirm") return <ConfirmVerification type={type} code={code} outcome={outcome} setOutcome={setOutcome} processing={processing} onConfirm={confirm} />;
+  if (routeId === "verify-result") return <VerificationResult outcome={outcome} role={role} record={(state.verification.records ?? []).find((record) => record.code === state.verification.code && record.verifierRole === role)} onNavigate={onNavigate} />;
+  return <VerificationHistory role={role} records={state.verification.records ?? []} />;
 }
