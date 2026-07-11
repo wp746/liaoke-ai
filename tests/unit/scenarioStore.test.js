@@ -64,3 +64,69 @@ test("AI generation exposes upstream fallback and rejection outcomes", () => {
   assert.deepEqual(fallback.ai, { status: "fallback", stage: "fallback", outcome: "fallback" });
   assert.deepEqual(rejected.ai, { status: "rejected", stage: "rejected", outcome: "rejected" });
 });
+
+test("merchant operation drafts validate ranges and persist published settings", () => {
+  const start = createScenarioState("returning-customer");
+  const rejected = transition(start, { type: "UPDATE_BENEFIT_POLICY", actorRole: "owner", field: "cashbackRate", value: 16 });
+  assert.equal(rejected.operations.benefitPolicy.cashbackRate, 8);
+  assert.match(rejected.operations.feedback, /3%–15%/);
+  const valid = transition(rejected, { type: "UPDATE_BENEFIT_POLICY", actorRole: "owner", field: "cashbackRate", value: 15 });
+  const saved = transition(valid, { type: "SAVE_BENEFIT_POLICY", actorRole: "owner" });
+  assert.equal(saved.operations.benefitPolicy.cashbackRate, 15);
+  assert.equal(saved.operations.feedback, "权益策略已保存");
+  const drafted = transition(saved, { type: "UPDATE_ACTIVITY_DRAFT", actorRole: "owner", field: "templateId", value: "weekday" });
+  const published = transition(drafted, { type: "PUBLISH_ACTIVITY", actorRole: "owner" });
+  assert.equal(published.operations.activities[0].templateId, "weekday");
+  assert.equal(published.operations.feedback, "活动已发布");
+});
+
+test("points settings and products reject invalid values and persist valid saves", () => {
+  const start = createScenarioState("returning-customer");
+  const rejected = transition(start, { type: "UPDATE_POINTS_RULE", actorRole: "owner", field: "spend", value: -1 });
+  assert.equal(rejected.operations.pointsRules.spend, 10);
+  assert.match(rejected.operations.feedback, /不能小于 0/);
+  const updated = transition(rejected, { type: "UPDATE_POINTS_RULE", actorRole: "owner", field: "birthday", value: 250 });
+  const saved = transition(updated, { type: "SAVE_POINTS_RULES", actorRole: "owner" });
+  assert.equal(saved.operations.pointsRules.birthday, 250);
+  assert.equal(saved.operations.feedback, "积分规则已保存");
+  const invalidProduct = transition(saved, { type: "UPDATE_POINTS_PRODUCT_DRAFT", actorRole: "owner", field: "stock", value: -2 });
+  assert.equal(invalidProduct.operations.pointsProductDraft.stock, 99);
+  const named = transition(invalidProduct, { type: "UPDATE_POINTS_PRODUCT_DRAFT", actorRole: "owner", field: "name", value: "新品酸梅汤" });
+  const productSaved = transition(named, { type: "SAVE_POINTS_PRODUCT", actorRole: "owner" });
+  assert.equal(productSaved.operations.pointsProducts.at(-1).name, "新品酸梅汤");
+  assert.equal(productSaved.operations.feedback, "积分商品已保存");
+});
+
+test("owner administration transitions employees and plan state", () => {
+  const start = createScenarioState("returning-customer");
+  const denied = transition(start, { type: "ADD_EMPLOYEE", actorRole: "staff" });
+  assert.equal(denied.operations.employees.length, start.operations.employees.length);
+  const added = transition(start, { type: "ADD_EMPLOYEE", actorRole: "owner" });
+  assert.equal(added.operations.employees.length, start.operations.employees.length + 1);
+  const employeeId = added.operations.employees.at(-1).id;
+  const promoted = transition(added, { type: "UPDATE_EMPLOYEE_ROLE", actorRole: "owner", employeeId, role: "manager" });
+  assert.equal(promoted.operations.employees.at(-1).role, "manager");
+  const removed = transition(promoted, { type: "REMOVE_EMPLOYEE", actorRole: "owner", employeeId });
+  assert.equal(removed.operations.employees.some(({ id }) => id === employeeId), false);
+  const renewed = transition(start, { type: "RENEW_PLAN", actorRole: "owner" });
+  assert.equal(renewed.operations.plan.remainingDays, start.operations.plan.remainingDays + 365);
+  const upgraded = transition(renewed, { type: "UPGRADE_PLAN", actorRole: "owner" });
+  assert.equal(upgraded.operations.plan.name, "旗舰版 Enterprise");
+});
+
+test("export tasks capture type, use unique ids, and follow explicit transitions", () => {
+  const start = createScenarioState("returning-customer");
+  const first = transition(start, { type: "SUBMIT_EXPORT", actorRole: "owner", exportType: "activity" });
+  assert.equal(first.operations.exportTasks[0].type, "activity");
+  assert.equal(first.operations.exportTasks[0].status, "queued");
+  const firstId = first.operations.exportTasks[0].id;
+  const processing = transition(first, { type: "PROCESS_EXPORT", actorRole: "owner", taskId: firstId });
+  assert.equal(processing.operations.exportTasks[0].status, "processing");
+  const ready = transition(processing, { type: "COMPLETE_EXPORT", actorRole: "owner", taskId: firstId });
+  assert.equal(ready.operations.exportTasks[0].status, "ready");
+  const second = transition(ready, { type: "SUBMIT_EXPORT", actorRole: "owner", exportType: "members" });
+  assert.notEqual(second.operations.exportTasks[0].id, firstId);
+  const secondProcessing = transition(second, { type: "PROCESS_EXPORT", actorRole: "owner", taskId: second.operations.exportTasks[0].id });
+  const failed = transition(secondProcessing, { type: "FAIL_EXPORT", actorRole: "owner", taskId: second.operations.exportTasks[0].id });
+  assert.equal(failed.operations.exportTasks[0].status, "failed");
+});

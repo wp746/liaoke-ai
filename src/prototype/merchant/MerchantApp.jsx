@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { BarChart3, Gift, History, ScanLine, UserRound, UsersRound } from "lucide-react";
 import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
@@ -33,7 +33,8 @@ function canAccessRoute(role, routeId) {
   if (routeId === "points-rules" && role === "manager") return true;
   if (pointsRoutes.has(routeId)) return canMerchant(role, "points:write");
   if (routeId === "employees") return canMerchant(role, "employee:write");
-  if (routeId === "merchant-plan" || routeId === "merchant-export") return true;
+  if (routeId === "merchant-plan") return role === "owner" || role === "manager";
+  if (routeId === "merchant-export") return true;
   if (routeId === "store-settings") return canMerchant(role, "store:update");
   return false;
 }
@@ -63,7 +64,6 @@ function RoutePlaceholder({ routeId }) {
 }
 
 export function MerchantApp({ routeId, role, state, dispatch, onNavigate }) {
-  const [selectedTemplate, setSelectedTemplate] = useState("referral");
   const directRouteRequested = new URLSearchParams(window.location.search).has("route");
   const tabs = merchantTabs(role).map((tab) => ({ ...tab, ...tabPresentation[tab.id] }));
 
@@ -77,7 +77,7 @@ export function MerchantApp({ routeId, role, state, dispatch, onNavigate }) {
   else if (routeId === "merchant-dashboard") page = <MerchantDashboard role={role} state={state} dispatch={dispatch} onNavigate={onNavigate} />;
   else if (verificationRoutes.has(routeId)) page = <VerificationPages routeId={routeId} role={role} state={state} dispatch={dispatch} onNavigate={onNavigate} />;
   else if (memberRoutes.has(routeId)) page = <MemberPages routeId={routeId} members={state.members} onNavigate={onNavigate} />;
-  else if (configurationRoutes.has(routeId)) page = <OperationsPages routeId={routeId} role={role} state={state} dispatch={dispatch} onNavigate={onNavigate} selectedTemplate={selectedTemplate} onSelectTemplate={setSelectedTemplate} />;
+  else if (configurationRoutes.has(routeId)) page = <OperationsPages routeId={routeId} role={role} state={state} dispatch={dispatch} onNavigate={onNavigate} />;
   else page = <RoutePlaceholder routeId={routeId} />;
 
   return <MiniProgramFrame title="燎客商家" tabs={tabs} activeRoute={routeId} onNavigate={onNavigate}>{page}</MiniProgramFrame>;

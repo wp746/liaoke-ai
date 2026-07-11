@@ -161,12 +161,10 @@ test("merchant account keeps data export exclusive to the owner", async ({ page 
   await page.goto("/?surface=merchant&role=owner&route=merchant-export");
   await expect(page.getByRole("heading", { name: "我的账号" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "数据导出" })).toBeVisible();
+  await page.getByLabel("报表类型").selectOption("activity");
   await page.getByRole("button", { name: "生成报表" }).click();
-  await expect(page.getByRole("status")).toHaveText("排队中");
-  await page.getByRole("button", { name: "开始生成" }).click();
-  await expect(page.getByRole("status")).toHaveText("生成中");
-  await page.getByRole("button", { name: "模拟完成" }).click();
   await expect(page.getByRole("status")).toHaveText("可下载");
+  await expect(page.getByTestId("export-task-id").locator("..").getByText("活动报表", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "下载报表" })).toBeVisible();
 });
 
@@ -235,12 +233,74 @@ test("owner controls employees store availability and plan while other roles rem
   await expect(page.getByRole("button", { name: "续费" })).toBeEnabled();
 });
 
-test("export job can enter failed state and retry to queued", async ({ page }) => {
+test("export job preserves its type and state across route remount", async ({ page }) => {
   await page.goto("/?surface=merchant&role=owner&route=merchant-export");
+  await page.getByLabel("报表类型").selectOption("members");
   await page.getByRole("button", { name: "生成报表" }).click();
-  await page.getByRole("button", { name: "开始生成" }).click();
-  await page.getByRole("button", { name: "模拟失败" }).click();
-  await expect(page.getByRole("status")).toHaveText("生成失败");
-  await page.getByRole("button", { name: "重试" }).click();
-  await expect(page.getByRole("status")).toHaveText("排队中");
+  await expect(page.getByRole("status")).toHaveText("可下载");
+  const taskId = await page.getByTestId("export-task-id").textContent();
+  const navigation = page.getByRole("navigation", { name: "燎客商家主导航" });
+  await navigation.getByRole("button", { name: "经营" }).click();
+  await navigation.getByRole("button", { name: "我的" }).click();
+  await expect(page.getByTestId("export-task-id")).toHaveText(taskId);
+  await expect(page.getByTestId("export-task-id").locator("..").getByText("会员列表", { exact: true })).toBeVisible();
+});
+
+test("merchant operation forms validate and persist controlled state", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=benefit-policy");
+  await page.getByLabel("消费返现比例").fill("16");
+  await expect(page.getByRole("alert")).toContainText("3%–15%");
+  await expect(page.getByLabel("消费返现比例")).toHaveValue("8");
+  await page.getByLabel("消费返现比例").fill("15");
+  await page.getByRole("button", { name: "保存权益策略" }).click();
+  await expect(page.getByRole("status")).toHaveText("权益策略已保存");
+  await page.getByLabel("当前页面").selectOption("activities");
+  await page.getByLabel("当前页面").selectOption("benefit-policy");
+  await expect(page.getByLabel("消费返现比例")).toHaveValue("15");
+
+  await page.getByLabel("当前页面").selectOption("activity-editor");
+  await page.getByLabel("活动模板").selectOption("birthday");
+  await page.getByRole("button", { name: "发布活动" }).click();
+  await expect(page.getByRole("status")).toHaveText("活动已发布");
+  await page.getByLabel("当前页面").selectOption("activities");
+  await page.getByLabel("当前页面").selectOption("activity-editor");
+  await expect(page.getByLabel("活动模板")).toHaveValue("birthday");
+});
+
+test("points forms persist truthful saves", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=points-rules");
+  await page.getByLabel("生日当月到店").fill("250");
+  await page.getByRole("button", { name: "保存积分规则" }).click();
+  await expect(page.getByRole("status")).toHaveText("积分规则已保存");
+  await page.getByLabel("当前页面").selectOption("points-products");
+  await page.getByLabel("当前页面").selectOption("points-rules");
+  await expect(page.getByLabel("生日当月到店")).toHaveValue("250");
+
+  await page.getByLabel("当前页面").selectOption("points-product-editor");
+  await page.getByLabel("商品名称").fill("新品酸梅汤");
+  await page.getByRole("button", { name: "保存积分商品" }).click();
+  await expect(page.getByRole("status")).toHaveText("积分商品已保存");
+  await page.getByLabel("当前页面").selectOption("points-products");
+  await expect(page.getByText("新品酸梅汤", { exact: true })).toBeVisible();
+});
+
+test("employee and plan actions transition state while staff is gated", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=employees");
+  await page.getByRole("button", { name: "添加员工" }).click();
+  const invited = page.getByRole("article").filter({ hasText: "待绑定员工" });
+  await expect(invited).toBeVisible();
+  await invited.getByLabel("员工角色").selectOption("manager");
+  await expect(invited.getByLabel("员工角色")).toHaveValue("manager");
+  page.once("dialog", (dialog) => dialog.accept());
+  await invited.getByRole("button", { name: "移除员工" }).click();
+  await expect(invited).toHaveCount(0);
+
+  await page.goto("/?surface=merchant&role=owner&route=merchant-plan");
+  await page.getByRole("button", { name: "续费" }).click();
+  await expect(page.getByRole("status")).toHaveText("已续费 1 年");
+  await page.getByRole("button", { name: "升级套餐" }).click();
+  await expect(page.getByText("当前套餐：旗舰版 Enterprise", { exact: true })).toBeVisible();
+
+  await page.goto("/?surface=merchant&role=staff&route=merchant-plan");
+  await expect(page.getByRole("heading", { name: "当前角色无法访问" })).toBeVisible();
 });
