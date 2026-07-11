@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BarChart3, Camera, Gift, Home, Sparkles, UserRound } from "lucide-react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
@@ -53,14 +53,19 @@ function Placeholder({ routeId }) {
 }
 
 export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
+  const [selectedCouponId, setSelectedCouponId] = useState(null);
+  const openCoupon = (couponId) => {
+    setSelectedCouponId(couponId);
+    onNavigate("coupon-code");
+  };
   const pageProps = { state, dispatch, onNavigate };
   const pages = {
     "entry-consent": <EntryConsent {...pageProps} />,
     "entry-unavailable": <EntryUnavailable {...pageProps} />,
     home: <HomePage {...pageProps} />,
     "coupon-claim": <CouponClaim {...pageProps} />,
-    benefits: <Benefits {...pageProps} />,
-    "coupon-code": <CouponCode {...pageProps} />,
+    benefits: <Benefits {...pageProps} onSelectCoupon={openCoupon} />,
+    "coupon-code": <CouponCode {...pageProps} selectedCouponId={selectedCouponId} />,
     balance: <Balance {...pageProps} />,
     "deduction-code": <DeductionCode {...pageProps} />,
   };

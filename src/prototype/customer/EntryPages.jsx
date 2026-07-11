@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { EmptyState, PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 
 export function EntryConsent({ dispatch, onNavigate }) {
+  const [consentChecked, setConsentChecked] = useState(true);
   const accept = () => {
+    if (!consentChecked) return;
     dispatch({ type: "ACCEPT_CONSENT" });
     onNavigate("home");
   };
@@ -16,10 +18,14 @@ export function EntryConsent({ dispatch, onNavigate }) {
           <h1>这一桌的星火，等你点亮</h1>
           <p>授权手机号后，可领取到店权益，并在权益中心查看使用记录。</p>
           <label className="customer-consent">
-            <input type="checkbox" defaultChecked />
+            <input
+              type="checkbox"
+              checked={consentChecked}
+              onChange={(event) => setConsentChecked(event.target.checked)}
+            />
             <span>我已阅读并同意用户服务与隐私说明</span>
           </label>
-          <PrimaryButton onClick={accept}>同意并继续</PrimaryButton>
+          <PrimaryButton onClick={accept} disabled={!consentChecked}>同意并继续</PrimaryButton>
         </div>
         <BrandMascot kind="welcome" />
       </SurfaceCard>

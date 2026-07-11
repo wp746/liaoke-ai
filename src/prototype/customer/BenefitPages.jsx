@@ -3,7 +3,12 @@ import { ChevronRight, Clock3, Coins, Gift, QrCode, TicketCheck } from "lucide-r
 import { BrandMascot } from "../components/Brand.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 
-const referralStates = ["待生效", "可使用", "已使用", "已过期"];
+const referralStatusLabels = {
+  pending: "待生效",
+  active: "可使用",
+  used: "已使用",
+  expired: "已过期",
+};
 
 function CouponRow({ coupon, onOpen }) {
   const usable = coupon.status === "active";
@@ -35,7 +40,7 @@ export function CouponClaim({ state, onNavigate }) {
   );
 }
 
-export function Benefits({ state, onNavigate }) {
+export function Benefits({ state, dispatch, onNavigate, onSelectCoupon }) {
   const [tab, setTab] = useState("到店券");
   return (
     <main className="customer-page">
@@ -58,7 +63,7 @@ export function Benefits({ state, onNavigate }) {
       {tab === "到店券" && (
         <section className="customer-list" aria-label="到店券列表">
           {state.coupons.map((coupon) => (
-            <CouponRow key={coupon.id} coupon={coupon} onOpen={() => onNavigate("coupon-code")} />
+            <CouponRow key={coupon.id} coupon={coupon} onOpen={() => onSelectCoupon(coupon.id)} />
           ))}
         </section>
       )}
@@ -68,10 +73,20 @@ export function Benefits({ state, onNavigate }) {
             <Gift size={24} />
             <strong>朋友到店后，推荐券会自动生效</strong>
             <p>状态会随着好友到店和使用进度更新。</p>
+            <PrimaryButton onClick={() => dispatch({ type: "CREATE_REFERRAL_COUPON" })}>生成推荐券</PrimaryButton>
           </SurfaceCard>
-          <div className="customer-state-grid">
-            {referralStates.map((status) => <StatusPill status="plain" key={status}>{status}</StatusPill>)}
-          </div>
+          {state.referralCoupons.length > 0 ? (
+            <div className="customer-referral-list">
+              {state.referralCoupons.map((coupon) => (
+                <article className="customer-referral-record" key={coupon.id}>
+                  <span><strong>¥{coupon.value} 推荐券</strong><small>{coupon.id}</small></span>
+                  <StatusPill status={coupon.status === "active" ? "success" : "plain"}>
+                    {referralStatusLabels[coupon.status] ?? coupon.status}
+                  </StatusPill>
+                </article>
+              ))}
+            </div>
+          ) : <p className="customer-empty-copy">还没有推荐券，分享后可在这里查看状态。</p>}
         </section>
       )}
       {tab === "返现余额" && (
@@ -105,8 +120,10 @@ function CodeDialog({ eyebrow, title, code, expiresAt, limits, onBack }) {
   );
 }
 
-export function CouponCode({ state, onNavigate }) {
-  const coupon = state.coupons.find(({ status }) => status === "active") ?? state.coupons[0];
+export function CouponCode({ state, selectedCouponId, onNavigate }) {
+  const coupon = state.coupons.find(({ id }) => id === selectedCouponId)
+    ?? state.coupons.find(({ status }) => status === "active")
+    ?? state.coupons[0];
   return <CodeDialog eyebrow="到店券核销码" title={coupon.title} code={coupon.code} expiresAt={coupon.expiresAt} limits="堂食可用，每桌限用 1 张，不与其他到店券同享" onBack={() => onNavigate("benefits")} />;
 }
 
