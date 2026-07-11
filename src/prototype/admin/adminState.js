@@ -12,7 +12,7 @@ const codes = [
 
 export function createAdminState() {
   return {
-    stores, selectedStoreId: "STORE001", codes, nextStoreSequence: 28, nextCodeSequence: 1, feedback: null,
+    stores, selectedStoreId: "STORE001", codes, nextStoreSequence: 28, nextCodeSequence: 1, nextPromptCopySequence: 1, feedback: null,
     benefitTemplates: [
       { id: "coupon", name: "优惠券预设", rule: "满 100 元赠 20 元到店券", status: "active" },
       { id: "cashback", name: "返现预设", rule: "实付金额返 8% 权益余额", status: "active" },
@@ -84,11 +84,23 @@ export function adminReducer(state, event) {
     case "DEACTIVATE_CODE": return { ...state, codes: state.codes.map((code) => code.id === event.codeId ? { ...code, status: "disabled" } : code) };
     case "RETRY_AI_FAILURE": return { ...state, aiFailures: state.aiFailures.map((task) => task.id === event.taskId ? { ...task, status: "retrying" } : task), feedback: `任务 ${event.taskId} 已进入重试队列。` };
     case "TOGGLE_TEMPLATE": return { ...state, benefitTemplates: state.benefitTemplates.map((template) => template.id === event.templateId ? { ...template, status: template.status === "active" ? "paused" : "active" } : template), feedback: "权益预设状态已更新。" };
-    case "ACTIVATE_PROMPT": return { ...state, promptVersions: state.promptVersions.map((prompt) => ({ ...prompt, status: prompt.version === event.version ? "active" : prompt.status === "active" ? "retired" : prompt.status })), feedback: `提示词 ${event.version} 已发布。` };
+    case "SAVE_AI_QUOTA": {
+      const target = state.aiQuota.find(({ store }) => store === event.store);
+      if (!target) return state;
+      const budget = Number(event.budget);
+      if (!Number.isInteger(budget) || budget < 1 || budget > 100000) return { ...state, feedback: "月度预算须为 1–100000 次的整数。" };
+      return { ...state, aiQuota: state.aiQuota.map((item) => item.store === event.store ? { ...item, budget } : item), feedback: `${event.store}月度预算已保存为 ${budget} 次。` };
+    }
+    case "ACTIVATE_PROMPT": {
+      const target = state.promptVersions.find(({ version }) => version === event.version);
+      if (!target || target.status !== "draft") return state;
+      return { ...state, promptVersions: state.promptVersions.map((prompt) => ({ ...prompt, status: prompt.version === event.version ? "active" : prompt.status === "active" ? "retired" : prompt.status })), feedback: `提示词 ${event.version} 已发布。` };
+    }
     case "COPY_PROMPT": {
       const source = state.promptVersions.find(({ version }) => version === event.version);
       if (!source) return state;
-      return { ...state, promptVersions: [{ ...source, version: `${event.version}-副本`, status: "draft", updatedAt: "2026-07-11 14:40" }, ...state.promptVersions], feedback: `提示词 ${event.version} 已复制为草稿。` };
+      const copyVersion = `${event.version}-copy-${String(state.nextPromptCopySequence).padStart(3, "0")}`;
+      return { ...state, nextPromptCopySequence: state.nextPromptCopySequence + 1, promptVersions: [{ ...source, version: copyVersion, status: "draft", updatedAt: "2026-07-11 14:40" }, ...state.promptVersions], feedback: `提示词 ${event.version} 已复制为草稿 ${copyVersion}。` };
     }
     case "ADD_KEYWORD": {
       const value = event.value?.trim();

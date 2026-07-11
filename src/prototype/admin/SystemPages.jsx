@@ -18,8 +18,18 @@ export function BenefitTemplatesPage({ permissions, adminState, dispatchAdmin })
   return <Page eyebrow="BENEFIT LIBRARY" title="权益预设模板" description="统一管理新门店可一键采用的权益基线。" permissions={permissions}><Feedback message={adminState.feedback} /><DataTable label="权益预设模板" headers={["模板", "默认规则", "状态", "操作"]} rows={adminState.benefitTemplates.map((item) => <tr key={item.id}><td><strong>{item.name}</strong></td><td>{item.rule}</td><td>{statusLabel[item.status]}</td><td>{permissions.canWrite ? <button type="button" className="admin-text-action" onClick={() => dispatchAdmin({ type: "TOGGLE_TEMPLATE", templateId: item.id })}>{item.status === "active" ? "暂停" : "启用"}{item.name}</button> : "只读"}</td></tr>)} /></Page>;
 }
 
-export function AiQuotaPage({ permissions, adminState, onNavigate }) {
-  return <Page eyebrow="AI CONTROL" title="AI 配额" description="按门店对照本周期已用量、预算与推理成本。" permissions={permissions}><div className="admin-form-actions"><button type="button" className="admin-secondary-action" onClick={() => onNavigate("ai-failures")}>查看失败任务</button><button type="button" className="admin-secondary-action" onClick={() => onNavigate("prompt-versions")}>管理提示词版本</button></div><DataTable label="门店 AI 配额" headers={["门店", "已用", "预算", "成本", "使用率"]} rows={adminState.aiQuota.map((item) => <tr key={item.store}><td><strong>{item.store}</strong></td><td>{item.used} 次</td><td>{item.budget} 次</td><td>{item.cost}</td><td>{Math.round(item.used / item.budget * 100)}%</td></tr>)} /></Page>;
+function QuotaBudgetControl({ item, dispatchAdmin }) {
+  const [draft, setDraft] = useState(String(item.budget));
+  const save = () => {
+    const budget = Number(draft);
+    dispatchAdmin({ type: "SAVE_AI_QUOTA", store: item.store, budget });
+    setDraft(Number.isInteger(budget) && budget >= 1 && budget <= 100000 ? String(budget) : String(item.budget));
+  };
+  return <div className="admin-form-actions"><label><span className="sr-only">{item.store}月度预算</span><input type="number" min="1" max="100000" step="1" value={draft} onChange={(event) => setDraft(event.target.value)} /></label><button type="button" className="admin-text-action" onClick={save}>保存{item.store}月度预算</button></div>;
+}
+
+export function AiQuotaPage({ permissions, adminState, dispatchAdmin, onNavigate }) {
+  return <Page eyebrow="AI CONTROL" title="AI 配额" description="按门店对照本周期已用量、预算与推理成本。" permissions={permissions}><div className="admin-form-actions"><button type="button" className="admin-secondary-action" onClick={() => onNavigate("ai-failures")}>查看失败任务</button><button type="button" className="admin-secondary-action" onClick={() => onNavigate("prompt-versions")}>管理提示词版本</button></div><Feedback message={adminState.feedback} /><DataTable label="门店 AI 配额" headers={["门店", "已用", "预算", "成本", "使用率"]} rows={adminState.aiQuota.map((item) => <tr key={item.store}><td><strong>{item.store}</strong></td><td>{item.used} 次</td><td>{permissions.canWrite ? <QuotaBudgetControl item={item} dispatchAdmin={dispatchAdmin} /> : `${item.budget} 次`}</td><td>{item.cost}</td><td>{Math.round(item.used / item.budget * 100)}%</td></tr>)} /></Page>;
 }
 
 export function AiFailuresPage({ permissions, adminState, dispatchAdmin, onNavigate }) {

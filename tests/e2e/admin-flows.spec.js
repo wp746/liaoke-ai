@@ -190,3 +190,30 @@ test("system pages expose the complete operational data contract", async ({ page
   await page.goto("/?surface=admin&role=super_admin&route=system-logs");
   for (const field of ["操作人", "角色", "门店", "操作", "结果", "时间"]) await expect(page.getByRole("columnheader", { name: field, exact: true })).toBeVisible();
 });
+
+test("AI quota budget is validated, role-gated, and persists across routes", async ({ page }) => {
+  await page.goto("/?surface=admin&role=super_admin&route=ai-quota");
+  const budget = page.getByLabel("牛里牛气潮汕牛肉火锅月度预算");
+  await budget.fill("0");
+  await page.getByRole("button", { name: "保存牛里牛气潮汕牛肉火锅月度预算" }).click();
+  await expect(page.getByRole("status")).toHaveText("月度预算须为 1–100000 次的整数。");
+  await expect(budget).toHaveValue("1200");
+  await budget.fill("1500");
+  await page.getByRole("button", { name: "保存牛里牛气潮汕牛肉火锅月度预算" }).click();
+  await expect(page.getByRole("status")).toHaveText("牛里牛气潮汕牛肉火锅月度预算已保存为 1500 次。");
+  await page.getByRole("button", { name: "查看失败任务" }).click();
+  await page.getByRole("navigation", { name: "平台模块导航" }).getByRole("button", { name: "AI / 提示词" }).click();
+  await expect(page.getByLabel("牛里牛气潮汕牛肉火锅月度预算")).toHaveValue("1500");
+
+  await page.goto("/?surface=admin&role=platform_admin&route=ai-quota");
+  await expect(page.getByLabel("牛里牛气潮汕牛肉火锅月度预算")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "保存牛里牛气潮汕牛肉火锅月度预算" })).toHaveCount(0);
+});
+
+test("repeated prompt copies render distinct draft versions", async ({ page }) => {
+  await page.goto("/?surface=admin&role=super_admin&route=prompt-versions");
+  await page.getByRole("button", { name: "复制提示词 v3.2", exact: true }).click();
+  await page.getByRole("button", { name: "复制提示词 v3.2", exact: true }).click();
+  await expect(page.getByText("v3.2-copy-001", { exact: true })).toBeVisible();
+  await expect(page.getByText("v3.2-copy-002", { exact: true })).toBeVisible();
+});
