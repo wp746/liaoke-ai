@@ -17,6 +17,32 @@ test("points redemption reduces points and emits an active code", () => {
   assert.equal(redeemed.points.redemptions[0].status, "active");
 });
 
+test("repeated eligible redemptions create distinct coherent transactions", () => {
+  const start = { ...createScenarioState("returning-customer"), points: { balance: 2000, redemptions: [] } };
+  const first = transition(start, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  const second = transition(first, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  assert.equal(second.points.balance, 1000);
+  assert.deepEqual(second.points.redemptions.map(({ id, code }) => [id, code]), [
+    ["PNT-20260710-02", "AB7X3K2R"],
+    ["PNT-20260710-01", "AB7X3K2Q"],
+  ]);
+});
+
+test("points redemption rejects monthly-limit, sold-out, and insufficient states", () => {
+  const start = createScenarioState("returning-customer");
+  const prior = (count) => Array.from({ length: count }, (_, index) => ({
+    id: `OLD-${index}`, productId: "drink-suanmei", status: "active", code: `CODE-${index}`,
+  }));
+  const limited = transition({ ...start, points: { balance: 5000, redemptions: prior(2) } }, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  const soldOut = transition({ ...start, points: { balance: 50000, redemptions: prior(99) } }, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  const insufficient = transition({ ...start, points: { balance: 10, redemptions: [] } }, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  assert.equal(limited.lastError, "POINTS_MONTHLY_LIMIT");
+  assert.equal(soldOut.lastError, "POINTS_SOLD_OUT");
+  assert.equal(insufficient.lastError, "POINTS_INSUFFICIENT");
+  assert.equal(limited.points.balance, 5000);
+  assert.equal(soldOut.points.redemptions.length, 99);
+});
+
 test("AI generation advances from copy to image before completing", () => {
   const start = createScenarioState("returning-customer");
   const copy = transition(start, { type: "START_AI", outcome: "done" });

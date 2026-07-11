@@ -108,9 +108,19 @@ export function transition(state, event) {
       return { ...state, referralCoupons: state.referralCoupons.map((coupon) => coupon.id === event.couponId ? { ...coupon, status: "active" } : coupon) };
     case "REDEEM_POINTS": {
       const product = fixtures.pointsProducts.find((item) => item.id === event.productId);
-      if (!product || state.points.balance < product.points) return { ...state, lastError: "POINTS_INSUFFICIENT" };
-      const redemption = { id: "PNT-20260710-01", code: "AB7X3K2Q", productId: product.id, status: "active" };
-      return { ...state, points: { ...state.points, balance: state.points.balance - product.points, redemptions: [redemption, ...state.points.redemptions] } };
+      if (!product) return { ...state, lastError: "POINTS_PRODUCT_MISSING" };
+      const productRedemptions = state.points.redemptions.filter(({ productId }) => productId === product.id);
+      if (productRedemptions.length >= product.stock) return { ...state, lastError: "POINTS_SOLD_OUT" };
+      if (productRedemptions.length >= product.monthlyLimit) return { ...state, lastError: "POINTS_MONTHLY_LIMIT" };
+      if (state.points.balance < product.points) return { ...state, lastError: "POINTS_INSUFFICIENT" };
+      const ordinal = state.points.redemptions.length + 1;
+      const redemption = {
+        id: `PNT-20260710-${String(ordinal).padStart(2, "0")}`,
+        code: `AB7X3K2${String.fromCharCode(80 + ordinal)}`,
+        productId: product.id,
+        status: "active",
+      };
+      return { ...state, lastError: null, points: { ...state.points, balance: state.points.balance - product.points, redemptions: [redemption, ...state.points.redemptions] } };
     }
     case "VERIFY_CODE":
       return { ...state, verification: { ...state.verification, status: event.result ?? "success", code: event.code } };

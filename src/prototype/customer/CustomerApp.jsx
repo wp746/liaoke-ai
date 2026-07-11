@@ -40,7 +40,7 @@ function HomePage({ state, dispatch, onNavigate }) {
       </section>
       <section className="customer-metrics" aria-label="我的燎客数据">
         <button type="button" onClick={() => onNavigate("benefits")}><strong>4 张</strong><span>可用权益</span></button>
-        <button type="button" onClick={() => onNavigate("points")}><strong>1,250</strong><span>积分</span></button>
+        <button type="button" onClick={() => onNavigate("points")}><strong>{state.points.balance.toLocaleString()}</strong><span>积分</span></button>
       </section>
       <SurfaceCard tone="hero">
         <div className="customer-ai-card__icon"><Camera size={25} /></div>
@@ -81,7 +81,7 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
     "poster-preview": aiReady ? <PosterPreview {...pageProps} selectedCopy={selectedAiCopy} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
     balance: <Balance {...pageProps} />,
     "deduction-code": <DeductionCode {...pageProps} />,
-    points: <Points {...pageProps} />,
+    points: <Points {...pageProps} products={fixtures.pointsProducts} />,
     "points-store": <PointsStore {...pageProps} products={fixtures.pointsProducts} onSelect={setSelectedProductId} />,
     "points-product": <PointsProduct {...pageProps} product={fixtures.pointsProducts.find(({id}) => id === selectedProductId)} />,
     "points-redemption": <PointsRedemption {...pageProps} product={fixtures.pointsProducts.find(({id}) => id === selectedProductId)} />,

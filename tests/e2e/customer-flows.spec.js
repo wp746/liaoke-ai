@@ -7,6 +7,43 @@ test("redeems a points gift and opens its code", async ({ page }) => {
   await page.getByRole("button", { name: "确认消耗 500 积分" }).click();
   await expect(page.getByText("兑换成功")).toBeVisible();
   await expect(page.getByText("AB7X3K2Q")).toBeVisible();
+  await page.getByRole("button", { name: "首页", exact: true }).click();
+  await expect(page.getByRole("button", { name: /750.*积分/ })).toBeVisible();
+  await page.getByRole("button", { name: "积分", exact: true }).click();
+  await expect(page.getByText("兑换酸梅汤一杯")).toBeVisible();
+  await expect(page.getByText("-500").first()).toBeVisible();
+});
+
+test("a second eligible redemption opens its own transaction then reaches the monthly limit", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=points-store");
+  for (const expectedCode of ["AB7X3K2Q", "AB7X3K2R"]) {
+    await page.getByRole("button", { name: "查看酸梅汤一杯" }).click();
+    await page.getByRole("button", { name: "立即兑换" }).click();
+    await page.getByRole("button", { name: "确认消耗 500 积分" }).click();
+    await expect(page.getByText(expectedCode)).toBeVisible();
+    await page.getByRole("button", { name: "积分", exact: true }).click();
+    await page.getByRole("button", { name: "逛积分商城" }).click();
+  }
+  await expect(page.getByRole("button", { name: "查看酸梅汤一杯" })).toBeDisabled();
+  await expect(page.getByText("本月 2/2")).toBeVisible();
+  await expect(page.getByText("本月限兑次数已用完")).toBeVisible();
+});
+
+test("privacy actions return prototype results and require destructive confirmation", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=privacy-data");
+  await page.getByRole("button", { name: /查询个人数据/ }).click();
+  await expect(page.getByText("查询结果：姓名、手机号、会员等级与积分记录")).toBeVisible();
+  await page.getByRole("button", { name: /导出个人数据/ }).click();
+  await expect(page.getByText("导出申请已创建（原型演示，不会生成真实文件）")).toBeVisible();
+  for (const [action, consequence] of [["删除个人数据", "删除后将无法恢复"], ["撤回隐私同意", "部分个性化服务将停止"], ["注销账户", "账户权益与积分将无法继续使用"]]) {
+    await page.getByRole("button", { name: new RegExp(action) }).click();
+    await expect(page.getByRole("dialog")).toContainText(consequence);
+    await page.getByRole("button", { name: "取消并返回" }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await page.getByRole("button", { name: new RegExp(action) }).click();
+    await page.getByRole("button", { name: `确认${action}` }).click();
+    await expect(page.getByText(`${action}申请已记录（原型演示，未修改真实数据）`)).toBeVisible();
+  }
 });
 
 test("renders every points and profile route with required customer content", async ({ page }) => {
