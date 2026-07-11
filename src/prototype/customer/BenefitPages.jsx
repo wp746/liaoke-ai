@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronRight, Clock3, Coins, Gift, QrCode, TicketCheck } from "lucide-react";
 import { BrandMascot } from "../components/Brand.jsx";
+import { GlassSurface, LiaoxiaoxingMoment, LiquidLens, RewardGlyph, SparkTrail } from "../components/Glass.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
@@ -11,16 +12,23 @@ const referralStatusLabels = {
   expired: "已过期",
 };
 
+const couponGlyphKinds = {
+  "CPN-20260710-01": "store",
+  "CPN-20260710-02": "dish",
+  "CPN-20260703-01": "group",
+  "CPN-20260620-01": "drink",
+};
+
 function CouponRow({ coupon, onOpen }) {
   const usable = coupon.status === "active";
   return (
-    <button type="button" className="customer-coupon" onClick={onOpen}>
-      <span className="customer-coupon__value">¥{coupon.value}</span>
+    <button type="button" className="customer-coupon-row glass-surface is-interactive" onClick={onOpen}>
+      <RewardGlyph kind={couponGlyphKinds[coupon.id]} state={usable ? "active" : "used"} value={`¥${coupon.value}`} />
       <span>
-        <strong>{coupon.title}</strong>
+        <strong>{coupon.title.replace(/^¥\d+\s*/, "")}</strong>
         <small>{usable ? `有效期至 ${coupon.expiresAt.slice(0, 10)}` : "已使用"}</small>
       </span>
-      <ChevronRight size={17} />
+      <ChevronRight aria-hidden="true" size={18} />
     </button>
   );
 }
@@ -46,11 +54,13 @@ export function Benefits({ state, onNavigate, onSelectCoupon }) {
   const [tab, setTab] = useState("到店券");
   return (
     <main className="customer-page">
-      <header className="customer-page__header">
-        <span>我的可用福利</span>
-        <h1>权益中心</h1>
-      </header>
-      <div className="customer-segment" role="tablist" aria-label="权益分类">
+      <LiaoxiaoxingMoment kind="coupon" className="customer-benefits-hero">
+        <header className="customer-page__header">
+          <span>我的可用福利</span>
+          <h1>权益中心</h1>
+        </header>
+      </LiaoxiaoxingMoment>
+      <GlassSurface as="div" className="customer-segment" role="tablist" aria-label="权益分类">
         {["到店券", "推荐券", "返现余额"].map((item) => (
           <button
             type="button"
@@ -59,15 +69,18 @@ export function Benefits({ state, onNavigate, onSelectCoupon }) {
             className={tab === item ? "is-active" : ""}
             key={item}
             onClick={() => setTab(item)}
-          >{item}</button>
+          >
+            <LiquidLens active={tab === item}>{item}</LiquidLens>
+            <SparkTrail active={tab === item} />
+          </button>
         ))}
-      </div>
+      </GlassSurface>
       {tab === "到店券" && (
-        <section className="customer-list" aria-label="到店券列表">
+        <GlassSurface className="customer-coupon-sheet" aria-label="到店券列表">
           {state.coupons.map((coupon) => (
             <CouponRow key={coupon.id} coupon={coupon} onOpen={() => onSelectCoupon(coupon.id)} />
           ))}
-        </section>
+        </GlassSurface>
       )}
       {tab === "推荐券" && (
         <section className="customer-referrals">
