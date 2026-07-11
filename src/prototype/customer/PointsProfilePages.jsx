@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronRight, Coins, Gift, ShieldCheck, UserRound } from "lucide-react";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
 const categories = ["热门", "饮品", "小菜", "小吃", "服务"];
 const baseLedger = [
@@ -39,7 +40,7 @@ export function PointsRedemption({ product, state, dispatch }) {
   const [transactionId, setTransactionId] = useState(null);
   const redemption = state.points.redemptions.find(({ id }) => id === transactionId);
   const gate = availability(product, state);
-  if (redemption) return <main className="customer-page customer-claim"><StatusPill status="success">兑换成功</StatusPill><h1>{product.name}已兑换</h1><p>交易 {redemption.id} · 到店出示下方兑换码。</p><strong className="customer-code">{redemption.code}</strong></main>;
+  if (redemption) return <main className="customer-page customer-claim motion-host"><GalaceanStage kind="redeem" /><StatusPill status="success">兑换成功</StatusPill><h1>{product.name}已兑换</h1><p>交易 {redemption.id} · 到店出示下方兑换码。</p><strong className="customer-code">{redemption.code}</strong></main>;
   return <main className="customer-page"><header className="customer-page__header"><span>确认兑换</span><h1>{product.name}</h1></header><SurfaceCard tone="warm"><strong>将消耗 {product.points} 积分</strong><p>兑换后积分将立即扣除，礼品每月限兑 {product.monthlyLimit} 次。</p><PrimaryButton disabled={gate.disabled} onClick={() => { const id = `PNT-20260710-${String(state.points.redemptions.length + 1).padStart(2, "0")}`; setTransactionId(id); dispatch({type:"REDEEM_POINTS", productId: product.id}); }}>{gate.reason || `确认消耗 ${product.points} 积分`}</PrimaryButton></SurfaceCard></main>;
 }
 
@@ -48,7 +49,7 @@ export function Referrals() {
   return <main className="customer-page"><header className="customer-page__header"><span>朋友推荐</span><h1>推荐进度</h1></header><section className="customer-list">{records.map(([title, detail], i) => <article className="customer-referral-record" key={title}><span><strong>{title}</strong><small>{detail}</small></span><StatusPill status={i === 4 ? "success" : "plain"}>{["已绑定","首消完成","待生效","可使用","已完成"][i]}</StatusPill></article>)}</section></main>;
 }
 
-export function MemberLevel() { return <main className="customer-page"><header className="customer-page__header"><span>会员成长</span><h1>Lv2 熟客</h1></header><SurfaceCard tone="hero"><strong>1,280 / 2,000 成长值</strong><progress value="1280" max="2000" style={{width:"100%"}}/><p>距离 Lv3 挚友还差 720 成长值</p></SurfaceCard><h2>已解锁权益</h2><section className="customer-list">{["会员积分加速","生日专属好礼","每月到店券"].map((x) => <article className="customer-referral-record" key={x}><strong>{x}</strong><StatusPill status="success">已解锁</StatusPill></article>)}</section></main>; }
+export function MemberLevel() { return <main className="customer-page motion-host"><GalaceanStage kind="upgrade" /><header className="customer-page__header"><span>会员成长</span><h1>Lv2 熟客</h1></header><SurfaceCard tone="hero"><strong>1,280 / 2,000 成长值</strong><progress value="1280" max="2000" style={{width:"100%"}}/><p>距离 Lv3 挚友还差 720 成长值</p></SurfaceCard><h2>已解锁权益</h2><section className="customer-list">{["会员积分加速","生日专属好礼","每月到店券"].map((x) => <article className="customer-referral-record" key={x}><strong>{x}</strong><StatusPill status="success">已解锁</StatusPill></article>)}</section></main>; }
 
 export function Me({ state, onNavigate }) { return <main className="customer-page"><header className="customer-page__header"><span>个人中心</span><h1>{state.customer.name}</h1><p>{state.customer.maskedPhone}</p></header><SurfaceCard tone="warm"><UserRound size={26}/><strong>{state.customer.level}</strong><p>成长值 {state.customer.growth.toLocaleString()}</p><PrimaryButton onClick={() => onNavigate("member-level")}>查看会员等级</PrimaryButton></SurfaceCard><section className="customer-list">{[["我的积分","points"],["推荐进度","referrals"],["隐私与数据权利","privacy-data"]].map(([label, route]) => <button className="customer-coupon" type="button" key={route} onClick={() => onNavigate(route)}><ShieldCheck size={20}/><strong>{label}</strong><ChevronRight size={17}/></button>)}</section></main>; }
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronRight, Clock3, Coins, Gift, QrCode, TicketCheck } from "lucide-react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
 const referralStatusLabels = {
   pending: "待生效",
@@ -26,7 +27,8 @@ function CouponRow({ coupon, onOpen }) {
 
 export function CouponClaim({ state, onNavigate }) {
   return (
-    <main className="customer-page customer-claim">
+    <main className="customer-page customer-claim motion-host">
+      <GalaceanStage kind="claim" />
       <BrandMascot kind="coupon" />
       <StatusPill status="success">领取成功</StatusPill>
       <h1>福利已放进权益中心</h1>

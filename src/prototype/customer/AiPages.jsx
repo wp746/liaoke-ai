@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Check, Copy, ImagePlus, QrCode, RefreshCw, Save } from "lucide-react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
 export const AI_STYLES = ["烟火食刻", "质感大片", "漫画趣味", "简约清新"];
 export const AI_PROGRESS_VARIANTS = ["copy", "image", "fallback", "rejected"];
@@ -133,7 +134,8 @@ export function AiProgress({ state, dispatch, onNavigate }) {
   };
   return (
     <AiStyleTag>
-      <main className="customer-page customer-ai__progress">
+      <main className="customer-page customer-ai__progress motion-host">
+        {variant !== "rejected" && <GalaceanStage kind="ai" />}
         <BrandMascot kind={variant === "rejected" ? "empty" : "ai"} />
         <section className="customer-ai__progress-card" aria-live="polite">
           <StatusPill status={variant === "rejected" ? "danger" : "ai"}>{variant === "rejected" ? "内容安全提示" : "AI 创作中"}</StatusPill>
@@ -169,7 +171,8 @@ export function PosterPreview({ state, selectedCopy, onNavigate }) {
   };
   return (
     <AiStyleTag>
-      <main className="customer-page customer-ai">
+      <main className="customer-page customer-ai motion-host">
+        <GalaceanStage kind="poster" />
         <header className="customer-page__header"><span>作品预览</span><h1>海报已生成</h1><p>喜欢的话，可以保存到相册。</p></header>
         <section className="customer-ai__poster" aria-label="推荐海报预览">
           <div className="customer-ai__store"><img src="/brand/liaoke-mark.svg" alt="" /><span>{state.store.name}</span></div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { EmptyState, PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
 export function EntryConsent({ dispatch, onNavigate }) {
   const [consentChecked, setConsentChecked] = useState(true);
@@ -11,7 +12,8 @@ export function EntryConsent({ dispatch, onNavigate }) {
   };
 
   return (
-    <main className="customer-page customer-entry">
+    <main className="customer-page customer-entry motion-host">
+      <GalaceanStage kind="entry" />
       <SurfaceCard tone="hero">
         <div>
           <StatusPill status="reward">牛里牛气 · A12桌</StatusPill>
