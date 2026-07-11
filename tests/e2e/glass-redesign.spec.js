@@ -22,3 +22,49 @@ test("benefit tabs move the lens and keep content accessible", async ({ page }) 
   await expect(page.getByRole("tab", { name: "推荐券" })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByText("朋友到店后，推荐券会自动生效")).toBeVisible();
 });
+
+test("customer nav is a floating glass dock with one AI lens", async ({ page }) => {
+  await page.goto("/?surface=customer&route=home&scenario=returning-customer");
+  const nav = page.getByRole("navigation", { name: "燎客 AI主导航" });
+  await expect(nav).toHaveClass(/mini-program-tabs--glass/);
+  await expect(nav.locator(".is-featured .liquid-lens")).toHaveCount(1);
+  await expect(nav.getByRole("button")).toHaveText(["首页", "权益", "AI创作", "积分", "我的"]);
+});
+
+test("points and balance have distinct glyphs without list mascots", async ({ page }) => {
+  await page.goto("/?surface=customer&route=points-store&scenario=returning-customer");
+  await expect(page.locator('[data-glyph-kind="points"]')).toHaveCount(3);
+  await expect(page.locator(".customer-product-list .brand-mascot")).toHaveCount(0);
+
+  await page.goto("/?surface=customer&route=balance&scenario=returning-customer");
+  await expect(page.locator('[data-glyph-kind="balance"]')).toHaveCount(1);
+});
+
+test("AI and referral flows expose their own glyph families without row mascots", async ({ page }) => {
+  await page.goto("/?surface=customer&route=ai-create&scenario=returning-customer");
+  await expect(page.locator('[data-glass-level="acrylic"].customer-ai-composer')).toHaveCount(1);
+  await expect(page.locator('.customer-ai-composer [data-glyph-kind="ai"]')).toHaveCount(1);
+
+  await page.goto("/?surface=customer&route=referrals&scenario=returning-customer");
+  await expect(page.locator('[data-glyph-kind="referral"]')).toHaveCount(1);
+  await expect(page.locator(".customer-referral-record .brand-mascot")).toHaveCount(0);
+});
+
+test("entry success empty and poster mascots use Liaoxiaoxing moments", async ({ page }) => {
+  await page.goto("/?surface=customer&route=entry-consent&scenario=new-customer");
+  await expect(page.locator(".customer-entry-moment .brand-mascot")).toHaveCount(1);
+
+  await page.goto("/?surface=customer&route=entry-unavailable&scenario=new-customer");
+  await expect(page.locator(".customer-unavailable-moment .brand-mascot")).toHaveCount(1);
+
+  await page.goto("/?surface=customer&route=coupon-claim&scenario=returning-customer");
+  await expect(page.locator(".customer-claim-moment .brand-mascot")).toHaveCount(1);
+
+  await page.goto("/?surface=customer&route=ai-progress&scenario=returning-customer&variant=rejected");
+  await expect(page.locator(".customer-ai__progress-moment .brand-mascot")).toHaveCount(1);
+
+  await page.goto("/?surface=customer&route=ai-progress&scenario=returning-customer&variant=fallback");
+  await page.getByRole("button", { name: "查看生成结果" }).click();
+  await page.getByRole("button", { name: "选这版" }).first().click();
+  await expect(page.locator(".customer-ai__poster-moment .brand-mascot")).toHaveCount(1);
+});

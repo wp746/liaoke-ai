@@ -1,5 +1,6 @@
 import React from "react";
 import { BatteryMedium, MoreHorizontal, Signal, Wifi } from "lucide-react";
+import { LiquidLens } from "./Glass.jsx";
 
 export function MiniProgramFrame({ title, tabs, activeRoute, onNavigate, children }) {
   return (
@@ -19,7 +20,7 @@ export function MiniProgramFrame({ title, tabs, activeRoute, onNavigate, childre
           </span>
         </header>
         <div className="mini-program-content">{children}</div>
-        <nav className="mini-program-tabs" aria-label={`${title}主导航`}>
+        <nav className="mini-program-tabs mini-program-tabs--glass" aria-label={`${title}主导航`}>
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const active = tab.id === activeRoute;
@@ -31,9 +32,9 @@ export function MiniProgramFrame({ title, tabs, activeRoute, onNavigate, childre
                 aria-current={active ? "page" : undefined}
                 onClick={() => onNavigate(tab.id)}
               >
-                <span className="mini-program-tabs__icon">
+                <LiquidLens active={active || tab.featured} className="mini-program-tabs__icon">
                   {Icon ? <Icon size={18} strokeWidth={2.2} /> : tab.label.slice(0, 1)}
-                </span>
+                </LiquidLens>
                 <span>{tab.label}</span>
               </button>
             );

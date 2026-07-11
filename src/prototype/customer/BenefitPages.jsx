@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { ChevronRight, Clock3, Coins, Gift, QrCode, TicketCheck } from "lucide-react";
-import { BrandMascot } from "../components/Brand.jsx";
+import { ChevronRight, Clock3, Coins, Gift, QrCode } from "lucide-react";
 import { GlassSurface, LiaoxiaoxingMoment, LiquidLens, RewardGlyph, SparkTrail } from "../components/Glass.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
@@ -37,7 +36,7 @@ export function CouponClaim({ state, onNavigate }) {
   return (
     <main className="customer-page customer-claim motion-host">
       <GalaceanStage kind="claim" />
-      <BrandMascot kind="coupon" />
+      <LiaoxiaoxingMoment kind="coupon" className="customer-claim-moment" />
       <StatusPill status="success">领取成功</StatusPill>
       <h1>福利已放进权益中心</h1>
       <p>¥10 今日到店券已到账，本桌消费满足使用条件后即可出示券码。</p>
@@ -145,12 +144,12 @@ export function Balance({ state, onNavigate }) {
   return (
     <main className="customer-page">
       <header className="customer-page__header"><span>返现余额</span><h1>¥{state.customer.balance.toFixed(2)}</h1></header>
-      <SurfaceCard tone="hero">
-        <TicketCheck size={26} />
+      <GlassSurface level="acrylic" className="customer-balance-vessel">
+        <RewardGlyph kind="balance" state="active" />
         <strong>结账时可出示抵扣码</strong>
         <p>抵扣结果以门店核销页显示为准。</p>
         <PrimaryButton onClick={() => onNavigate("deduction-code")}>生成抵扣码</PrimaryButton>
-      </SurfaceCard>
+      </GlassSurface>
     </main>
   );
 }

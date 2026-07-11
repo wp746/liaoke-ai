@@ -24,14 +24,15 @@
 }
 
 .mini-program-frame__screen {
+  position: relative;
   display: grid;
   grid-template-rows: 34px 49px minmax(0, 1fr) 68px;
   height: 100%;
   overflow: hidden;
   border-radius: 39px;
   background:
-    radial-gradient(circle at 88% 7%, rgba(248, 184, 77, .09), transparent 26%),
-    linear-gradient(180deg, #fffdf8, var(--ivory));
+    radial-gradient(circle at 78% 4%, rgba(248, 184, 77, .13), transparent 31%),
+    linear-gradient(180deg, #fffdf8, #faf6ee);
 }
 
 .mini-program-status {
@@ -104,6 +105,24 @@
   background: rgba(255, 255, 255, .94);
 }
 
+.mini-program-tabs--glass {
+  align-self: end;
+  margin: 0 8px 8px;
+  padding: 7px 8px 8px;
+  border: 1px solid rgba(255, 255, 255, .72);
+  border-radius: 25px;
+  background: rgba(255, 253, 248, .92);
+  box-shadow: 0 14px 30px rgba(73, 43, 18, .13);
+}
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .mini-program-tabs--glass {
+    background: rgba(255, 253, 248, .76);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+}
+
 .mini-program-tabs button {
   position: relative;
   display: grid;
@@ -135,7 +154,7 @@
   background: var(--cream-100);
 }
 
-.mini-program-tabs button.is-featured .mini-program-tabs__icon {
+.mini-program-tabs--glass button.is-featured .liquid-lens {
   width: 38px;
   height: 38px;
   margin-top: -18px;

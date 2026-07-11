@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { BrandMascot } from "../components/Brand.jsx";
-import { EmptyState, PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { LiaoxiaoxingMoment } from "../components/Glass.jsx";
+import { PrimaryButton, StatusPill } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
 export function EntryConsent({ dispatch, onNavigate }) {
@@ -14,7 +14,7 @@ export function EntryConsent({ dispatch, onNavigate }) {
   return (
     <main className="customer-page customer-entry motion-host">
       <GalaceanStage kind="entry" />
-      <SurfaceCard tone="hero">
+      <LiaoxiaoxingMoment kind="welcome" className="ui-card ui-card--hero customer-entry-moment">
         <div>
           <StatusPill status="reward">牛里牛气 · A12桌</StatusPill>
           <h1>这一桌的星火，等你点亮</h1>
@@ -29,8 +29,7 @@ export function EntryConsent({ dispatch, onNavigate }) {
           </label>
           <PrimaryButton onClick={accept} disabled={!consentChecked}>同意并继续</PrimaryButton>
         </div>
-        <BrandMascot kind="welcome" />
-      </SurfaceCard>
+      </LiaoxiaoxingMoment>
     </main>
   );
 }
@@ -47,12 +46,11 @@ export function EntryUnavailable() {
 
   return (
     <main className="customer-page customer-unavailable">
-      <EmptyState
-        image="/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-empty-error.png"
-        title={title}
-        body={body}
-        action={<PrimaryButton onClick={() => window.location.reload()}>重新扫码</PrimaryButton>}
-      />
+      <LiaoxiaoxingMoment kind="empty" className="empty-state customer-unavailable-moment">
+        <h3>{title}</h3>
+        <p>{body}</p>
+        <PrimaryButton onClick={() => window.location.reload()}>重新扫码</PrimaryButton>
+      </LiaoxiaoxingMoment>
     </main>
   );
 }

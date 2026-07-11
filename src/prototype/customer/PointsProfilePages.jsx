@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChevronRight, Coins, Gift, ShieldCheck, UserRound } from "lucide-react";
+import { GlassSurface, RewardGlyph } from "../components/Glass.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
@@ -26,7 +27,7 @@ export function Points({ state, onNavigate, products = [] }) {
 export function PointsStore({ state, products, onSelect, onNavigate }) {
   const [category, setCategory] = useState("热门");
   const visible = category === "热门" ? products : products.filter((p) => p.category === category);
-  return <main className="customer-page"><header className="customer-page__header"><span>可用积分 {state.points.balance.toLocaleString()}</span><h1>积分商城</h1></header><div className="customer-segment" role="tablist" aria-label="礼品分类" style={{gridTemplateColumns:"repeat(5,1fr)"}}>{categories.map((item) => <button type="button" role="tab" aria-selected={category === item} className={category === item ? "is-active" : ""} key={item} onClick={() => setCategory(item)}>{item}</button>)}</div><section className="customer-list">{visible.map((product) => { const gate = availability(product, state); const used = state.points.redemptions.filter(({productId}) => productId === product.id).length; return <article className="customer-coupon" key={product.id}><span className="customer-coupon__value"><Gift size={22}/></span><span><strong>{product.name}</strong><small>{product.points.toLocaleString()} 积分 · 剩余库存 {Math.max(0, product.stock - used)} · 本月 {used}/{product.monthlyLimit}</small></span><button type="button" aria-label={`查看${product.name}`} disabled={gate.disabled} onClick={() => { onSelect(product.id); onNavigate("points-product"); }}>{gate.reason || <ChevronRight size={17}/>}</button></article>; })}{visible.length === 0 && <p className="customer-empty-copy">该分类礼品即将上新</p>}</section></main>;
+  return <main className="customer-page"><header className="customer-page__header"><span>可用积分 {state.points.balance.toLocaleString()}</span><h1>积分商城</h1></header><div className="customer-segment" role="tablist" aria-label="礼品分类" style={{gridTemplateColumns:"repeat(5,1fr)"}}>{categories.map((item) => <button type="button" role="tab" aria-selected={category === item} className={category === item ? "is-active" : ""} key={item} onClick={() => setCategory(item)}>{item}</button>)}</div><section className="customer-list customer-product-list">{visible.map((product) => { const gate = availability(product, state); const used = state.points.redemptions.filter(({productId}) => productId === product.id).length; return <GlassSurface as="article" level="solid" interactive className="customer-coupon customer-points-product" key={product.id}><RewardGlyph kind="points" state={gate.disabled ? "paused" : "active"} value={product.points.toLocaleString()} /><span><strong>{product.name}</strong><small>{product.points.toLocaleString()} 积分 · 剩余库存 {Math.max(0, product.stock - used)} · 本月 {used}/{product.monthlyLimit}</small></span><button type="button" aria-label={`查看${product.name}`} disabled={gate.disabled} onClick={() => { onSelect(product.id); onNavigate("points-product"); }}>{gate.reason || <ChevronRight size={17}/>}</button></GlassSurface>; })}{visible.length === 0 && <p className="customer-empty-copy">该分类礼品即将上新</p>}</section></main>;
 }
 
 export function PointsProduct({ product, state, onNavigate }) {
@@ -46,7 +47,7 @@ export function PointsRedemption({ product, state, dispatch }) {
 
 export function Referrals() {
   const records = [["已绑定好友", "好友已通过你的海报完成绑定"], ["首次消费完成", "首单已确认"], ["推荐券待生效", "待门店确认"], ["推荐券可使用", "¥10 已到账"], ["推荐奖励已完成", "本次推荐旅程完成"]];
-  return <main className="customer-page"><header className="customer-page__header"><span>朋友推荐</span><h1>推荐进度</h1></header><section className="customer-list">{records.map(([title, detail], i) => <article className="customer-referral-record" key={title}><span><strong>{title}</strong><small>{detail}</small></span><StatusPill status={i === 4 ? "success" : "plain"}>{["已绑定","首消完成","待生效","可使用","已完成"][i]}</StatusPill></article>)}</section></main>;
+  return <main className="customer-page"><GlassSurface level="solid" className="customer-referrals-vessel"><RewardGlyph kind="referral" state="active" /><header className="customer-page__header"><span>朋友推荐</span><h1>推荐进度</h1></header></GlassSurface><section className="customer-list">{records.map(([title, detail], i) => <article className="customer-referral-record" key={title}><span><strong>{title}</strong><small>{detail}</small></span><StatusPill status={i === 4 ? "success" : "plain"}>{["已绑定","首消完成","待生效","可使用","已完成"][i]}</StatusPill></article>)}</section></main>;
 }
 
 export function MemberLevel() {

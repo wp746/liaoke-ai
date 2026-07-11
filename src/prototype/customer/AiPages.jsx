@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Check, Copy, ImagePlus, QrCode, RefreshCw, Save } from "lucide-react";
-import { BrandMascot } from "../components/Brand.jsx";
+import { GlassSurface, LiaoxiaoxingMoment, RewardGlyph } from "../components/Glass.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
@@ -16,7 +16,8 @@ export const COPY_CANDIDATES = [
 const aiStyles = `
   .customer-ai { display:grid; gap:14px; align-content:start; }
   .customer-ai__intro { display:grid; grid-template-columns:1fr 92px; align-items:end; overflow:hidden; padding:18px 6px 0 18px; }
-  .customer-ai__intro .brand-mascot { width:98px; height:126px; transform:none; }
+  .customer-ai__intro > div { grid-column:1; grid-row:1; }
+  .customer-ai__intro .brand-mascot { grid-column:2; grid-row:1; width:98px; height:126px; transform:none; }
   .customer-ai__intro p { margin:0 0 14px; }
   .customer-ai__field { display:grid; gap:7px; font-size:11px; font-weight:800; }
   .customer-ai__field input[type=file] { width:100%; padding:13px; border:1px dashed rgba(0,194,255,.48); border-radius:16px; background:rgba(0,194,255,.05); color:var(--ink-600); font-size:10px; }
@@ -27,7 +28,7 @@ const aiStyles = `
   .customer-ai__styles button { min-height:40px; border:1px solid var(--line); border-radius:14px; background:#fff; color:var(--ink-600); font-size:10px; font-weight:800; }
   .customer-ai__styles button[aria-pressed=true] { border-color:rgba(0,194,255,.55); background:rgba(0,194,255,.08); color:#007ba4; }
   .customer-ai__progress { display:grid; min-height:100%; place-items:center; align-content:center; text-align:center; }
-  .customer-ai__progress .brand-mascot { width:154px; height:175px; transform:none; }
+  .customer-ai__progress .liaoxiaoxing-moment .brand-mascot { width:154px; height:175px; transform:none; }
   .customer-ai__progress-card { width:100%; padding:20px; border:1px solid rgba(0,194,255,.22); border-radius:22px; background:linear-gradient(145deg,rgba(0,194,255,.08),#fff); }
   .customer-ai__progress-card h1 { font-size:22px; }
   .customer-ai__progress-card .ui-primary { margin-top:10px; }
@@ -46,6 +47,7 @@ const aiStyles = `
   .customer-ai__poster-copy { max-width:210px; margin:24px 0 15px; color:#fff !important; font-size:17px !important; font-weight:850; line-height:1.45 !important; }
   .customer-ai__poster-bottom { display:grid; grid-template-columns:1fr 86px; align-items:end; gap:8px; }
   .customer-ai__poster .brand-mascot { width:116px; height:126px; transform:none; }
+  .customer-ai__poster-moment { display:contents; }
   .customer-ai__qr { display:grid; place-items:center; padding:8px 4px; border-radius:14px; background:#fff; color:var(--ink-900); }
   .customer-ai__qr span { margin-top:3px; font-size:8px; font-weight:850; }
   .customer-ai__actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -80,29 +82,31 @@ export function AiCreate({ dispatch, onNavigate, draft, onDraftChange }) {
     <AiStyleTag>
       <main className="customer-page customer-ai">
         <SurfaceCard tone="ai">
-          <div className="customer-ai__intro">
+          <LiaoxiaoxingMoment kind="ai" className="customer-ai__intro">
             <div><StatusPill status="ai">AI 灵感已就位</StatusPill><h1>把这一桌，拍成会发光的记忆</h1><p>上传 1–3 张照片，再留下一句真实感受。</p></div>
-            <BrandMascot kind="ai" />
-          </div>
+          </LiaoxiaoxingMoment>
         </SurfaceCard>
-        <label className="customer-ai__field">
-          <span><ImagePlus size={14} /> 上传用餐照片</span>
-          <input aria-label="上传用餐照片" type="file" accept="image/*" multiple onChange={updatePhotos} />
-          <small className="customer-ai__counter">{photoCount > 0 ? `已选 ${photoCount}/3 张` : "支持 1–3 张"}</small>
-          {photoError && <StatusPill status="danger">{photoError}</StatusPill>}
-        </label>
-        <label className="customer-ai__field">
-          <span>今天的真实感受</span>
-          <textarea aria-label="今天的真实感受" maxLength={50} value={draft.feeling} placeholder="例如：吊龙很嫩，朋友聚餐很舒服" onChange={(event) => onDraftChange({ ...draft, feeling: event.target.value })} />
-          <small className="customer-ai__counter">{draft.feeling.length}/50</small>
-        </label>
-        <section className="customer-ai__field" aria-label="海报风格">
-          <span>选择一种风格</span>
-          <div className="customer-ai__styles">
-            {AI_STYLES.map((style) => <button type="button" key={style} aria-pressed={draft.style === style} onClick={() => onDraftChange({ ...draft, style })}>{style}</button>)}
-          </div>
-        </section>
-        <PrimaryButton onClick={start} disabled={!canStart}>生成我的海报</PrimaryButton>
+        <GlassSurface level="acrylic" className="customer-ai-composer">
+          <RewardGlyph kind="ai" state="active" />
+          <label className="customer-ai__field">
+            <span><ImagePlus size={14} /> 上传用餐照片</span>
+            <input aria-label="上传用餐照片" type="file" accept="image/*" multiple onChange={updatePhotos} />
+            <small className="customer-ai__counter">{photoCount > 0 ? `已选 ${photoCount}/3 张` : "支持 1–3 张"}</small>
+            {photoError && <StatusPill status="danger">{photoError}</StatusPill>}
+          </label>
+          <label className="customer-ai__field">
+            <span>今天的真实感受</span>
+            <textarea aria-label="今天的真实感受" maxLength={50} value={draft.feeling} placeholder="例如：吊龙很嫩，朋友聚餐很舒服" onChange={(event) => onDraftChange({ ...draft, feeling: event.target.value })} />
+            <small className="customer-ai__counter">{draft.feeling.length}/50</small>
+          </label>
+          <section className="customer-ai__field" aria-label="海报风格">
+            <span>选择一种风格</span>
+            <div className="customer-ai__styles">
+              {AI_STYLES.map((style) => <button type="button" key={style} aria-pressed={draft.style === style} onClick={() => onDraftChange({ ...draft, style })}>{style}</button>)}
+            </div>
+          </section>
+          <PrimaryButton onClick={start} disabled={!canStart}>生成我的海报</PrimaryButton>
+        </GlassSurface>
       </main>
     </AiStyleTag>
   );
@@ -136,7 +140,7 @@ export function AiProgress({ state, dispatch, onNavigate, variant: directVariant
     <AiStyleTag>
       <main className="customer-page customer-ai__progress motion-host">
         {activeVariant !== "rejected" && <GalaceanStage kind="ai" />}
-        <BrandMascot kind={activeVariant === "rejected" ? "empty" : "ai"} />
+        <LiaoxiaoxingMoment kind={activeVariant === "rejected" ? "empty" : "ai"} className="customer-ai__progress-moment" />
         <section className="customer-ai__progress-card" aria-live="polite">
           <StatusPill status={activeVariant === "rejected" ? "danger" : "ai"}>{activeVariant === "rejected" ? "内容安全提示" : "AI 创作中"}</StatusPill>
           <h1>{view.title}</h1><p>{view.body}</p>{view.detail && <p>{view.detail}</p>}
@@ -202,7 +206,7 @@ export function PosterPreview({ state, selectedCopy, onNavigate }) {
         <section className="customer-ai__poster" aria-label="推荐海报预览">
           <div className="customer-ai__store"><img src="/brand/liaoke-mark.svg" alt="" /><span>{state.store.name}</span></div>
           <p className="customer-ai__poster-copy">{copyText}</p>
-          <div className="customer-ai__poster-bottom"><BrandMascot kind="ai" /><div className="customer-ai__qr" aria-label="专属推荐二维码"><QrCode size={58} strokeWidth={1.3} /><span>专属推荐码</span></div></div>
+          <div className="customer-ai__poster-bottom"><LiaoxiaoxingMoment kind="ai" className="customer-ai__poster-moment" /><div className="customer-ai__qr" aria-label="专属推荐二维码"><QrCode size={58} strokeWidth={1.3} /><span>专属推荐码</span></div></div>
         </section>
         {notice && (noticeKind === "error" ? <p role="alert">{notice}</p> : <StatusPill status="success">{notice}</StatusPill>)}
         <div className="customer-ai__actions">
