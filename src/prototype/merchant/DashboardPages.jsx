@@ -69,7 +69,7 @@ export function MerchantLogin({ role, state, onNavigate }) {
 function StoreStatus({ role, state, dispatch }) {
   const canUpdate = canMerchant(role, "store:update");
   const paused = state.store.paused;
-  const toggle = () => dispatch({ type: paused ? "RESUME_STORE" : "PAUSE_STORE" });
+  const toggle = () => dispatch({ type: paused ? "RESUME_STORE" : "PAUSE_STORE", actorRole: role });
 
   return (
     <SurfaceCard tone={paused ? "plain" : "warm"}>

@@ -58,8 +58,9 @@ function ActivityEditor({ operations, dispatch, role }) {
 }
 
 function BenefitPolicy({ operations, dispatch, role }) {
-  const policy = operations.benefitPolicy;
+  const policy = operations.benefitPolicyDraft;
   const update = (field, value) => dispatch({ type: "UPDATE_BENEFIT_POLICY", actorRole: role, field, value });
+  useEffect(() => () => dispatch({ type: "RESET_BENEFIT_POLICY_DRAFT", actorRole: role }), [dispatch, role]);
   return <main className="merchant-page"><PageHeader eyebrow="权益成本" title="返现与推荐策略" body="设置后仅影响新发放的权益，历史权益保持原规则。" /><SurfaceCard tone="plain"><div style={cardGrid}>
     <NumberField label="消费返现比例" value={policy.cashbackRate} min="3" max="15" suffix="%" onChange={(value) => update("cashbackRate", value)} />
     <NumberField label="老带新抵扣券面值" value={policy.referralValue} min="5" max="20" suffix="元" onChange={(value) => update("referralValue", value)} />
@@ -93,8 +94,9 @@ function PointsProductEditor({ operations, dispatch, role }) {
 const pointsFields = [["每消费 1 元", "spend"], ["每日到店签到", "checkIn"], ["AI 晒圈成功", "aiShare"], ["完善个人资料", "profile"], ["生日当月到店", "birthday"]];
 
 function PointsRules({ role, operations, dispatch }) {
+  useEffect(() => role === "owner" ? () => dispatch({ type: "RESET_POINTS_RULES_DRAFT", actorRole: role }) : undefined, [dispatch, role]);
   if (!canMerchant(role, "points:write")) return <main className="merchant-page merchant-permission-state"><SurfaceCard tone="warm"><StatusPill status="danger">只读</StatusPill><h1>积分规则配置</h1><p>老板权限才能修改积分规则</p></SurfaceCard></main>;
-  const rules = operations.pointsRules;
+  const rules = operations.pointsRulesDraft;
   const update = (field, value) => dispatch({ type: "UPDATE_POINTS_RULE", actorRole: role, field, value });
   return <main className="merchant-page"><PageHeader eyebrow="积分体系" title="积分规则配置" body="积分不抵现金、不可提现、不可转让。" /><SurfaceCard tone="plain"><div style={cardGrid}>{pointsFields.map(([label, field]) => <NumberField key={field} label={label} value={rules[field]} min="0" suffix="积分" onChange={(value) => update(field, value)} />)}<label style={fieldStyle}>积分有效期<select aria-label="积分有效期" value={rules.expiryDays} onChange={(event) => update("expiryDays", event.target.value === "forever" ? "forever" : Number(event.target.value))} style={inputStyle}><option value="90">90 天</option><option value="180">180 天</option><option value="365">365 天</option><option value="forever">永久</option></select></label><PrimaryButton onClick={() => dispatch({ type: "SAVE_POINTS_RULES", actorRole: role })}>保存积分规则</PrimaryButton><Feedback operations={operations} /></div></SurfaceCard></main>;
 }
@@ -121,7 +123,7 @@ function ExportJob({ role, operations, dispatch }) {
     const timer = window.setTimeout(() => dispatch({ type: event, actorRole: role, taskId: task.id }), 80);
     return () => window.clearTimeout(timer);
   }, [dispatch, role, task]);
-  return <SurfaceCard tone="plain"><div style={cardGrid}><span className="merchant-eyebrow"><Download size={14} /> 数据导出</span><h2>数据导出</h2><label style={fieldStyle}>报表类型<select aria-label="报表类型" value={operations.exportDraftType} onChange={(event) => dispatch({ type: "UPDATE_EXPORT_TYPE", actorRole: role, exportType: event.target.value })} style={inputStyle}><option value="members">会员列表</option><option value="activity">活动报表</option><option value="operation">月度经营总表</option></select></label><PrimaryButton onClick={() => dispatch({ type: "SUBMIT_EXPORT", actorRole: role, exportType: operations.exportDraftType })}>生成报表</PrimaryButton>{task && <section style={cardGrid}><span role="status">{exportLabels[task.status]}</span><strong>{exportTypeLabels[task.type]}</strong><small data-testid="export-task-id">{task.id}</small>{task.status === "ready" && <><a href="data:text/plain,燎客门店经营报表" download="liaoke-report.csv">下载报表</a><small className="merchant-readonly">原型仅下载演示文件，不包含真实经营数据。</small></>}{task.status === "failed" && <small role="alert">任务生成失败，请重新提交。</small>}</section>}</div></SurfaceCard>;
+  return <SurfaceCard tone="plain"><div style={cardGrid}><span className="merchant-eyebrow"><Download size={14} /> 数据导出</span><h2>数据导出</h2><label style={fieldStyle}>报表类型<select aria-label="报表类型" value={operations.exportDraftType} onChange={(event) => dispatch({ type: "UPDATE_EXPORT_TYPE", actorRole: role, exportType: event.target.value })} style={inputStyle}><option value="members">会员列表</option><option value="activity">活动报表</option><option value="operation">月度经营总表</option></select></label><PrimaryButton onClick={() => dispatch({ type: "SUBMIT_EXPORT", actorRole: role, exportType: operations.exportDraftType })}>生成报表</PrimaryButton>{task && <section style={cardGrid}><span role="status">{exportLabels[task.status]}</span><strong>{exportTypeLabels[task.type]}</strong><small data-testid="export-task-id">{task.id}</small>{task.status === "ready" && <><a href="data:text/plain,燎客门店经营报表" download="liaoke-report.csv">下载报表</a><small className="merchant-readonly">原型仅下载演示文件，不包含真实经营数据。</small></>}{task.status === "failed" && <><small role="alert">任务生成失败，请重试生成。</small><button type="button" className="merchant-secondary-action" onClick={() => dispatch({ type: "RETRY_EXPORT", actorRole: role, taskId: task.id })}>重试生成</button></>}</section>}</div></SurfaceCard>;
 }
 
 function MerchantAccount({ role, state, dispatch }) {

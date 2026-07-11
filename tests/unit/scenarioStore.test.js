@@ -71,7 +71,12 @@ test("merchant operation drafts validate ranges and persist published settings",
   assert.equal(rejected.operations.benefitPolicy.cashbackRate, 8);
   assert.match(rejected.operations.feedback, /3%–15%/);
   const valid = transition(rejected, { type: "UPDATE_BENEFIT_POLICY", actorRole: "owner", field: "cashbackRate", value: 15 });
-  const saved = transition(valid, { type: "SAVE_BENEFIT_POLICY", actorRole: "owner" });
+  assert.equal(valid.operations.benefitPolicy.cashbackRate, 8);
+  assert.equal(valid.operations.benefitPolicyDraft.cashbackRate, 15);
+  const reset = transition(valid, { type: "RESET_BENEFIT_POLICY_DRAFT", actorRole: "owner" });
+  assert.equal(reset.operations.benefitPolicyDraft.cashbackRate, 8);
+  const editedAgain = transition(reset, { type: "UPDATE_BENEFIT_POLICY", actorRole: "owner", field: "cashbackRate", value: 15 });
+  const saved = transition(editedAgain, { type: "SAVE_BENEFIT_POLICY", actorRole: "owner" });
   assert.equal(saved.operations.benefitPolicy.cashbackRate, 15);
   assert.equal(saved.operations.feedback, "权益策略已保存");
   const drafted = transition(saved, { type: "UPDATE_ACTIVITY_DRAFT", actorRole: "owner", field: "templateId", value: "weekday" });
@@ -86,7 +91,12 @@ test("points settings and products reject invalid values and persist valid saves
   assert.equal(rejected.operations.pointsRules.spend, 10);
   assert.match(rejected.operations.feedback, /不能小于 0/);
   const updated = transition(rejected, { type: "UPDATE_POINTS_RULE", actorRole: "owner", field: "birthday", value: 250 });
-  const saved = transition(updated, { type: "SAVE_POINTS_RULES", actorRole: "owner" });
+  assert.equal(updated.operations.pointsRules.birthday, 200);
+  assert.equal(updated.operations.pointsRulesDraft.birthday, 250);
+  const resetRules = transition(updated, { type: "RESET_POINTS_RULES_DRAFT", actorRole: "owner" });
+  assert.equal(resetRules.operations.pointsRulesDraft.birthday, 200);
+  const editedAgain = transition(resetRules, { type: "UPDATE_POINTS_RULE", actorRole: "owner", field: "birthday", value: 250 });
+  const saved = transition(editedAgain, { type: "SAVE_POINTS_RULES", actorRole: "owner" });
   assert.equal(saved.operations.pointsRules.birthday, 250);
   assert.equal(saved.operations.feedback, "积分规则已保存");
   const invalidProduct = transition(saved, { type: "UPDATE_POINTS_PRODUCT_DRAFT", actorRole: "owner", field: "stock", value: -2 });
@@ -106,10 +116,14 @@ test("owner administration transitions employees and plan state", () => {
   const employeeId = added.operations.employees.at(-1).id;
   const promoted = transition(added, { type: "UPDATE_EMPLOYEE_ROLE", actorRole: "owner", employeeId, role: "manager" });
   assert.equal(promoted.operations.employees.at(-1).role, "manager");
-  const removed = transition(promoted, { type: "REMOVE_EMPLOYEE", actorRole: "owner", employeeId });
+  const invalidRole = transition(promoted, { type: "UPDATE_EMPLOYEE_ROLE", actorRole: "owner", employeeId, role: "owner" });
+  assert.equal(invalidRole.operations.employees.at(-1).role, "manager");
+  assert.equal(invalidRole.operations.employees.filter(({ role }) => role === "owner").length, 1);
+  const removed = transition(invalidRole, { type: "REMOVE_EMPLOYEE", actorRole: "owner", employeeId });
   assert.equal(removed.operations.employees.some(({ id }) => id === employeeId), false);
   const renewed = transition(start, { type: "RENEW_PLAN", actorRole: "owner" });
   assert.equal(renewed.operations.plan.remainingDays, start.operations.plan.remainingDays + 365);
+  assert.equal(renewed.operations.plan.expireDate, "2028-06-30");
   const upgraded = transition(renewed, { type: "UPGRADE_PLAN", actorRole: "owner" });
   assert.equal(upgraded.operations.plan.name, "旗舰版 Enterprise");
 });
@@ -129,4 +143,18 @@ test("export tasks capture type, use unique ids, and follow explicit transitions
   const secondProcessing = transition(second, { type: "PROCESS_EXPORT", actorRole: "owner", taskId: second.operations.exportTasks[0].id });
   const failed = transition(secondProcessing, { type: "FAIL_EXPORT", actorRole: "owner", taskId: second.operations.exportTasks[0].id });
   assert.equal(failed.operations.exportTasks[0].status, "failed");
+  const retried = transition(failed, { type: "RETRY_EXPORT", actorRole: "owner", taskId: failed.operations.exportTasks[0].id });
+  assert.equal(retried.operations.exportTasks[0].status, "queued");
+});
+
+test("store availability transitions require the owner role", () => {
+  const start = createScenarioState("returning-customer");
+  const deniedPause = transition(start, { type: "PAUSE_STORE", actorRole: "manager" });
+  assert.equal(deniedPause.store.paused, false);
+  const paused = transition(start, { type: "PAUSE_STORE", actorRole: "owner" });
+  assert.equal(paused.store.paused, true);
+  const deniedResume = transition(paused, { type: "RESUME_STORE", actorRole: "staff" });
+  assert.equal(deniedResume.store.paused, true);
+  const resumed = transition(paused, { type: "RESUME_STORE", actorRole: "owner" });
+  assert.equal(resumed.store.paused, false);
 });

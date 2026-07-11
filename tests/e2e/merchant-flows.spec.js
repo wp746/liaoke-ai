@@ -251,6 +251,10 @@ test("merchant operation forms validate and persist controlled state", async ({ 
   await page.getByLabel("消费返现比例").fill("16");
   await expect(page.getByRole("alert")).toContainText("3%–15%");
   await expect(page.getByLabel("消费返现比例")).toHaveValue("8");
+  await page.getByLabel("消费返现比例").fill("14");
+  await page.getByLabel("当前页面").selectOption("activities");
+  await page.getByLabel("当前页面").selectOption("benefit-policy");
+  await expect(page.getByLabel("消费返现比例")).toHaveValue("8");
   await page.getByLabel("消费返现比例").fill("15");
   await page.getByRole("button", { name: "保存权益策略" }).click();
   await expect(page.getByRole("status")).toHaveText("权益策略已保存");
@@ -269,6 +273,10 @@ test("merchant operation forms validate and persist controlled state", async ({ 
 
 test("points forms persist truthful saves", async ({ page }) => {
   await page.goto("/?surface=merchant&role=owner&route=points-rules");
+  await page.getByLabel("生日当月到店").fill("225");
+  await page.getByLabel("当前页面").selectOption("points-products");
+  await page.getByLabel("当前页面").selectOption("points-rules");
+  await expect(page.getByLabel("生日当月到店")).toHaveValue("200");
   await page.getByLabel("生日当月到店").fill("250");
   await page.getByRole("button", { name: "保存积分规则" }).click();
   await expect(page.getByRole("status")).toHaveText("积分规则已保存");
@@ -303,4 +311,14 @@ test("employee and plan actions transition state while staff is gated", async ({
 
   await page.goto("/?surface=merchant&role=staff&route=merchant-plan");
   await expect(page.getByRole("heading", { name: "当前角色无法访问" })).toBeVisible();
+});
+
+test("failed export is visible and retries through the real task lifecycle", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=merchant-export");
+  await expect(page.getByRole("status")).toHaveText("生成失败");
+  const failedTaskId = await page.getByTestId("export-task-id").textContent();
+  await page.getByRole("button", { name: "重试生成" }).click();
+  await expect(page.getByRole("status")).toHaveText("可下载");
+  await expect(page.getByTestId("export-task-id")).toHaveText(failedTaskId);
+  await expect(page.getByRole("link", { name: "下载报表" })).toBeVisible();
 });
