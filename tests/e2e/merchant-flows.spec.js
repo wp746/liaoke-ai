@@ -219,9 +219,11 @@ test("only owner can publish points rules", async ({ page }) => {
 
 test("activities expose the four PRD templates and their editor", async ({ page }) => {
   await page.goto("/?surface=merchant&role=owner&route=activities");
-  for (const template of ["老带新奖励（常驻）", "生日礼", "工作日福利", "晒圈送券"]) {
+  for (const template of ["老带新奖励（常驻）", "生日礼", "工作日福利", "好友首单礼"]) {
     await expect(page.getByRole("button", { name: new RegExp(template) })).toBeVisible();
   }
+  await expect(page.getByText(/晒圈送券|凭截图领取/)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /好友首单礼.*好友完成绑定并完成首次符合条件的消费后/ })).toBeVisible();
   await page.getByRole("button", { name: /工作日福利/ }).click();
   await expect(page).toHaveURL(/route=activity-editor/);
   await expect(page.getByRole("heading", { name: "活动编辑" })).toBeVisible();

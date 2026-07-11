@@ -2,6 +2,7 @@ import { fixtures } from "./fixtures.js";
 
 export const EVENTS = [
   "ACCEPT_CONSENT", "CLAIM_COUPON", "START_AI", "ADVANCE_AI", "COMPLETE_AI",
+  "HYDRATE_AI_VARIANT",
   "CREATE_REFERRAL_COUPON", "ACTIVATE_REFERRAL_COUPON", "REDEEM_POINTS",
   "VERIFY_CODE", "PAUSE_STORE", "RESUME_STORE", "SET_ROLE",
   "UPDATE_ACTIVITY_DRAFT", "PUBLISH_ACTIVITY", "UPDATE_BENEFIT_POLICY", "SAVE_BENEFIT_POLICY",
@@ -147,6 +148,15 @@ export function transition(state, event) {
       return { ...state, customer: { ...state.customer, consentAccepted: true } };
     case "CLAIM_COUPON":
       return { ...state, coupons: state.coupons.map((coupon, index) => index === 0 ? { ...coupon, status: "active" } : coupon) };
+    case "HYDRATE_AI_VARIANT": {
+      const variants = {
+        copy: { status: "processing", stage: "copy", outcome: "done" },
+        image: { status: "processing", stage: "image", outcome: "done" },
+        fallback: { status: "fallback", stage: "fallback", outcome: "fallback" },
+        rejected: { status: "rejected", stage: "rejected", outcome: "rejected" },
+      };
+      return variants[event.variant] ? { ...state, ai: variants[event.variant] } : state;
+    }
     case "START_AI":
       if (event.outcome === "rejected") {
         return { ...state, ai: { status: "rejected", stage: "rejected", outcome: "rejected" } };

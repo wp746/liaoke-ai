@@ -25,7 +25,7 @@ npm run test:e2e
 npm run verify:all
 ```
 
-- `npm test`：运行 25 个 Node 单元测试，覆盖路由注册表、场景状态、权限和动效生命周期。
+- `npm test`：运行 26 个 Node 单元测试，覆盖路由注册表、场景状态、权限、AI 直达状态和动效生命周期。
 - `npm run test:e2e`：启动 Playwright 配置的本地 Vite 服务并执行全量浏览器测试；覆盖全部 56 个路由、五条主流程、响应式、权限、动效降级和截图生成。
 - `npm run verify:all`：依次验证 API 合同、导出品牌包、校验原生小程序、运行小程序/API 冒烟测试并构建 Vite 产物。它不替代 `npm test` 或 `npm run test:e2e`，三条命令应分别执行。
 
@@ -65,6 +65,7 @@ Prototype Shell
 | `route` | 当前端注册表中的 route id | 直达指定页面或关键状态 |
 | `scenario` | `new-customer` / `returning-customer` / `points-verification` | 重建新客领券、老客复访或积分礼品核销状态 |
 | `role` | 商家：`owner` / `manager` / `staff`；后台：`super_admin` / `platform_admin` | 改变导航和操作权限；顾客端不使用该参数 |
+| `variant` | AI 进度：`copy` / `image` / `fallback` / `rejected`；另有页面专属值 | 直达受支持的关键状态；应用会同步内部场景状态，并在交互推进时更新或移除参数 |
 
 任务验收使用的精确相对链接如下：
 
@@ -72,6 +73,10 @@ Prototype Shell
 /?surface=customer&scenario=new-customer&route=entry-consent
 /?surface=merchant&role=staff&scenario=points-verification&route=verify-hub
 /?surface=admin&role=platform_admin&route=admin-overview
+/?surface=customer&scenario=returning-customer&route=ai-progress&variant=copy
+/?surface=customer&scenario=returning-customer&route=ai-progress&variant=image
+/?surface=customer&scenario=returning-customer&route=ai-progress&variant=fallback
+/?surface=customer&scenario=returning-customer&route=ai-progress&variant=rejected
 ```
 
 本地可直接点击：
@@ -80,7 +85,7 @@ Prototype Shell
 - [商家端：店员执行积分礼品核销](http://localhost:5173/?surface=merchant&role=staff&scenario=points-verification&route=verify-hub)
 - [平台后台：平台运营只读总览](http://localhost:5173/?surface=admin&role=platform_admin&route=admin-overview)
 
-当前状态会写回地址栏，因此评审人完成切换后，可以复制 URL 复现同一端、页面、场景和角色。
+当前受支持的评审状态会写回地址栏，因此评审人完成切换后，可以复制 URL 复现同一端、页面、场景、角色和关键 `variant`。AI 进度直达链接刷新后会重建匹配的内部状态；继续操作时，`copy` 会推进为 `image`，进入结果或返回输入页后会移除不再适用的 `variant`，避免污染普通流程。
 
 ## 5. 使用实时检查器
 

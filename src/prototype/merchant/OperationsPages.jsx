@@ -7,7 +7,7 @@ export const ACTIVITY_TEMPLATES = [
   { id: "referral", name: "老带新奖励（常驻）", description: "配置抵扣券面值、有效期和每月上限", tag: "核心裂变" },
   { id: "birthday", name: "生日礼", description: "会员生日前自动发送礼品或优惠券", tag: "会员关怀" },
   { id: "weekday", name: "工作日福利", description: "周一至周四提供折扣或菜品福利", tag: "填淡谷" },
-  { id: "share", name: "晒圈送券", description: "AI 晒圈后凭截图领取奖励券", tag: "提升参与" },
+  { id: "share", name: "好友首单礼", description: "好友完成绑定并完成首次符合条件的消费后，推荐券自动发放", tag: "有效推荐" },
 ];
 
 const fieldStyle = { display: "grid", gap: 6, fontSize: 11, fontWeight: 750 };

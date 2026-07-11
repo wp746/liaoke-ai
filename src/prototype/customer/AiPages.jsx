@@ -115,17 +115,17 @@ const progressViews = {
   rejected: { title: "这张照片暂时不能使用", body: "照片不符合要求，请更换", detail: "换一张清晰的用餐照片再试试。", action: "返回更换照片" },
 };
 
-export function AiProgress({ state, dispatch, onNavigate }) {
-  const requested = new URLSearchParams(window.location.search).get("variant");
-  const variant = progressViews[requested] ? requested : progressViews[state.ai.stage] ? state.ai.stage : "copy";
-  const view = progressViews[variant];
+export function AiProgress({ state, dispatch, onNavigate, variant: directVariant, onVariantChange }) {
+  const activeVariant = progressViews[directVariant] ? directVariant : progressViews[state.ai.stage] ? state.ai.stage : "copy";
+  const view = progressViews[activeVariant];
   const proceed = () => {
-    if (variant === "rejected") return onNavigate("ai-create");
-    if (variant === "copy") {
+    if (activeVariant === "rejected") return onNavigate("ai-create");
+    if (activeVariant === "copy") {
       dispatch({ type: "ADVANCE_AI" });
+      if (directVariant) onVariantChange("image");
       return;
     }
-    if (variant === "image") {
+    if (activeVariant === "image") {
       dispatch({ type: "COMPLETE_AI" });
       if (state.ai.outcome !== "fallback") onNavigate("ai-select");
       return;
@@ -135,12 +135,12 @@ export function AiProgress({ state, dispatch, onNavigate }) {
   return (
     <AiStyleTag>
       <main className="customer-page customer-ai__progress motion-host">
-        {variant !== "rejected" && <GalaceanStage kind="ai" />}
-        <BrandMascot kind={variant === "rejected" ? "empty" : "ai"} />
+        {activeVariant !== "rejected" && <GalaceanStage kind="ai" />}
+        <BrandMascot kind={activeVariant === "rejected" ? "empty" : "ai"} />
         <section className="customer-ai__progress-card" aria-live="polite">
-          <StatusPill status={variant === "rejected" ? "danger" : "ai"}>{variant === "rejected" ? "内容安全提示" : "AI 创作中"}</StatusPill>
+          <StatusPill status={activeVariant === "rejected" ? "danger" : "ai"}>{activeVariant === "rejected" ? "内容安全提示" : "AI 创作中"}</StatusPill>
           <h1>{view.title}</h1><p>{view.body}</p>{view.detail && <p>{view.detail}</p>}
-          {variant !== "rejected" && <div className="customer-ai__dots" aria-hidden="true"><i /><i /><i /></div>}
+          {activeVariant !== "rejected" && <div className="customer-ai__dots" aria-hidden="true"><i /><i /><i /></div>}
           <PrimaryButton onClick={proceed}>{view.action}</PrimaryButton>
         </section>
       </main>
@@ -163,11 +163,36 @@ export function AiSelect({ draft, onSelect, onNavigate }) {
 
 export function PosterPreview({ state, selectedCopy, onNavigate }) {
   const [notice, setNotice] = useState("");
+  const [noticeKind, setNoticeKind] = useState("success");
   const copyText = selectedCopy || COPY_CANDIDATES[0];
-  const save = () => setNotice("海报已保存到相册");
+  const save = () => {
+    const escapeXml = (value) => value.replace(/[<>&'\"]/g, (character) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '\"': "&quot;" })[character]);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#201712"/><stop offset=".54" stop-color="#5c2714"/><stop offset="1" stop-color="#f18731"/></linearGradient></defs><rect width="1080" height="1440" rx="72" fill="url(#bg)"/><text x="80" y="120" fill="#fff" font-family="sans-serif" font-size="38" font-weight="700">${escapeXml(state.store.name)}</text><foreignObject x="80" y="260" width="920" height="600"><div xmlns="http://www.w3.org/1999/xhtml" style="color:white;font:700 64px/1.5 sans-serif">${escapeXml(copyText)}</div></foreignObject><rect x="760" y="1080" width="240" height="240" rx="32" fill="#fff"/><text x="880" y="1210" text-anchor="middle" fill="#201712" font-family="sans-serif" font-size="28">专属推荐码</text><text x="80" y="1320" fill="#fff" font-family="sans-serif" font-size="34">燎客 AI · 自愿分享</text></svg>`;
+    const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `liaoke-poster-${Date.now()}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    setNoticeKind("success");
+    setNotice("海报文件已开始下载");
+  };
   const copy = async () => {
-    try { await navigator.clipboard.writeText(copyText); } catch { /* Prototype browsers may block clipboard access. */ }
-    setNotice("文案已复制");
+    if (!navigator.clipboard?.writeText) {
+      setNoticeKind("error");
+      setNotice("复制失败，请手动选择文案复制");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(copyText);
+      setNoticeKind("success");
+      setNotice("文案已复制");
+    } catch {
+      setNoticeKind("error");
+      setNotice("复制失败，请手动选择文案复制");
+    }
   };
   return (
     <AiStyleTag>
@@ -179,7 +204,7 @@ export function PosterPreview({ state, selectedCopy, onNavigate }) {
           <p className="customer-ai__poster-copy">{copyText}</p>
           <div className="customer-ai__poster-bottom"><BrandMascot kind="ai" /><div className="customer-ai__qr" aria-label="专属推荐二维码"><QrCode size={58} strokeWidth={1.3} /><span>专属推荐码</span></div></div>
         </section>
-        {notice && <StatusPill status="success">{notice}</StatusPill>}
+        {notice && (noticeKind === "error" ? <p role="alert">{notice}</p> : <StatusPill status="success">{notice}</StatusPill>)}
         <div className="customer-ai__actions">
           <button type="button" onClick={save}><Save size={15} />保存海报</button>
           <button type="button" onClick={copy}><Copy size={14} />复制文案</button>

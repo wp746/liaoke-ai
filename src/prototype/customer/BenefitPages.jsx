@@ -87,7 +87,7 @@ export function Benefits({ state, onNavigate, onSelectCoupon }) {
                 </article>
               ))}
             </div>
-          ) : <p className="customer-empty-copy">还没有推荐券，分享后可在这里查看状态。</p>}
+          ) : <p className="customer-empty-copy">好友完成绑定并完成首次符合条件的消费后，可在这里查看推荐进度。</p>}
         </section>
       )}
       {tab === "返现余额" && (

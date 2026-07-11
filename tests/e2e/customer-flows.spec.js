@@ -131,6 +131,13 @@ test("referral tab renders upstream records without a self-service issuance cont
   await expect(page.getByText("已过期", { exact: true })).toBeVisible();
 });
 
+test("empty referral copy requires binding and qualifying consumption, never sharing", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=new-customer&route=benefits");
+  await page.getByRole("tab", { name: "推荐券" }).click();
+  await expect(page.getByText("好友完成绑定并完成首次符合条件的消费后，可在这里查看推荐进度。")).toBeVisible();
+  await expect(page.getByText(/分享后|发圈|凭截图/)).toHaveCount(0);
+});
+
 test("creates and saves a referral poster", async ({ page }) => {
   await page.goto("/?surface=customer&scenario=returning-customer&route=ai-create");
   await expect(page.getByLabel("上传用餐照片")).toHaveAttribute("multiple", "");
@@ -164,6 +171,43 @@ test("creates and saves a referral poster", async ({ page }) => {
   await expect(page.getByText(/强制分享/)).toHaveCount(0);
 });
 
+test("downloads the rendered poster as a real SVG file before reporting success", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-progress&variant=fallback");
+  await page.getByRole("button", { name: "查看生成结果" }).click();
+  await page.getByRole("button", { name: "选这版" }).first().click();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "保存海报" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^liaoke-poster-.*\.svg$/);
+  expect(await download.createReadStream()).not.toBeNull();
+  await expect(page.getByText("海报文件已开始下载")).toBeVisible();
+});
+
+test("reports clipboard success only after write resolves and explicit failure on rejection", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: () => Promise.resolve() },
+    });
+  });
+  await page.goto("/?surface=customer&scenario=returning-customer&route=ai-progress&variant=fallback");
+  await page.getByRole("button", { name: "查看生成结果" }).click();
+  await page.getByRole("button", { name: "选这版" }).first().click();
+  await page.getByRole("button", { name: "复制文案" }).click();
+  await expect(page.getByText("文案已复制")).toBeVisible();
+
+  await page.evaluate(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: () => Promise.reject(new Error("denied")) },
+    });
+  });
+  await page.getByRole("button", { name: "复制文案" }).click();
+  await expect(page.getByRole("alert")).toHaveText("复制失败，请手动选择文案复制");
+  await expect(page.getByText("文案已复制")).toHaveCount(0);
+});
+
 test("shows deterministic AI progress fallback and rejection states", async ({ page }) => {
   const states = [
     ["copy", "正在理解你的真实感受"],
@@ -175,6 +219,25 @@ test("shows deterministic AI progress fallback and rejection states", async ({ p
   for (const [variant, copy] of states) {
     await page.goto(`/?surface=customer&scenario=returning-customer&route=ai-progress&variant=${variant}`);
     await expect(page.getByText(copy)).toBeVisible();
+  }
+});
+
+test("keeps every AI progress direct variant coherent through reload and interaction", async ({ page }) => {
+  const variants = [
+    ["copy", "正在理解你的真实感受", "继续生成图片", "image", "正在为照片调出烟火质感"],
+    ["image", "正在为照片调出烟火质感", "查看生成结果", null, "选一句最像你的"],
+    ["fallback", "先给你精选版", "查看生成结果", null, "选一句最像你的"],
+    ["rejected", "照片不符合要求，请更换", "返回更换照片", null, "把这一桌，拍成会发光的记忆"],
+  ];
+
+  for (const [variant, initialCopy, action, nextVariant, nextHeading] of variants) {
+    await page.goto(`/?surface=customer&scenario=returning-customer&route=ai-progress&variant=${variant}`);
+    await expect.poll(() => new URL(page.url()).searchParams.get("variant")).toBe(variant);
+    await page.reload();
+    await expect(page.getByText(initialCopy)).toBeVisible();
+    await page.getByRole("button", { name: action }).click();
+    await expect(page.getByText(nextHeading)).toBeVisible();
+    await expect.poll(() => new URL(page.url()).searchParams.get("variant")).toBe(nextVariant);
   }
 });
 

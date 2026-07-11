@@ -55,7 +55,7 @@ function Placeholder({ routeId }) {
   return <main className="customer-page customer-placeholder"><Sparkles size={28} /><h1>{routeId === "points" ? "我的积分" : routeId === "me" ? "我的" : "AI 创作"}</h1><p>这束星火正在准备中。</p></main>;
 }
 
-export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
+export function CustomerApp({ routeId, state, dispatch, onNavigate, aiVariant, onAiVariantChange }) {
   const [selectedCouponId, setSelectedCouponId] = useState(null);
   const [aiDraft, setAiDraft] = useState({ feeling: "", style: "质感大片" });
   const [selectedAiCopy, setSelectedAiCopy] = useState("");
@@ -65,7 +65,7 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
     onNavigate("coupon-code");
   };
   const pageProps = { state, dispatch, onNavigate };
-  const progressOverride = AI_PROGRESS_VARIANTS.includes(new URLSearchParams(window.location.search).get("variant"));
+  const progressOverride = AI_PROGRESS_VARIANTS.includes(aiVariant);
   const aiStarted = state.ai.status !== "idle";
   const aiReady = ["done", "fallback"].includes(state.ai.status);
   const pages = {
@@ -76,7 +76,7 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate }) {
     benefits: <Benefits {...pageProps} onSelectCoupon={openCoupon} />,
     "coupon-code": <CouponCode {...pageProps} selectedCouponId={selectedCouponId} />,
     "ai-create": <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
-    "ai-progress": aiStarted || progressOverride ? <AiProgress {...pageProps} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
+    "ai-progress": aiStarted || progressOverride ? <AiProgress {...pageProps} variant={aiVariant} onVariantChange={onAiVariantChange} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
     "ai-select": aiReady ? <AiSelect {...pageProps} draft={aiDraft} onSelect={setSelectedAiCopy} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
     "poster-preview": aiReady ? <PosterPreview {...pageProps} selectedCopy={selectedAiCopy} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
     balance: <Balance {...pageProps} />,

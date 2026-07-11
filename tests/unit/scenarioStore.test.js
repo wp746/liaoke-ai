@@ -65,6 +65,19 @@ test("AI generation exposes upstream fallback and rejection outcomes", () => {
   assert.deepEqual(rejected.ai, { status: "rejected", stage: "rejected", outcome: "rejected" });
 });
 
+test("AI direct-link variants hydrate coherent scenario state", () => {
+  const start = createScenarioState("returning-customer");
+  const expected = {
+    copy: { status: "processing", stage: "copy", outcome: "done" },
+    image: { status: "processing", stage: "image", outcome: "done" },
+    fallback: { status: "fallback", stage: "fallback", outcome: "fallback" },
+    rejected: { status: "rejected", stage: "rejected", outcome: "rejected" },
+  };
+  for (const [variant, ai] of Object.entries(expected)) {
+    assert.deepEqual(transition(start, { type: "HYDRATE_AI_VARIANT", variant }).ai, ai);
+  }
+});
+
 test("merchant operation drafts validate ranges and persist published settings", () => {
   const start = createScenarioState("returning-customer");
   const rejected = transition(start, { type: "UPDATE_BENEFIT_POLICY", actorRole: "owner", field: "cashbackRate", value: 16 });

@@ -28,6 +28,19 @@ const surfaceRoles = {
   admin: ["super_admin", "platform_admin"],
 };
 
+const routeVariants = {
+  "ai-create": new Set(["fallback", "rejected"]),
+  "ai-progress": new Set(["copy", "image", "fallback", "rejected"]),
+  "entry-unavailable": new Set(["invalid-code", "inactive-store", "paused-store"]),
+  "member-level": new Set(["just-upgraded"]),
+};
+
+function normalizeVariant(surface, routeId, requestedVariant) {
+  return surface === "customer" && routeVariants[routeId]?.has(requestedVariant)
+    ? requestedVariant
+    : null;
+}
+
 const surfaceRendererPaths = {
   customer: "./customer/CustomerApp.jsx",
   merchant: "./merchant/MerchantApp.jsx",
@@ -136,12 +149,19 @@ export default function PrototypeApp() {
     ? requestedScenario
     : "returning-customer";
   const initialRole = normalizeRole(initialSurface, query.get("role"));
+  const initialVariant = normalizeVariant(initialSurface, initialRoute, query.get("variant"));
 
   const [surface, setSurface] = useState(initialSurface);
   const [routeId, setRouteId] = useState(initialRoute);
   const [scenarioId, setScenarioId] = useState(initialScenario);
   const [role, setRole] = useState(initialRole);
-  const [state, setState] = useState(() => createScenarioState(initialScenario));
+  const [variant, setVariant] = useState(initialVariant);
+  const [state, setState] = useState(() => {
+    const initialState = createScenarioState(initialScenario);
+    return initialRoute === "ai-progress" && initialVariant
+      ? transition(initialState, { type: "HYDRATE_AI_VARIANT", variant: initialVariant })
+      : initialState;
+  });
 
   const dispatch = useCallback((event) => {
     setState((current) => transition(current, event));
@@ -150,13 +170,20 @@ export default function PrototypeApp() {
   useEffect(() => {
     const params = new URLSearchParams({ surface, route: routeId, scenario: scenarioId });
     if (role) params.set("role", role);
+    if (variant) params.set("variant", variant);
     window.history.replaceState(null, "", `${window.location.pathname}?${params}`);
-  }, [role, routeId, scenarioId, surface]);
+  }, [role, routeId, scenarioId, surface, variant]);
+
+  const handleNavigate = useCallback((nextRoute) => {
+    setRouteId(nextRoute);
+    setVariant(null);
+  }, []);
 
   const handleSurfaceChange = (nextSurface) => {
     setSurface(nextSurface);
     setRouteId(surfaceDefaults[nextSurface]);
     setRole(normalizeRole(nextSurface, role));
+    setVariant(null);
   };
 
   const handleRoleChange = (nextRole) => {
@@ -168,12 +195,13 @@ export default function PrototypeApp() {
   const handleScenarioChange = (nextScenarioId) => {
     setScenarioId(nextScenarioId);
     setState(createScenarioState(nextScenarioId));
+    setVariant(null);
   };
 
   const surfaceModule = surfaceModules[surfaceRendererPaths[surface]];
   const SurfaceRenderer = surfaceModule?.default
     ?? surfaceModule?.[surfaceRendererNames[surface]];
-  const rendererProps = { routeId, role, state, dispatch, onNavigate: setRouteId };
+  const rendererProps = { routeId, role, state, dispatch, onNavigate: handleNavigate, aiVariant: variant, onAiVariantChange: setVariant };
 
   return (
     <PrototypeShell
@@ -183,7 +211,7 @@ export default function PrototypeApp() {
       role={role}
       routes={getRoutesForSurface(surface)}
       onSurfaceChange={handleSurfaceChange}
-      onRouteChange={setRouteId}
+      onRouteChange={handleNavigate}
       onScenarioChange={handleScenarioChange}
       onRoleChange={handleRoleChange}
     >
