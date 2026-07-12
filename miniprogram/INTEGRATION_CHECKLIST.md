@@ -2,6 +2,7 @@
 
 ## 1. 微信侧配置
 
+- 运行 `npm run preflight:wechat:strict`，确认退出码为 0。
 - 替换 `project.config.json` 中的真实 `appid`。
 - 微信公众平台配置服务器域名：
   - `request合法域名`：API Base URL。
@@ -12,6 +13,13 @@
   - TabBar 五项正常。
   - `wx.login()` 能返回真实 code。
   - 相册保存权限弹窗正常。
+
+发布准备记录统一填写：
+
+```text
+miniprogram/RELEASE_READINESS.md
+miniprogram/DEVICE_ACCEPTANCE_REPORT.md
+```
 
 ## 2. 前端环境切换
 

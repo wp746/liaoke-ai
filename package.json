@@ -19,6 +19,8 @@
     "validate:miniprogram": "node scripts/validate-miniprogram.js",
     "smoke:miniprogram": "node scripts/smoke-miniprogram-api.cjs",
     "smoke:api": "node scripts/smoke-http-api.cjs",
+    "preflight:wechat": "node scripts/preflight-wechat-devtools.cjs",
+    "preflight:wechat:strict": "node scripts/preflight-wechat-devtools.cjs --require-ready",
     "verify:all": "npm run validate:api-contract && npm run export:brand-kit && npm run validate:miniprogram && npm run smoke:miniprogram && npm run smoke:api && npm run build",
     "preview": "vite preview --host 0.0.0.0"
   },

@@ -12,6 +12,20 @@ appid: touristappid
 
 可以直接用游客 AppID 预览 mock 版本。正式联调时再换真实小程序 AppID。
 
+导入前先运行：
+
+```bash
+npm run preflight:wechat
+```
+
+正式体验版或上传前必须运行：
+
+```bash
+npm run preflight:wechat:strict
+```
+
+严格检查不通过时，不得宣称完成微信开发者工具编译或真机验收。
+
 ## 2. 当前测试模式
 
 默认是页面内 mock，不需要后端服务：

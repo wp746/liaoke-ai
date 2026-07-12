@@ -44,6 +44,7 @@ npm run validate:miniprogram
 npm run validate:api-contract
 npm run smoke:miniprogram
 npm run smoke:api
+npm run preflight:wechat
 npm run verify:all
 ```
 
@@ -74,6 +75,13 @@ npm run verify:all
 `validate:api-contract` 会检查接口文档、小程序 `api.js` 和本地 HTTP mock server 是否覆盖同一组核心 endpoint。
 
 `verify:all` 会串行运行品牌导出、小程序结构校验、接口契约校验、两套 smoke test 和网页构建。
+
+`preflight:wechat` 独立检查真实 AppID、微信开发者工具 CLI 和项目配置。当前发布就绪状态见：
+
+```text
+miniprogram/RELEASE_READINESS.md
+miniprogram/DEVICE_ACCEPTANCE_REPORT.md
+```
 
 ## 打开方式
 
