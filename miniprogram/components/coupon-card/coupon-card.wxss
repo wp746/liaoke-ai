@@ -1,18 +1,17 @@
 .coupon-card {
+  position: relative;
   display: flex;
-  align-items: stretch;
-  gap: 20rpx;
-  padding: 22rpx;
-  border: 1rpx solid #ebe1d2;
-  border-radius: 30rpx;
-  background: #ffffff;
-  box-shadow: 0 14rpx 34rpx rgba(82, 54, 24, 0.07);
-}
-
-.coupon-ribbon {
-  width: 12rpx;
-  border-radius: 999rpx;
-  background: linear-gradient(180deg, #ff4b1b, #f8b84d);
+  min-height: 176rpx;
+  align-items: center;
+  gap: 12rpx;
+  overflow: hidden;
+  padding: 22rpx 18rpx;
+  border: 1rpx solid rgba(255, 255, 255, .76);
+  border-radius: 44rpx;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(255, 243, 224, .76));
+  box-shadow: 0 22rpx 52rpx rgba(82, 54, 24, 0.09);
+  -webkit-backdrop-filter: blur(32rpx);
+  backdrop-filter: blur(32rpx);
 }
 
 .coupon-main {
@@ -24,30 +23,63 @@
 }
 
 .coupon-title {
-  color: #1f1f23;
+  color: var(--lk-ink-900);
   font-size: 29rpx;
   font-weight: 800;
 }
 
 .coupon-benefit {
-  color: #ff4b1b;
+  color: var(--lk-ember-600);
   font-size: 42rpx;
   font-weight: 900;
 }
 
 .coupon-note {
-  color: #696a72;
+  color: var(--lk-ink-600);
   font-size: 23rpx;
   line-height: 1.45;
 }
 
 .coupon-action {
+  position: relative;
+  display: flex;
+  min-width: 106rpx;
+  min-height: 88rpx;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   align-self: center;
-  min-width: 112rpx;
-  padding: 18rpx 22rpx;
-  border-radius: 999rpx;
-  background: #1f1f23;
-  color: #ffffff;
-  font-size: 24rpx;
+  overflow: hidden;
+  padding: 12rpx 16rpx;
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, .78);
+  color: var(--lk-ink-900);
+  font-size: 22rpx;
   font-weight: 800;
+}
+
+.coupon-action image {
+  position: absolute;
+  inset: -16rpx;
+  width: 138rpx;
+  height: 124rpx;
+  opacity: 0.06;
+}
+
+.coupon-action text {
+  position: relative;
+  z-index: 1;
+}
+
+.coupon-arrow {
+  color: var(--lk-ember-600);
+  font-size: 31rpx;
+  line-height: .8;
+}
+
+.coupon-card--used,
+.coupon-card--expired,
+.coupon-card--paused {
+  background: rgba(239, 237, 232, .92);
+  filter: grayscale(.58);
 }

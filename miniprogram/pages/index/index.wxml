@@ -1,53 +1,61 @@
-<view class="page with-tab home-page">
-  <brand-lockup />
-
-  <view class="hero section">
+<view class="page with-tab home-page {{reduceMotion ? 'reduce-motion' : ''}}">
+  <lk-liaoxiaoxing-moment scene-id="home">
     <view class="hero-copy">
-      <text class="table-ip">{{store.tableIpName}} · {{store.tableName}}</text>
-      <text class="store-name">{{store.name}}</text>
-      <text class="store-slogan">{{store.slogan}}</text>
-      <text class="hero-text">先领今天的吃肉券，再让燎小星帮你生成一张适合发朋友圈的火锅海报。</text>
+      <text class="eyebrow">{{store.tableIpName}} · {{store.tableName}}</text>
+      <text class="hero-title">欢迎落座，<br />今天也要吃好一点</text>
+      <text class="hero-body">{{store.name}} · {{store.slogan}}</text>
     </view>
-    <image class="hero-mascot" src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png" mode="aspectFit" />
-  </view>
+  </lk-liaoxiaoxing-moment>
 
   <view class="section">
     <view class="split-row section-title">
       <view>
-        <text class="tiny-label">今日福利</text>
-        <text class="heading">扫码进店专属券</text>
+        <text class="tiny-label">TODAY'S GIFT</text>
+        <text class="heading">今日到店权益</text>
       </view>
-      <text class="muted">MVP mock</text>
+      <button class="text-link lk-pressable" bindtap="goCoupon">全部权益 ›</button>
     </view>
     <coupon-card wx:if="{{todayCoupon}}" coupon="{{todayCoupon}}" action-text="查看" bind:action="goCoupon" />
-    <view wx:else class="claim-card card">
-      <text>新会员可领一张「今日吃肉券」</text>
+    <lk-glass-surface wx:else level="lens">
+      <view class="claim-card">
+        <lk-reward-glyph kind="dish" value="新客" />
+        <view class="claim-copy">
+          <text>你的第一张吃肉券已备好</text>
+          <text class="muted">点击领取，结账前出示即可</text>
+        </view>
+      </view>
       <button class="primary-btn" bindtap="handleIssueCoupon">领取今日吃肉券</button>
-    </view>
+    </lk-glass-surface>
   </view>
 
-  <view class="action-grid section">
-    <button class="action-card" bindtap="goAiPlay">
-      <text class="action-title">AI 朋友圈神器</text>
-      <text class="action-body">上传随手拍，生成文案和海报。</text>
-    </button>
-    <button class="action-card" bindtap="goReward">
-      <text class="action-title">赚燎星值</text>
-      <text class="action-body">领券、创作、邀请都能得奖励。</text>
-    </button>
+  <view class="metric-grid section">
+    <lk-glass-surface level="acrylic" interactive>
+      <button class="metric-card" bindtap="goCoupon">
+        <lk-reward-glyph kind="balance" value="{{todayCoupon ? '1张' : '待领'}}" />
+        <view><text class="metric-title">我的权益</text><text class="muted">随时查看可用券</text></view>
+      </button>
+    </lk-glass-surface>
+    <lk-glass-surface level="acrylic" interactive>
+      <button class="metric-card" bindtap="goReward">
+        <lk-reward-glyph kind="points" value="{{member.points}}" />
+        <view><text class="metric-title">我的积分</text><text class="muted">{{member.level}}</text></view>
+      </button>
+    </lk-glass-surface>
   </view>
 
-  <button class="group-entry section" bindtap="joinMemberGroup">
-    <view>
-      <text class="action-title">一键加入会员群</text>
-      <text class="action-body">{{store.groupJoinGuide}}</text>
-    </view>
-    <image src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png" mode="aspectFit" />
-  </button>
+  <lk-glass-surface level="solid" interactive>
+    <button class="ai-entry" bindtap="goAiPlay">
+      <lk-reward-glyph kind="ai" />
+      <view><text class="action-title">AI 创作一张今日食刻</text><text class="action-body">随手拍也能变成高级朋友圈素材</text></view>
+      <text class="entry-arrow">›</text>
+    </button>
+  </lk-glass-surface>
 
-  <mascot-card
-    title="燎小星"
-    image-src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png"
-    text="我会负责欢迎、领券、AI 创作和奖励提醒，不会强制你转发。"
-  />
+  <lk-glass-surface level="acrylic" interactive>
+    <button class="group-entry" bindtap="joinMemberGroup">
+      <lk-reward-glyph kind="group" />
+      <view><text class="action-title">加入会员福利群</text><text class="action-body">{{store.groupJoinGuide}}</text></view>
+      <text class="entry-arrow">›</text>
+    </button>
+  </lk-glass-surface>
 </view>

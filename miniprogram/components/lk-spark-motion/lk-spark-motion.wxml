@@ -1,0 +1,3 @@
+<view wx:if="{{active}}" class="lk-spark-motion lk-spark-motion--{{kind}} {{reduced ? 'is-reduced' : ''}}" aria-hidden="true">
+  <view></view><view></view><view></view><view></view>
+</view>

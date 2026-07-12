@@ -1,26 +1,17 @@
-.screen-head {
+.hero-copy {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18rpx;
-}
-
-.screen-head view {
-  display: flex;
-  min-width: 0;
-  flex: 1;
+  max-width: 350rpx;
   flex-direction: column;
   gap: 10rpx;
 }
 
-.screen-head image {
-  width: 150rpx;
-  height: 170rpx;
+.ai-label {
+  color: #007b9e;
 }
 
 .screen-title {
-  color: #1f1f23;
-  font-size: 43rpx;
+  color: var(--lk-ink-900);
+  font-size: 44rpx;
   font-weight: 900;
   line-height: 1.18;
 }
@@ -32,9 +23,8 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 2rpx dashed #f3b16b;
-  border-radius: 36rpx;
-  background: #fff8ec;
+  border-radius: var(--lk-radius-md);
+  background: radial-gradient(circle at 50% 35%, rgba(0, 194, 255, .10), transparent 48%);
 }
 
 .upload-state {
@@ -43,14 +33,14 @@
   top: 22rpx;
   padding: 12rpx 18rpx;
   border-radius: 999rpx;
-  background: rgba(31, 31, 35, 0.82);
+  background: rgba(0, 123, 158, 0.86);
   color: #ffffff;
   font-size: 22rpx;
   font-weight: 800;
 }
 
 .upload-state.done {
-  background: rgba(255, 75, 27, 0.9);
+  background: rgba(0, 123, 158, 0.92);
 }
 
 .upload-state.failed {
@@ -69,22 +59,9 @@
   gap: 12rpx;
 }
 
-.upload-icon {
-  display: flex;
-  width: 94rpx;
-  height: 94rpx;
-  align-items: center;
-  justify-content: center;
-  border-radius: 28rpx;
-  background: linear-gradient(135deg, #ff4b1b, #f8b84d);
-  color: #ffffff;
-  font-size: 60rpx;
-  font-weight: 600;
-}
-
 .upload-title,
 .input-label {
-  color: #1f1f23;
+  color: var(--lk-ink-900);
   font-size: 30rpx;
   font-weight: 900;
 }
@@ -115,8 +92,8 @@ textarea {
 .style-grid button {
   padding: 18rpx 22rpx;
   border-radius: 999rpx;
-  background: #f7f6f3;
-  color: #5f6068;
+  background: rgba(255, 255, 255, .72);
+  color: var(--lk-ink-600);
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -125,9 +102,19 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 18rpx;
+  padding: 28rpx;
 }
 
 .style-grid .active {
-  background: #1f1f23;
+  background: #007b9e;
   color: #ffffff;
+  box-shadow: 0 14rpx 28rpx rgba(0, 123, 158, .18);
+}
+
+.safety-note {
+  display: block;
+  margin-top: 16rpx;
+  color: var(--lk-ink-600);
+  font-size: 21rpx;
+  text-align: center;
 }

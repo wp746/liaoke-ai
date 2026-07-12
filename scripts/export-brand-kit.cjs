@@ -123,6 +123,21 @@ function main() {
     }
   }
 
+  const sceneAssetMap = [
+    ["public/brand/ip-liaoxiaoxing/scene-library/display/scene-home-welcome-transparent-v1-display.png", "miniprogram/assets/brand/scenes/scene-home-welcome.png"],
+    ["public/brand/ip-liaoxiaoxing/scene-library/display/scene-benefits-wallet-transparent-v1-display.png", "miniprogram/assets/brand/scenes/scene-benefits-wallet.png"],
+    ["public/brand/ip-liaoxiaoxing/scene-library/display/scene-ai-magic-transparent-v1-display.png", "miniprogram/assets/brand/scenes/scene-ai-magic.png"],
+    ["public/brand/ip-liaoxiaoxing/scene-library/display/scene-points-reward-transparent-v1-display.png", "miniprogram/assets/brand/scenes/scene-points-reward.png"],
+    ["public/brand/ip-liaoxiaoxing/scene-library/display/scene-profile-phone-cape-transparent-v2-display.png", "miniprogram/assets/brand/scenes/scene-profile-phone.png"]
+  ];
+  for (const [from, to] of sceneAssetMap) {
+    const source = path.join(root, from);
+    if (!fs.existsSync(source)) {
+      throw new Error(`Missing scene source: ${from}`);
+    }
+    copyIfNeeded(source, path.join(root, to));
+  }
+
   const appIcon = path.join(root, "brand-kit/exports/app-icon-1024.png");
   if (fs.existsSync(appIcon)) {
     copyIfNeeded(appIcon, path.join(root, "miniprogram/assets/brand/png/app-icon-1024.png"));

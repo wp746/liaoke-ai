@@ -1,24 +1,36 @@
-<view class="page with-tab me-page">
-  <view class="profile-card card">
-    <view class="avatar">{{member.avatarText}}</view>
-    <view>
+<view class="page with-tab me-page {{reduceMotion ? 'reduce-motion' : ''}}">
+  <lk-liaoxiaoxing-moment scene-id="profile">
+    <view class="profile-copy">
+      <text class="tiny-label">MY LIAOKE</text>
       <text class="nickname">{{member.nickname}}</text>
-      <text class="muted">{{member.level}} · {{member.points}} 燎星值</text>
+      <text class="member-level">{{member.level}}</text>
+      <text class="muted">{{member.points}} 可用积分</text>
     </view>
-  </view>
+  </lk-liaoxiaoxing-moment>
 
-  <view class="store-card soft-card section">
-    <text class="tiny-label">当前门店</text>
-    <text class="store-name">{{store.name}}</text>
-    <text class="muted">{{store.tableIpName}} · {{store.tableName}}</text>
-  </view>
+  <lk-glass-surface level="lens">
+    <view class="member-card">
+      <lk-reward-glyph kind="points" value="{{member.points}}" />
+      <view><text>燎客会员卡</text><text class="muted">{{store.name}} · {{store.tableName}}</text></view>
+      <text class="member-badge">{{member.level}}</text>
+    </view>
+  </lk-glass-surface>
 
-  <view class="menu-list section">
-    <button>会员资料</button>
-    <button>我的海报</button>
-    <button bindtap="goMemberGroup">加入会员福利群</button>
-    <button>联系客服</button>
-    <button bindtap="goMerchantVerify">商家核销入口</button>
-    <button bindtap="goMerchantDashboard">商家数据页</button>
-  </view>
+  <lk-glass-surface level="solid">
+    <view class="service-panel">
+      <view class="service-title"><text>我的服务</text><text class="muted">常用入口</text></view>
+      <button class="service-row lk-pressable"><lk-reward-glyph kind="store" /><text>会员资料</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
+      <button class="service-row lk-pressable"><lk-reward-glyph kind="ai" /><text>我的 AI 作品</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
+      <button class="service-row lk-pressable" bindtap="goMemberGroup"><lk-reward-glyph kind="group" /><text>加入会员福利群</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
+      <button class="service-row lk-pressable"><lk-reward-glyph kind="drink" /><text>联系客服</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
+    </view>
+  </lk-glass-surface>
+
+  <lk-glass-surface level="acrylic">
+    <view class="merchant-tools">
+      <text class="tiny-label">商家工具</text>
+      <button bindtap="goMerchantVerify">核销入口 ›</button>
+      <button bindtap="goMerchantDashboard">经营数据 ›</button>
+    </view>
+  </lk-glass-surface>
 </view>

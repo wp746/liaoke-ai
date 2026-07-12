@@ -1,0 +1,4 @@
+<view class="lk-liaoxiaoxing-moment {{compact ? 'is-compact' : ''}}">
+  <image class="lk-liaoxiaoxing-moment__image" src="{{imageSrc}}" mode="aspectFit" aria-hidden="{{decorative}}" />
+  <view class="lk-liaoxiaoxing-moment__content"><slot /></view>
+</view>

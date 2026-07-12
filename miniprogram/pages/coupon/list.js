@@ -5,10 +5,12 @@ Page({
     activeStatus: "unused",
     coupons: [],
     filteredCoupons: [],
-    selectedCoupon: null
+    selectedCoupon: null,
+    reduceMotion: false
   },
 
   onShow() {
+    this.setData({ reduceMotion: app.globalData.reduceMotion });
     app.bootstrap().then(() => this.refreshCoupons());
   },
 

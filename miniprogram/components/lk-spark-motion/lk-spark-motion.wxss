@@ -1,0 +1,34 @@
+.lk-spark-motion {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.lk-spark-motion view {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 6rpx;
+  background: var(--lk-reward-gold);
+  box-shadow: 0 0 24rpx rgba(248, 184, 77, .8);
+  animation: lk-spark-burst 900ms ease-out both;
+}
+
+.lk-spark-motion view:nth-child(2) { animation-delay: 70ms; transform: rotate(45deg); }
+.lk-spark-motion view:nth-child(3) { animation-delay: 120ms; }
+.lk-spark-motion view:nth-child(4) { animation-delay: 180ms; transform: rotate(45deg); }
+
+.lk-spark-motion.is-reduced view {
+  animation: none;
+  opacity: .42;
+}
+
+@keyframes lk-spark-burst {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.3); }
+  45% { opacity: 1; }
+  to { opacity: 0; transform: translate(calc(-50% + 110rpx), calc(-50% - 120rpx)) scale(1.15); }
+}

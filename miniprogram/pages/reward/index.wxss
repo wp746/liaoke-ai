@@ -1,33 +1,49 @@
-.reward-hero {
+.points-copy {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 38rpx;
-  border-radius: 42rpx;
-  background: linear-gradient(135deg, #1f1f23 0%, #5b2a16 62%, #ff6b1a 100%);
-  color: #ffffff;
-}
-
-.reward-hero view {
-  display: flex;
+  max-width: 310rpx;
   flex-direction: column;
-  gap: 10rpx;
-}
-
-.reward-hero .tiny-label,
-.reward-hero .muted {
-  color: rgba(255, 255, 255, 0.74);
+  gap: 9rpx;
 }
 
 .points {
-  font-size: 84rpx;
+  color: var(--lk-ink-900);
+  font-size: 82rpx;
   font-weight: 900;
   line-height: 1;
 }
 
-.reward-hero image {
-  width: 188rpx;
-  height: 210rpx;
+.points-unit {
+  color: #8a5b00;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.mall-entry {
+  display: flex;
+  min-height: 148rpx;
+  align-items: center;
+  gap: 14rpx;
+  padding: 20rpx 24rpx;
+}
+
+.mall-entry > view {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 8rpx;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.mall-entry .muted {
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.entry-arrow {
+  color: var(--lk-ember-600);
+  font-size: 46rpx;
 }
 
 .progress-card {
@@ -64,13 +80,12 @@
 
 .task-card {
   display: flex;
-  min-height: 226rpx;
+  min-height: 248rpx;
+  align-items: center;
   flex-direction: column;
   justify-content: space-between;
-  padding: 26rpx;
-  border-radius: 32rpx;
-  background: #ffffff;
-  box-shadow: 0 14rpx 34rpx rgba(82, 54, 24, 0.07);
+  padding: 20rpx;
+  text-align: center;
 }
 
 .task-title {
@@ -79,17 +94,38 @@
   font-weight: 900;
 }
 
-.task-points {
-  color: #ff4b1b;
-  font-size: 40rpx;
-  font-weight: 900;
-}
-
 .task-card button {
   padding: 16rpx 20rpx;
   border-radius: 999rpx;
-  background: #fff8ec;
-  color: #ff4b1b;
+  background: var(--lk-cream-100);
+  color: var(--lk-ember-600);
   font-size: 24rpx;
   font-weight: 800;
+}
+
+.points-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 28rpx;
+}
+
+.points-history > .split-row {
+  padding-bottom: 18rpx;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.points-history > view:not(.split-row) {
+  display: flex;
+  min-height: 82rpx;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1rpx solid var(--lk-line);
+  font-size: 25rpx;
+}
+
+.plus {
+  color: #8a5b00;
+  font-weight: 900;
 }

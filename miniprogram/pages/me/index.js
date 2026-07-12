@@ -3,14 +3,16 @@ const app = getApp();
 Page({
   data: {
     member: {},
-    store: {}
+    store: {},
+    reduceMotion: false
   },
 
   onShow() {
     app.bootstrap().then(({ member, store }) => {
       this.setData({
         member,
-        store
+        store,
+        reduceMotion: app.globalData.reduceMotion
       });
     });
   },

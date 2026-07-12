@@ -1,0 +1,69 @@
+.lk-reward-glyph {
+  position: relative;
+  display: flex;
+  width: 112rpx;
+  min-height: 112rpx;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--lk-ember-600);
+}
+
+.lk-reward-glyph__glass {
+  position: relative;
+  display: flex;
+  width: 88rpx;
+  height: 88rpx;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx solid rgba(255, 255, 255, .82);
+  border-radius: 30rpx 30rpx 38rpx 26rpx;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(255, 225, 185, .62));
+  box-shadow: inset 0 2rpx 0 rgba(255, 255, 255, .94), 0 18rpx 34rpx rgba(255, 75, 27, .14);
+}
+
+.lk-reward-glyph__glass text {
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.lk-reward-glyph__spark {
+  position: absolute;
+  right: 9rpx;
+  top: 8rpx;
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 4rpx;
+  background: var(--lk-reward-gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 16rpx rgba(248, 184, 77, .72);
+}
+
+.lk-reward-glyph__value {
+  margin-top: 5rpx;
+  font-size: 21rpx;
+  font-weight: 900;
+}
+
+.lk-reward-glyph--points,
+.lk-reward-glyph--referral {
+  color: #8a5b00;
+}
+
+.lk-reward-glyph--ai {
+  color: #007b9e;
+}
+
+.lk-reward-glyph--balance .lk-reward-glyph__glass,
+.lk-reward-glyph--drink .lk-reward-glyph__glass {
+  border-radius: 44rpx 44rpx 50rpx 50rpx;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .94), rgba(203, 242, 255, .68));
+}
+
+.lk-reward-glyph--used,
+.lk-reward-glyph--expired,
+.lk-reward-glyph--paused {
+  color: var(--lk-ink-600);
+  filter: grayscale(.8);
+  opacity: .66;
+}

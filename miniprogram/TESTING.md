@@ -2,11 +2,7 @@
 
 ## 1. 导入项目
 
-用微信开发者工具导入这个目录：
-
-```text
-/Users/wangpeng/Documents/Playground/AI 扫码牌/miniprogram
-```
+用微信开发者工具导入仓库内的 `miniprogram/`。
 
 当前 `project.config.json` 使用：
 
@@ -90,7 +86,7 @@ pages/ai-play/index
 - 海报页能看到燎小星有披肩形象。
 - 保存海报会走小程序 canvas 保存流程。
 
-### 路径 D：奖励
+### 路径 D：积分
 
 入口：
 
@@ -100,7 +96,7 @@ pages/reward/index
 
 测试：
 
-1. 查看燎星值、今日进度。
+1. 查看积分、等级进度和积分好物馆。
 2. 点击任务按钮。
 3. 点击邀请好友相关入口。
 
@@ -153,7 +149,27 @@ pages/merchant/dashboard
 - 今日数据正常展示。
 - 入群点击指标存在。
 
-## 4. 核心代码位置
+## 4. 五主页面视觉与状态验收
+
+每个页面必须在 iPhone 与 Android 真机各完成一轮，截图和录屏使用同一账号、同一数据与同一页面位置。
+
+| 页面 | 场景 ID | 正常 | 加载 | 空 | 错误 | 禁用 | 成功 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 首页 | `home` | Hero、今日权益、积分、AI 入口 | 发券按钮显示“发券中” | 无券时显示领取卡 | 发券失败 Toast | 重复提交不可触发 | 领券成功提示并出现券卡 |
+| 权益 | `benefits` | 三分类和立体券 Glyph | 列表加载期间保持骨架高度 | 分类无券显示空状态 | 加载失败 Toast | 已用/过期券为 Ash 状态 | 券码弹层正常打开 |
+| AI 创作 | `ai` | 图片、文本、风格工作台 | AI Cyan 上传状态 | 无图片仍可创作 | 上传失败状态可见 | 生成条件不足时不可重复提交 | 上传完成显示“AI 已就绪” |
+| 积分 | `points` | 积分、等级、任务、流水 | 数据加载不跳版 | 无任务时保留空容器 | 数据错误提示 | 已完成任务为 Ash 状态 | 任务完成 Toast 或正确跳转 |
+| 我的 | `profile` | 会员卡、我的服务、商家工具 | 会员数据加载不跳版 | 未登录显示登录入口 | 加载失败提示 | 无权限商家入口禁用 | 页面跳转正确 |
+
+额外视觉检查：
+
+1. 五个 Hero 均为 `340rpx × 340rpx` 场景框，动作不同但尺寸一致。
+2. 权益券和“我的服务”箭头下的燎小星暗纹透明度在 `0.04–0.09`。
+3. 关闭模糊后，所有文字、按钮与状态仍清晰可读。
+4. 开启 `liaoke_reduce_motion` 后无动画，但按压、筛选与业务流程仍可用。
+5. 顶部 Hero 与下方模块、末模块与 TabBar 之间保留明显间距。
+
+## 5. 核心代码位置
 
 ```text
 miniprogram/app.js                         启动、登录、门店与会员状态
@@ -164,7 +180,7 @@ miniprogram/pages/coupon/list/             券包与券码弹层
 miniprogram/pages/ai-play/                 上传/输入/选择风格
 miniprogram/pages/ai-result/               AI 文案候选
 miniprogram/pages/poster/preview/          海报预览与 canvas 保存
-miniprogram/pages/reward/                  奖励与任务
+miniprogram/pages/reward/                  积分与任务
 miniprogram/pages/merchant/verify/         商家核销
 miniprogram/pages/merchant/dashboard/      商家数据
 miniprogram/utils/api.js                   API 方法封装
@@ -172,9 +188,10 @@ miniprogram/utils/request.js               mock/HTTP 请求切换
 miniprogram/utils/mock-service.js          页面内 mock 服务
 miniprogram/utils/mock.js                  mock 数据
 miniprogram/assets/brand/ip/               有披肩燎小星 IP 资产
+miniprogram/assets/brand/scenes/           五页面正式场景资产
 ```
 
-## 5. 本地自动校验
+## 6. 本地自动校验
 
 在项目根目录运行：
 
@@ -191,7 +208,7 @@ npm run verify:all
 - HTTP mock API 是否跑通。
 - Web 演示页是否能构建。
 
-## 6. 切到本地 HTTP mock
+## 7. 切到本地 HTTP mock
 
 如果你想让微信开发者工具发真实 HTTP 请求到本机 mock API：
 

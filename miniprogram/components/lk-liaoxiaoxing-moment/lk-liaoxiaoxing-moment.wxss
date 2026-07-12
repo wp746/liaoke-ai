@@ -1,0 +1,38 @@
+.lk-liaoxiaoxing-moment {
+  position: relative;
+  display: flex;
+  min-height: 340rpx;
+  align-items: center;
+  overflow: hidden;
+  padding: 36rpx 300rpx 36rpx 36rpx;
+  border: 1rpx solid rgba(255, 255, 255, .72);
+  border-radius: var(--lk-radius-hero);
+  background:
+    radial-gradient(circle at 82% 28%, rgba(248, 184, 77, .24), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, .86), rgba(255, 244, 224, .72));
+  box-shadow: var(--lk-shadow-base);
+}
+
+.lk-liaoxiaoxing-moment__image {
+  position: absolute;
+  right: -6rpx;
+  top: 0;
+  width: 340rpx;
+  height: 340rpx;
+}
+
+.lk-liaoxiaoxing-moment__content {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.lk-liaoxiaoxing-moment.is-compact {
+  min-height: 180rpx;
+  padding-right: 180rpx;
+}
+
+.lk-liaoxiaoxing-moment.is-compact .lk-liaoxiaoxing-moment__image {
+  width: 190rpx;
+  height: 190rpx;
+}

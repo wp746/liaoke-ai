@@ -1,18 +1,20 @@
-<view class="page with-tab coupon-page">
-  <view class="wallet soft-card">
-    <view>
-      <text class="tiny-label">我的钱包</text>
-      <text class="wallet-title">{{filteredCoupons.length}} 张可用权益</text>
-      <text class="muted">结账前出示给店员核销</text>
+<view class="page with-tab coupon-page {{reduceMotion ? 'reduce-motion' : ''}}">
+  <lk-liaoxiaoxing-moment scene-id="benefits">
+    <view class="wallet-copy">
+      <text class="tiny-label">LIAOKE BENEFITS</text>
+      <text class="wallet-title">权益中心</text>
+      <text class="wallet-count">{{filteredCoupons.length}} 张当前可用</text>
+      <text class="muted">燎小星已经把好券收进你的钱包</text>
     </view>
-    <image src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png" mode="aspectFit" />
-  </view>
+  </lk-liaoxiaoxing-moment>
 
-  <view class="segment section">
-    <button class="{{activeStatus === 'unused' ? 'active' : ''}}" data-status="unused" bindtap="switchStatus">可用</button>
-    <button class="{{activeStatus === 'used' ? 'active' : ''}}" data-status="used" bindtap="switchStatus">已使用</button>
-    <button class="{{activeStatus === 'expired' ? 'active' : ''}}" data-status="expired" bindtap="switchStatus">已过期</button>
-  </view>
+  <lk-glass-surface level="acrylic">
+    <view class="segment">
+      <button data-status="unused" bindtap="switchStatus"><lk-liquid-lens active="{{activeStatus === 'unused'}}">可用</lk-liquid-lens></button>
+      <button data-status="used" bindtap="switchStatus"><lk-liquid-lens active="{{activeStatus === 'used'}}">已使用</lk-liquid-lens></button>
+      <button data-status="expired" bindtap="switchStatus"><lk-liquid-lens active="{{activeStatus === 'expired'}}">已过期</lk-liquid-lens></button>
+    </view>
+  </lk-glass-surface>
 
   <view class="coupon-list section">
     <coupon-card
@@ -22,18 +24,24 @@
       action-text="出示"
       bind:action="showCode"
     />
-    <view wx:if="{{filteredCoupons.length === 0}}" class="empty-state card">当前没有这类券</view>
+    <lk-glass-surface wx:if="{{filteredCoupons.length === 0}}" level="solid">
+      <view class="empty-state">
+        <lk-reward-glyph kind="balance" state="paused" />
+        <text>当前没有这类权益</text>
+        <text class="muted">换个分类看看，新的好券会出现在这里</text>
+      </view>
+    </lk-glass-surface>
   </view>
 
-  <mascot-card
-    compact
-    title="核销提醒"
-    image-src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png"
-    text="请在结账前打开券码，店员确认后再完成核销。"
-  />
+  <lk-glass-surface level="solid">
+    <view class="verify-note">
+      <lk-reward-glyph kind="store" />
+      <view><text>核销提醒</text><text class="muted">请在结账前打开券码，店员确认后再核销。</text></view>
+    </view>
+  </lk-glass-surface>
 
   <view wx:if="{{selectedCoupon}}" class="modal-mask" bindtap="closeCode">
-    <view class="code-modal" catchtap="noop">
+    <view class="code-modal lk-glass-solid" catchtap="noop">
       <text class="code-title">{{selectedCoupon.title}}</text>
       <text class="code-benefit">{{selectedCoupon.benefit}}</text>
       <view class="fake-qrcode">

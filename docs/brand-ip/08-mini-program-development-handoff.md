@@ -34,11 +34,13 @@
 | `GlassSurface` | `lk-glass-surface` | Base / Acrylic / Lens / Solid 材质 |
 | `LiquidLens` | `lk-liquid-lens` | Tab、筛选和焦点滑动层 |
 | `RewardGlyph` | `lk-reward-glyph` | 券、余额、积分、AI、风险对象 |
-| `SparkTrail` | `lk-spark-trail` | 轻量 CSS/WXSS 尾焰 |
+| `SparkTrail` | `lk-spark-motion` | 轻量 CSS/WXSS 尾焰与成功反馈 |
 | `LiaoxiaoxingMoment` | `lk-liaoxiaoxing-moment` | 场景角色、统一尺寸和出现条件 |
-| `MotionStage` | `lk-motion-stage` | 高价值节点的 Galacean 与静态降级 |
+| `MotionStage` | 后续 `lk-motion-stage` | 高价值节点的 Galacean 与静态降级 |
 
 业务页面只能组合这些组件，不得复制其内部样式后自行修改。
+
+首批原生实现位于 `miniprogram/components/lk-*`；新增页面必须直接复用，不得另起同义组件。
 
 ## 8.4 首批样板页
 
@@ -127,3 +129,19 @@ P0 未全部通过，不应认定视觉交付完成。
 - 性能、减少动态效果和无障碍测试报告。
 - 已知偏差清单；无偏差时明确写“无”。
 - 视觉验收签字表。
+
+## 8.10 原生用户端生产基线
+
+仓库内以下内容已作为开发公司可直接执行的首批生产基线：
+
+- `miniprogram/app.wxss`：跨页面 `--lk-*` Token、暖白降级、Press 与减少动态效果。
+- `miniprogram/assets/brand/scenes/manifest.js`：五页面场景唯一映射。
+- `miniprogram/components/lk-*`：五个共享视觉组件。
+- `miniprogram/pages/index/`：首页样板。
+- `miniprogram/pages/coupon/`：权益样板。
+- `miniprogram/pages/ai-play/`：AI 创作样板。
+- `miniprogram/pages/reward/`：积分样板。
+- `miniprogram/pages/me/`：我的样板。
+- `tests/unit/miniprogram-visual-system.test.js`：视觉合同自动化闸口。
+
+任何后续增删改查都必须保持该测试通过；如果业务需求确需改变视觉合同，应先修改正式规范并获得书面批准，再更新测试和实现。
