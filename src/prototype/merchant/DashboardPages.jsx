@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { Sparkline } from "../components/Charts.jsx";
-import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { GlassSurface } from "../components/Glass.jsx";
+import { PrimaryButton, StatusPill } from "../components/Ui.jsx";
 import { canMerchant } from "../permissions.js";
 
 const roleIdentity = {
@@ -55,11 +56,11 @@ export function MerchantLogin({ role, state, onNavigate }) {
       <StatusPill status="success">身份已安全识别</StatusPill>
       <h1>商家登录</h1>
       <p>使用当前原型身份进入对应的门店工作台。</p>
-      <SurfaceCard tone="warm">
+      <GlassSurface level="solid" className="ui-card ui-card--warm merchant-operations-panel">
         <span className="merchant-eyebrow"><Store size={14} /> 当前门店</span>
         <strong>{state.store.name}</strong>
         <span>{identity.role} · {identity.name}</span>
-      </SurfaceCard>
+      </GlassSurface>
       <PrimaryButton onClick={() => onNavigate(targetRoute)}>进入{identity.destination}</PrimaryButton>
       <small>演示环境不会连接真实微信账号</small>
     </main>
@@ -72,7 +73,7 @@ function StoreStatus({ role, state, dispatch }) {
   const toggle = () => dispatch({ type: paused ? "RESUME_STORE" : "PAUSE_STORE", actorRole: role });
 
   return (
-    <SurfaceCard tone={paused ? "plain" : "warm"}>
+    <GlassSurface level="solid" className={`ui-card ui-card--${paused ? "plain" : "warm"} merchant-operations-panel`}>
       <div className="merchant-section-heading">
         <div>
           <span className="merchant-eyebrow"><Store size={14} /> 门店状态</span>
@@ -84,7 +85,7 @@ function StoreStatus({ role, state, dispatch }) {
       {canUpdate
         ? <button type="button" className="merchant-secondary-action" onClick={toggle}>{paused ? "恢复营业" : "暂停营业"}</button>
         : <small className="merchant-readonly">仅老板可调整营业状态</small>}
-    </SurfaceCard>
+    </GlassSurface>
   );
 }
 
@@ -110,17 +111,17 @@ export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
         </PrimaryButton>
       </section>
 
-      <section className="merchant-metrics" aria-label="今日六项核心经营指标">
+      <GlassSurface as="section" level="solid" className="merchant-metrics" aria-label="今日六项核心经营指标">
         {metrics.map((metric) => (
-          <article key={metric.label}>
+          <article className="merchant-metric-card" key={metric.label}>
             <span>{metric.label}</span>
             <strong>{metric.value}</strong>
             <small>{metric.delta}</small>
           </article>
         ))}
-      </section>
+      </GlassSurface>
 
-      <SurfaceCard tone="plain">
+      <GlassSurface level="solid" className="ui-card ui-card--plain merchant-operations-panel">
         <div className="merchant-section-heading">
           <div><span className="merchant-eyebrow"><CalendarDays size={14} /> 经营趋势</span><strong>扫码与老带新订单</strong></div>
           <div className="merchant-range" aria-label="趋势范围">
@@ -131,7 +132,7 @@ export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
           <div><span><i className="is-scan" /> 扫码人数</span><Sparkline values={trend.scans} label={`近${days}天扫码人数趋势`} /></div>
           <div><span><i className="is-referral" /> 老带新订单</span><Sparkline values={trend.referrals} label={`近${days}天老带新订单趋势`} /></div>
         </div>
-      </SurfaceCard>
+      </GlassSurface>
 
       <StoreStatus role={role} state={state} dispatch={dispatch} />
 
@@ -148,7 +149,7 @@ export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
 
       <section className="merchant-recent">
         <div className="merchant-section-heading"><h2>最近核销</h2><button type="button" onClick={() => onNavigate("verify-history")}>查看全部</button></div>
-        <div className="merchant-verification-list">
+        <GlassSurface as="div" level="solid" className="merchant-verification-list">
           {recentVerifications.map((item) => (
             <article key={`${item.time}-${item.member}`}>
               <span className="merchant-verification-icon"><QrCode size={16} /></span>
@@ -156,7 +157,7 @@ export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
               <b>{item.value}</b>
             </article>
           ))}
-        </div>
+        </GlassSurface>
       </section>
     </main>
   );

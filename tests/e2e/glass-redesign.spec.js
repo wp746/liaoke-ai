@@ -84,3 +84,18 @@ test("entry success empty and poster mascots use Liaoxiaoxing moments", async ({
   await page.getByRole("button", { name: "选这版" }).first().click();
   await expect(page.locator(".customer-ai__poster-moment .brand-mascot")).toHaveCount(1);
 });
+
+test("merchant verification has distinct glyphs on one acrylic workbench", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=staff&scenario=points-verification&route=verify-hub");
+  await expect(page.locator('[data-glass-level="acrylic"].merchant-verify-grid')).toHaveCount(1);
+  await expect(page.locator('[data-glyph-kind="store"]')).toHaveCount(2);
+  for (const kind of ["balance", "referral", "points"]) {
+    await expect(page.locator(`[data-glyph-kind="${kind}"]`)).toHaveCount(1);
+  }
+});
+
+test("merchant redesign does not widen staff access", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=staff&route=activities");
+  await expect(page.getByRole("heading", { name: "当前角色无法访问" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "发布活动" })).toHaveCount(0);
+});

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle2, Clock3, Gift, History, Keyboard, ScanLine, Ticket, WalletCards } from "lucide-react";
-import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { GlassSurface, RewardGlyph } from "../components/Glass.jsx";
+import { PrimaryButton, StatusPill } from "../components/Ui.jsx";
 
 export const verificationTypes = {
   coupon: { label: "扫码核销", icon: ScanLine, title: "到店优惠券", code: "CP-20260711-0088", value: "满 100 减 20", cash: "¥ 128.00" },
@@ -8,6 +9,14 @@ export const verificationTypes = {
   balance: { label: "余额核销", icon: WalletCards, title: "会员余额抵扣", code: "BL-20260711-0032", value: "抵扣 ¥ 30", cash: "¥ 168.00" },
   referral_coupon: { label: "老带新抵扣券核销", icon: Ticket, title: "老带新抵扣券", code: "RC-20260711-0019", value: "满 100 减 10", cash: "¥ 136.00" },
   points_redemption: { label: "积分兑换核销", icon: Gift, title: "酸梅汤一杯", code: "AB7X3K2Q", value: "500 积分" },
+};
+
+export const verificationGlyphKinds = {
+  coupon: "store",
+  manual: "store",
+  balance: "balance",
+  referral_coupon: "referral",
+  points_redemption: "points",
 };
 
 const outcomeCopy = {
@@ -25,12 +34,9 @@ function VerificationHub({ onChoose, onNavigate }) {
   return (
     <main className="merchant-page merchant-verify">
       <div className="merchant-page-heading"><StatusPill status="success">核销服务正常</StatusPill><h1>核销工作台</h1><p>选择权益类型后扫码，也可以手动输入核销码。</p></div>
-      <div className="merchant-verify-grid">
-        {Object.entries(verificationTypes).map(([id, item]) => {
-          const Icon = item.icon;
-          return <button type="button" key={id} onClick={() => onChoose(id)}><Icon size={20} /><strong>{item.label}</strong><span>扫码或输入券码</span></button>;
-        })}
-      </div>
+      <GlassSurface as="div" level="acrylic" className="merchant-verify-grid">
+        {Object.entries(verificationTypes).map(([id, item]) => <button type="button" key={id} className="glass-surface is-interactive" onClick={() => onChoose(id)}><RewardGlyph kind={verificationGlyphKinds[id]} /><strong>{item.label}</strong><span>扫码或输入券码</span></button>)}
+      </GlassSurface>
       <button type="button" className="merchant-secondary-action" onClick={() => onNavigate("verify-history")}><History size={14} /> 查看核销记录</button>
     </main>
   );
@@ -42,7 +48,7 @@ function CodeEntry({ type, manual, code, setCode, onNavigate }) {
     <main className="merchant-page merchant-verify merchant-code-entry">
       <div className="merchant-page-heading"><StatusPill status="plain">{item.label}</StatusPill><h1>{manual ? "输入核销码" : "扫描顾客权益码"}</h1><p>{manual ? "支持英文和数字，提交前请与顾客确认。" : "将顾客二维码放入取景框，或改用手动输入。"}</p></div>
       {manual ? (
-        <SurfaceCard tone="plain"><label htmlFor="verification-code">核销码</label><input id="verification-code" value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} placeholder="请输入核销码" /><PrimaryButton disabled={!code.trim()} onClick={() => onNavigate("verify-confirm")}>查询权益</PrimaryButton></SurfaceCard>
+        <GlassSurface level="solid" className="ui-card ui-card--plain merchant-form-surface"><label htmlFor="verification-code">核销码</label><input id="verification-code" value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} placeholder="请输入核销码" /><PrimaryButton disabled={!code.trim()} onClick={() => onNavigate("verify-confirm")}>查询权益</PrimaryButton></GlassSurface>
       ) : (
         <div className="merchant-scan-stage"><ScanLine size={52} /><span>等待扫描</span><PrimaryButton onClick={() => onNavigate("verify-confirm")}>模拟扫描</PrimaryButton></div>
       )}
@@ -57,7 +63,7 @@ function ConfirmVerification({ type, code, outcome, setOutcome, processing, onCo
   return (
     <main className="merchant-page merchant-verify merchant-confirm">
       <div className="merchant-page-heading"><StatusPill status="success">权益有效</StatusPill><h1>确认核销信息</h1><p>请与顾客核对权益内容后再确认。</p></div>
-      <SurfaceCard tone="warm"><span className="merchant-eyebrow">{item.label}</span><h2>{item.title}</h2><strong className="merchant-verify-value">{item.value}</strong><small>核销码 {code}</small>{!points && <div className="merchant-cash-row"><span>应收金额</span><strong>{item.cash}</strong></div>}</SurfaceCard>
+      <GlassSurface level="solid" className="ui-card ui-card--warm merchant-confirm-surface"><span className="merchant-eyebrow">{item.label}</span><h2>{item.title}</h2><strong className="merchant-verify-value">{item.value}</strong><small>核销码 {code}</small>{!points && <div className="merchant-cash-row"><span>应收金额</span><strong>{item.cash}</strong></div>}</GlassSurface>
       <label className="merchant-demo-select">演示结果<select value={outcome} onChange={(event) => setOutcome(event.target.value)}>{Object.keys(outcomeCopy).map((id) => <option value={id} key={id}>{outcomeCopy[id].title}</option>)}</select></label>
       <PrimaryButton disabled={processing} onClick={onConfirm}>{processing ? "核销处理中…" : points ? "确认已交付赠品" : "确认核销"}</PrimaryButton>
       {processing && <p role="status" className="merchant-processing"><Clock3 size={16} /> 正在校验并写入核销记录</p>}
@@ -73,8 +79,8 @@ function VerificationResult({ outcome, role, record, onNavigate }) {
       <CheckCircle2 size={58} aria-hidden="true" />
       <StatusPill status={result.status}>{success ? "已完成" : "核销提示"}</StatusPill>
       <h1>{result.title}</h1><p>{result.body}</p>
-      {success && <SurfaceCard tone="plain"><span>核销员工</span><strong>{record?.verifierName ?? verifierNames[role]}</strong><span>核销时间</span><strong>{record?.timestamp ?? "2026-07-11 14:32:08"}</strong></SurfaceCard>}
-      {outcome === "timeout-query" && <SurfaceCard tone="warm"><strong>查询状态：未核销</strong><span>查询单号 VER-20260711-143208</span><span>若查询仍未完成，可安全重试；服务端会保持幂等。</span></SurfaceCard>}
+      {success && <GlassSurface level="solid" className="ui-card ui-card--plain merchant-confirm-surface"><span>核销员工</span><strong>{record?.verifierName ?? verifierNames[role]}</strong><span>核销时间</span><strong>{record?.timestamp ?? "2026-07-11 14:32:08"}</strong></GlassSurface>}
+      {outcome === "timeout-query" && <GlassSurface level="solid" className="ui-card ui-card--warm merchant-confirm-surface"><strong>查询状态：未核销</strong><span>查询单号 VER-20260711-143208</span><span>若查询仍未完成，可安全重试；服务端会保持幂等。</span></GlassSurface>}
       <PrimaryButton onClick={() => onNavigate(outcome === "timeout-query" ? "verify-confirm" : "verify-hub")}>{outcome === "timeout-query" ? "重新核销" : "继续核销"}</PrimaryButton>
     </main>
   );
@@ -82,7 +88,7 @@ function VerificationResult({ outcome, role, record, onNavigate }) {
 
 function VerificationHistory({ role, records }) {
   const visibleRecords = records.filter((record) => role === "owner" || record.verifierRole === role);
-  return <main className="merchant-page merchant-verify"><div className="merchant-page-heading"><StatusPill status="plain">仅展示权限范围内记录</StatusPill><h1>核销记录</h1><p>{role === "owner" ? "全店最近核销" : "当前账号最近核销"}</p></div><div className="merchant-verification-list">{visibleRecords.map((record, index) => { const Icon = verificationTypes[record.type]?.icon ?? Ticket; return <article key={`${record.code}-${record.timestamp}-${index}`}><div className="merchant-verification-icon"><Icon size={15} /></div><div><strong>{record.item} · {record.value}</strong><span>{record.code}</span><span>{record.verifierName} · {record.timestamp}</span></div><b>{record.status === "success" ? "成功" : record.status}</b></article>; })}</div></main>;
+  return <main className="merchant-page merchant-verify"><div className="merchant-page-heading"><StatusPill status="plain">仅展示权限范围内记录</StatusPill><h1>核销记录</h1><p>{role === "owner" ? "全店最近核销" : "当前账号最近核销"}</p></div><GlassSurface as="div" level="solid" className="merchant-verification-list">{visibleRecords.map((record, index) => { const Icon = verificationTypes[record.type]?.icon ?? Ticket; return <article key={`${record.code}-${record.timestamp}-${index}`}><div className="merchant-verification-icon"><Icon size={15} /></div><div><strong>{record.item} · {record.value}</strong><span>{record.code}</span><span>{record.verifierName} · {record.timestamp}</span></div><b>{record.status === "success" ? "成功" : record.status}</b></article>; })}</GlassSurface></main>;
 }
 
 export function VerificationPages({ routeId, role, state, dispatch, onNavigate }) {

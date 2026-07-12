@@ -3,14 +3,38 @@ import { expect, test } from "@playwright/test";
 test("verification modes render as five distinct legible controls", async ({ page }) => {
   await page.goto("/?surface=merchant&role=staff&route=verify-hub");
 
+  const workbench = page.locator(".merchant-verify-grid");
+  await expect(workbench).toHaveAttribute("data-glass-level", "acrylic");
+  await expect(workbench).toHaveCSS("backdrop-filter", "blur(12px)");
   const controls = page.locator(".merchant-verify-grid > button");
   await expect(controls).toHaveCount(5);
   for (const control of await controls.all()) {
     await expect(control).toHaveCSS("display", "grid");
-    await expect(control).toHaveCSS("background-color", "rgb(255, 255, 255)");
-    await expect(control.locator("strong")).toBeVisible();
-    await expect(control.locator("span")).toBeVisible();
+    await expect(control.locator(":scope > strong")).toBeVisible();
+    await expect(control.locator(":scope > span:last-child")).toBeVisible();
   }
+});
+
+test("merchant operational groups stay solid and keep mascots out of lists and forms", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=owner&route=merchant-dashboard");
+  await expect(page.locator('.merchant-metrics[data-glass-level="solid"]')).toHaveCount(1);
+
+  await page.goto("/?surface=merchant&role=manager&route=members");
+  await expect(page.locator('.merchant-member-list[data-glass-level="solid"]')).toHaveCount(1);
+  await expect(page.locator(".merchant-member-list .brand-mascot")).toHaveCount(0);
+
+  await page.goto("/?surface=merchant&role=owner&route=activity-editor");
+  await expect(page.locator('.merchant-operations-panel[data-glass-level="solid"]')).toHaveCount(1);
+  await expect(page.locator(".merchant-operations-panel .brand-mascot")).toHaveCount(0);
+
+  await page.goto("/?surface=merchant&role=owner&route=activities");
+  await expect(page.locator('.merchant-activity-list[data-glass-level="solid"]')).toHaveCount(1);
+
+  await page.goto("/?surface=merchant&role=owner&route=employees");
+  await expect(page.locator('.merchant-employee-panel[data-glass-level="solid"]')).toHaveCount(3);
+
+  await page.goto("/?surface=merchant&role=staff&route=verify-confirm");
+  await expect(page.locator('.merchant-confirm-surface[data-glass-level="solid"]')).toHaveCount(1);
 });
 
 test("captures the two merchant handoff screenshots", async ({ page }) => {

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Bot, ChevronRight, Coins, Crown, Search, Sparkles, Ticket, TrendingUp, UserRound } from "lucide-react";
-import { StatusPill, SurfaceCard } from "../components/Ui.jsx";
+import { GlassSurface } from "../components/Glass.jsx";
+import { StatusPill } from "../components/Ui.jsx";
 
 const memberFacts = {
   "MEM-20260710-01": { joined: "2026-03-18", lastVisitDays: 2, growth: 1280, nextLevel: 220, spent: "¥ 2,860", aiUses: 12, lastAi: "2026-07-10 20:16" },
@@ -31,16 +32,16 @@ function MemberList({ members, onOpen }) {
         <label>最近到店<select aria-label="最近到店" value={recentDays} onChange={(event) => setRecentDays(event.target.value)}><option value="all">不限</option><option value="7">近 7 天</option><option value="30">近 30 天</option></select></label>
         <label>老带新人数<select aria-label="老带新人数" value={referrals} onChange={(event) => setReferrals(event.target.value)}><option value="all">不限</option><option value="1">至少 1 人</option><option value="3">至少 3 人</option><option value="5">至少 5 人</option></select></label>
       </div>
-      <div className="merchant-member-list" aria-live="polite">
+      <GlassSurface as="div" level="solid" className="merchant-member-list" aria-live="polite">
         {visibleMembers.map((member) => <button type="button" key={member.id} onClick={() => onOpen(member.id)} aria-label={`${member.name} ${member.maskedPhone} 查看详情`}><span className="merchant-member-avatar"><UserRound size={18} /></span><span><strong>{member.name}</strong><small>{member.maskedPhone} · {member.level}</small><small>到店 {member.visits} 次 · 老带新 {member.referrals} 人</small></span><ChevronRight size={16} /></button>)}
-        {!visibleMembers.length && <SurfaceCard tone="plain"><strong>没有匹配的会员</strong><span>试试清空筛选条件或输入其他关键词。</span></SurfaceCard>}
-      </div>
+        {!visibleMembers.length && <div className="merchant-member-empty"><strong>没有匹配的会员</strong><span>试试清空筛选条件或输入其他关键词。</span></div>}
+      </GlassSurface>
     </main>
   );
 }
 
 function DetailSection({ icon: Icon, title, children }) {
-  return <SurfaceCard tone="plain"><div className="merchant-member-section-title"><Icon size={15} /><h2>{title}</h2></div>{children}</SurfaceCard>;
+  return <GlassSurface level="solid" className="ui-card ui-card--plain merchant-operations-panel"><div className="merchant-member-section-title"><Icon size={15} /><h2>{title}</h2></div>{children}</GlassSurface>;
 }
 
 function MemberDetail({ member }) {
