@@ -215,7 +215,7 @@ test("reduced motion keeps selected state without trail movement", async ({ page
   await expect(page.locator(".spark-trail.is-active")).toHaveCSS("animation-name", "none");
 });
 
-test("captures four stable Spark Glass handoff views", async ({ browser }) => {
+test("captures five stable Spark Glass handoff views", async ({ browser }) => {
   const captures = [
     ["/?surface=customer&route=benefits&scenario=returning-customer", "artifacts/screenshots/glass/customer-benefits.png"],
     ["/?surface=customer&route=home&scenario=returning-customer", "artifacts/screenshots/glass/customer-home.png"],

@@ -25,7 +25,7 @@ npm run test:e2e
 npm run verify:all
 ```
 
-- `npm test`：运行 33 个 Node 单元测试，覆盖路由注册表、场景状态、权限、AI 直达状态、动效生命周期和 Spark Glass 降级合同。
+- `npm test`：运行 34 个 Node 单元测试，覆盖路由注册表、场景状态、权限、AI 直达状态、动效生命周期和 Spark Glass 降级合同。
 - `npm run test:e2e`：启动 Playwright 配置的本地 Vite 服务并执行 146 个浏览器测试；覆盖全部 56 个路由、五条主流程、响应式、权限、动效降级、大面积玻璃层预算和稳定截图生成。
 - `npm run verify:all`：依次验证 API 合同、导出品牌包、校验原生小程序、运行小程序/API 冒烟测试并构建 Vite 产物。它不替代 `npm test` 或 `npm run test:e2e`，三条命令应分别执行。
 
