@@ -36,7 +36,7 @@
 - Produces `RewardGlyph({ kind, state, value, className })`; kinds are `store|dish|group|drink|balance|points|referral|risk|ai`, states are `active|used|expired|paused`.
 - Produces `SparkTrail({ active, className })` and `LiaoxiaoxingMoment({ kind, className, children })`.
 
-- [ ] **Step 1: Write failing contracts**
+- [x] **Step 1: Write failing contracts**
 
 ```js
 // tests/unit/glass-system.test.js
@@ -72,12 +72,12 @@ test("glyphs expose kind and non-color state text", async () => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `node --test tests/unit/glass-system.test.js`
 Expected: FAIL because `Glass.jsx` does not exist.
 
-- [ ] **Step 3: Implement the primitive module**
+- [x] **Step 3: Implement the primitive module**
 
 ```jsx
 // src/prototype/components/Glass.jsx
@@ -102,7 +102,7 @@ export function SparkTrail({ active = false, className = "" }) { return <span ar
 export function LiaoxiaoxingMoment({ kind = "coupon", className = "", children }) { return <div className={`liaoxiaoxing-moment liaoxiaoxing-moment--${kind} ${className}`.trim()}><BrandMascot kind={kind} />{children}</div>; }
 ```
 
-- [ ] **Step 4: Implement tokens, fallback, interaction, and reduced motion**
+- [x] **Step 4: Implement tokens, fallback, interaction, and reduced motion**
 
 ```css
 /* src/prototype/styles/glass.css */
@@ -136,14 +136,14 @@ export function LiaoxiaoxingMoment({ kind = "coupon", className = "", children }
 @media (prefers-reduced-motion: reduce) { .glass-surface.is-interactive,.spark-trail.is-active { animation: none; transition: none; transform: none; } }
 ```
 
-- [ ] **Step 5: Import and verify GREEN**
+- [x] **Step 5: Import and verify GREEN**
 
 Add `@import "./prototype/styles/glass.css";` after tokens in `src/styles.css`.
 
 Run: `node --test tests/unit/glass-system.test.js && npm run build`
 Expected: tests and build PASS; no new package or initial chunk.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/prototype/components/Glass.jsx src/prototype/styles/glass.css src/styles.css tests/unit/glass-system.test.js
@@ -164,7 +164,7 @@ git commit -m "feat: add Spark Glass primitives"
 - Consumes all Task 1 primitives.
 - Produces one Liaoxiaoxing Hero moment, one active tab lens, one acrylic coupon sheet, and exact coupon glyph mapping: `01→store`, `02→dish`, used `01→group`, `20→drink`.
 
-- [ ] **Step 1: Write failing reference-screen tests**
+- [x] **Step 1: Write failing reference-screen tests**
 
 ```js
 // tests/e2e/glass-redesign.spec.js
@@ -183,12 +183,12 @@ test("benefit tabs move the lens and keep content accessible", async ({ page }) 
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npx playwright test tests/e2e/glass-redesign.spec.js`
 Expected: FAIL because the current page has flat cards and no semantic glyphs.
 
-- [ ] **Step 3: Implement exact semantic mapping and grouped markup**
+- [x] **Step 3: Implement exact semantic mapping and grouped markup**
 
 ```jsx
 import { GlassSurface, LiaoxiaoxingMoment, LiquidLens, RewardGlyph, SparkTrail } from "../components/Glass.jsx";
@@ -206,7 +206,7 @@ function CouponRow({ coupon, onOpen }) {
 
 Wrap the heading in `<LiaoxiaoxingMoment kind="coupon" className="customer-benefits-hero">`; wrap tabs in one `GlassSurface`; wrap each label in `LiquidLens`; add `SparkTrail`; wrap all coupon rows in one `GlassSurface level="acrylic" className="customer-coupon-sheet"`.
 
-- [ ] **Step 4: Implement the approved restrained density**
+- [x] **Step 4: Implement the approved restrained density**
 
 ```css
 .customer-page:has(.customer-benefits-hero) { background: radial-gradient(circle at 76% 5%,rgba(248,184,77,.18),transparent 34%),linear-gradient(180deg,#fffdf8,#faf6ee); }
@@ -222,14 +222,14 @@ Wrap the heading in `<LiaoxiaoxingMoment kind="coupon" className="customer-benef
 .customer-coupon-row small { margin-top: 7px; color: var(--ink-600); font-size: 9px; }
 ```
 
-- [ ] **Step 5: Verify and capture**
+- [x] **Step 5: Verify and capture**
 
 Run: `npx playwright test tests/e2e/glass-redesign.spec.js`
 Expected: 2 tests PASS.
 
 Capture after fonts and two animation frames to `artifacts/screenshots/glass/benefits-reference.png`; compare with `docs/superpowers/specs/assets/liaoke-restrained-glass-benefits.png`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/prototype/customer/BenefitPages.jsx src/prototype/styles/customer.css tests/e2e/glass-redesign.spec.js artifacts/screenshots/glass/benefits-reference.png
@@ -255,7 +255,7 @@ git commit -m "feat: redesign customer benefits with Spark Glass"
 - Produces a floating acrylic bottom dock and semantic `ai`, `points`, `balance`, and `referral` glyphs.
 - Preserves all customer URLs, clipboard/download behavior, points gates, and six Galacean mount kinds.
 
-- [ ] **Step 1: Write failing customer-wide contracts**
+- [x] **Step 1: Write failing customer-wide contracts**
 
 ```js
 test("customer nav is a floating glass dock with one AI lens", async ({ page }) => {
@@ -274,12 +274,12 @@ test("points and balance have distinct glyphs without list mascots", async ({ pa
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "customer nav|points and balance"`
 Expected: FAIL because navigation and object families do not expose the new contracts.
 
-- [ ] **Step 3: Convert the bottom navigation**
+- [x] **Step 3: Convert the bottom navigation**
 
 ```jsx
 // MiniProgramFrame.jsx
@@ -303,7 +303,7 @@ import { LiquidLens } from "./Glass.jsx";
 .mini-program-tabs--glass button.is-featured .liquid-lens { background: var(--brand-gradient); color: #fff; box-shadow: 0 9px 20px rgba(255,75,27,.22); }
 ```
 
-- [ ] **Step 4: Apply exact object semantics**
+- [x] **Step 4: Apply exact object semantics**
 
 ```jsx
 // AiPages.jsx composer shell
@@ -318,12 +318,12 @@ import { LiquidLens } from "./Glass.jsx";
 
 Wrap existing entry/success/empty/error mascots in `LiaoxiaoxingMoment`. Do not add mascot images to product, transaction, referral-record, or coupon rows.
 
-- [ ] **Step 5: Verify customer and motion regressions**
+- [x] **Step 5: Verify customer and motion regressions**
 
 Run: `npm test && npx playwright test tests/e2e/customer-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/motion.spec.js`
 Expected: all PASS; Galacean kinds remain `entry,ai,claim,poster,redeem,upgrade`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/prototype/components/MiniProgramFrame.jsx src/prototype/styles/mobile.css src/prototype/customer src/prototype/styles/customer.css tests/e2e/customer-flows.spec.js tests/e2e/glass-redesign.spec.js
@@ -348,7 +348,7 @@ git commit -m "feat: extend Spark Glass across customer flows"
 - Uses lower blur and no full mascot art in lists/forms.
 - Preserves owner/manager/staff gates.
 
-- [ ] **Step 1: Write failing merchant contracts**
+- [x] **Step 1: Write failing merchant contracts**
 
 ```js
 test("merchant verification has distinct glyphs on one acrylic workbench", async ({ page }) => {
@@ -364,12 +364,12 @@ test("merchant redesign does not widen staff access", async ({ page }) => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "merchant"`
 Expected: glyph/workbench test FAIL; permission test PASS.
 
-- [ ] **Step 3: Implement verification glyphs and acrylic group**
+- [x] **Step 3: Implement verification glyphs and acrylic group**
 
 ```jsx
 import { GlassSurface, RewardGlyph } from "../components/Glass.jsx";
@@ -379,7 +379,7 @@ const verificationGlyphKinds = { coupon:"store", manual:"store", balance:"balanc
 </GlassSurface>
 ```
 
-- [ ] **Step 4: Apply operational material rules**
+- [x] **Step 4: Apply operational material rules**
 
 ```css
 .merchant-page { background: radial-gradient(circle at 82% 2%,rgba(248,184,77,.10),transparent 28%); }
@@ -392,12 +392,12 @@ const verificationGlyphKinds = { coupon:"store", manual:"store", balance:"balanc
 
 Use `GlassSurface level="solid"` for metric groups, member groups, forms, and confirmation surfaces.
 
-- [ ] **Step 5: Verify merchant, permission, and overflow tests**
+- [x] **Step 5: Verify merchant, permission, and overflow tests**
 
 Run: `npx playwright test tests/e2e/merchant-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/shell.spec.js --grep "merchant|staff|overflow"`
 Expected: selected tests PASS; 390×844 has no horizontal overflow.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/prototype/merchant src/prototype/styles/merchant.css tests/e2e/merchant-flows.spec.js tests/e2e/glass-redesign.spec.js
@@ -422,7 +422,7 @@ git commit -m "feat: refine merchant workbench with Spark Glass"
 - Tables remain `data-glass-level="solid"` and high contrast.
 - `platform_admin` remains read-only; read-only styling stays Ash, not AI Cyan.
 
-- [ ] **Step 1: Write failing hierarchy and permission tests**
+- [x] **Step 1: Write failing hierarchy and permission tests**
 
 ```js
 test("admin limits glass to navigation and context while tables stay solid", async ({ page }) => {
@@ -440,12 +440,12 @@ test("platform read-only stays non-AI and exposes no write action", async ({ pag
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "admin|platform"`
 Expected: material hierarchy FAIL; permission test PASS.
 
-- [ ] **Step 3: Add semantic materials without changing handlers**
+- [x] **Step 3: Add semantic materials without changing handlers**
 
 ```jsx
 // AdminFrame.jsx
@@ -458,7 +458,7 @@ Expected: material hierarchy FAIL; permission test PASS.
 <table className="admin-store-table glass-surface--solid" data-glass-level="solid" aria-label="平台门店列表">{/* existing table */}</table>
 ```
 
-- [ ] **Step 4: Implement restrained admin CSS**
+- [x] **Step 4: Implement restrained admin CSS**
 
 ```css
 .admin-frame { background: radial-gradient(circle at 88% 0,rgba(248,184,77,.08),transparent 28%),#f6f2ea; }
@@ -472,12 +472,12 @@ Expected: material hierarchy FAIL; permission test PASS.
 
 Use `RewardGlyph kind="risk"` on risk pages and `kind="ai"` only on AI quota/failure pages.
 
-- [ ] **Step 5: Verify admin and responsive contracts**
+- [x] **Step 5: Verify admin and responsive contracts**
 
 Run: `npx playwright test tests/e2e/admin-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/shell.spec.js --grep "admin|platform|sidebar|table"`
 Expected: selected tests PASS; sidebar/table visible at 1366×900; read-only controls absent.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/prototype/components/AdminFrame.jsx src/prototype/admin src/prototype/styles/admin.css tests/e2e/admin-flows.spec.js tests/e2e/glass-redesign.spec.js
@@ -507,7 +507,7 @@ git commit -m "feat: add professional glass hierarchy to admin"
 - Consumes Tasks 1–5 contracts.
 - Produces full fallback/reduced-motion/layer-budget evidence and stable comparison screenshots.
 
-- [ ] **Step 1: Add failing fallback, layer-budget, and reduced-motion tests**
+- [x] **Step 1: Add failing fallback, layer-budget, and reduced-motion tests**
 
 ```js
 test("glass surfaces keep a visible background layer and readable ink", async ({ page }) => {
@@ -542,12 +542,12 @@ test("glass CSS includes a solid warm fallback", () => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "fallback|two large|reduced motion"`
 Expected: at least one test FAIL before final layer and motion rules.
 
-- [ ] **Step 3: Complete focus, fallback, and motion CSS**
+- [x] **Step 3: Complete focus, fallback, and motion CSS**
 
 ```css
 .glass-surface.is-interactive:focus-visible,.liquid-lens:focus-visible { outline: 2px solid var(--ember-600); outline-offset: 3px; }
@@ -559,7 +559,7 @@ Expected: at least one test FAIL before final layer and motion rules.
 }
 ```
 
-- [ ] **Step 4: Capture and inspect four stable screenshots**
+- [x] **Step 4: Capture and inspect four stable screenshots**
 
 ```js
 const captures = [
@@ -578,7 +578,7 @@ for (const [url,path] of captures) {
 
 Open every original PNG. Reject loading frames, black compositor tiles, clipped mascots, text overflow, unreadable glass, or excessive reflection. Compare customer Benefits with `docs/superpowers/specs/assets/liaoke-restrained-glass-benefits.png` at the same crop.
 
-- [ ] **Step 5: Update the guide**
+- [x] **Step 5: Update the guide**
 
 ```md
 ## Spark Glass visual system
@@ -586,7 +586,7 @@ Open every original PNG. Reject loading frames, black compositor tiles, clipped 
 The prototype uses restrained Fluent Acrylic structure with Liquid Glass reserved for interactive focus. Liaoxiaoxing contributes flame, spark, trail, soft-arc, and ash glyph language. The UI provides a solid warm-white fallback when backdrop filtering is unavailable and removes spring/trail motion under reduced-motion preferences.
 ```
 
-- [ ] **Step 6: Run complete verification**
+- [x] **Step 6: Run complete verification**
 
 ```bash
 npm test
@@ -597,14 +597,14 @@ git diff --check
 
 Expected: all unit tests PASS; existing 130 Playwright checks plus new glass checks PASS; API/miniprogram/brand/build verification PASS; only the documented lazy Galacean chunk warning remains.
 
-- [ ] **Step 7: Commit the handoff**
+- [x] **Step 7: Commit the handoff**
 
 ```bash
 git add src/prototype/styles/glass.css src/prototype/styles/motion.css tests artifacts/screenshots/glass docs/prototype/liaoke-three-surface-prototype-guide.md
 git commit -m "test: verify Spark Glass visual redesign"
 ```
 
-- [ ] **Step 8: Request whole-branch review and update PR #1**
+- [x] **Step 8: Request whole-branch review and update PR #1**
 
 Review range: `474d7b8..HEAD`. Acceptance: no Critical/Important findings; behavior and permissions unchanged; approved Benefits direction is recognizable; QR and Galacean boundaries remain documented. Push the existing branch and keep PR #1 Draft until final user visual acceptance.
 
