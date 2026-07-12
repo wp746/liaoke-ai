@@ -17,6 +17,8 @@
 - 品牌与 IP 资产：[`docs/brand-ip/README.md`](docs/brand-ip/README.md)
 - 微信小程序核心代码：[`miniprogram/README.md`](miniprogram/README.md)
 - 三端交互原型使用与交接指南：[`docs/prototype/liaoke-three-surface-prototype-guide.md`](docs/prototype/liaoke-three-surface-prototype-guide.md)
+- 已锁定的三端 Liquid Glass 视觉系统：[`docs/superpowers/specs/2026-07-12-liaoke-cross-platform-liquid-glass-visual-system.md`](docs/superpowers/specs/2026-07-12-liaoke-cross-platform-liquid-glass-visual-system.md)
+- 小程序开发公司视觉实施与交接契约：[`docs/brand-ip/08-mini-program-development-handoff.md`](docs/brand-ip/08-mini-program-development-handoff.md)
 
 ## 开发附件
 

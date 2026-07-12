@@ -11,6 +11,12 @@
 - `05-visual-identity-system.md`：第一版 Logo、色彩、字体、组件、桌牌视觉规范。
 - `06-brand-asset-package.md`：正式品牌资产包索引、导出命令、交付清单。
 - `07-liaoxiaoxing-asset-pack.md`：燎小星首版形象资产包索引、使用场景、精修清单。
+- `08-mini-program-development-handoff.md`：交给小程序开发公司的视觉实施、真机交付与验收契约。
+- `../superpowers/specs/2026-07-12-liaoke-cross-platform-liquid-glass-visual-system.md`：三端正式锁定的视觉与动态治理标准。
+
+## 已锁定的视觉基线
+
+从 2026-07-12 起，用户端、商家端和平台后台统一使用“橙金暖白 Liquid Glass + Fluent Acrylic + 场景化燎小星”系统。以后任何新增、删除、修改、查询模块均必须沿用同一套 Token、共享组件、场景库和验收门槛；不得按单页重新设计。
 
 ## 最终命名结构
 

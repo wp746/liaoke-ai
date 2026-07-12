@@ -59,7 +59,7 @@ test("lens, trail, and mascot moment expose their state contracts", async () => 
 
     const moment = renderToStaticMarkup(React.createElement(module.LiaoxiaoxingMoment, { kind: "ai", className: "hero-moment" }, "生成完成"));
     assert.match(moment, /class="liaoxiaoxing-moment liaoxiaoxing-moment--ai hero-moment"/);
-    assert.match(moment, /liaoxiaoxing-ai-magic\.png/);
+    assert.match(moment, /scene-ai-magic-transparent-v1-display\.png/);
     assert.match(moment, /生成完成/);
   } finally { await vite.close(); }
 });

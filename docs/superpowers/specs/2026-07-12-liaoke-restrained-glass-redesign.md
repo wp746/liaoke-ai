@@ -1,9 +1,11 @@
 # 燎客「凝光玻璃」三端视觉升级设计规范
 
 日期：2026-07-12  
-状态：已批准视觉方向，等待书面规范复核  
+状态：已完成实施；规范已由正式锁定版接管
 基准分支：`codex/liaoke-three-surface-prototype`  
 基准 PR：`#1`（保持 Draft）
+
+> 本文件保留为本轮设计过程记录。后续开发、增删改查和验收以[`燎客跨端 Liquid Glass 视觉与动态系统`](./2026-07-12-liaoke-cross-platform-liquid-glass-visual-system.md)为唯一正式基线。
 
 ## 1. 背景与问题
 

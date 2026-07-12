@@ -15,9 +15,9 @@ export const COPY_CANDIDATES = [
 
 const aiStyles = `
   .customer-ai { display:grid; gap:14px; align-content:start; }
-  .customer-ai__intro { display:grid; grid-template-columns:1fr 92px; align-items:end; overflow:hidden; padding:18px 6px 0 18px; }
+  .customer-ai__intro { display:grid; min-height:170px; grid-template-columns:1fr 150px; align-items:center; overflow:hidden; padding:18px 0 18px 18px; }
   .customer-ai__intro > div { grid-column:1; grid-row:1; }
-  .customer-ai__intro .brand-mascot { grid-column:2; grid-row:1; width:98px; height:126px; transform:none; }
+  .customer-ai__intro .brand-mascot { grid-column:2; grid-row:1; width:170px; height:170px; transform:translateX(-8px); }
   .customer-ai__intro p { margin:0 0 14px; }
   .customer-ai__field { display:grid; gap:7px; font-size:11px; font-weight:800; }
   .customer-ai__field input[type=file] { width:100%; padding:13px; border:1px dashed rgba(0,194,255,.48); border-radius:16px; background:rgba(0,194,255,.05); color:var(--ink-600); font-size:10px; }

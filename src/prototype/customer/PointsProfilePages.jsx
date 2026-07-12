@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChevronRight, Coins, Gift, ShieldCheck, UserRound } from "lucide-react";
-import { GlassSurface, RewardGlyph } from "../components/Glass.jsx";
+import { GlassSurface, LiaoxiaoxingMoment, RewardGlyph } from "../components/Glass.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
@@ -21,7 +21,7 @@ function availability(product, state) {
 export function Points({ state, onNavigate, products = [] }) {
   const productName = (id) => products.find((product) => product.id === id)?.name ?? "积分礼品";
   const ledger = [...state.points.redemptions.map((item) => [`兑换${productName(item.productId)}`, `-${products.find((product) => product.id === item.productId)?.points ?? 0}`, item.id]), ...baseLedger];
-  return <main className="customer-page"><header className="customer-page__header"><span>我的积分</span><h1>{state.points.balance.toLocaleString()}</h1></header><SurfaceCard tone="warm"><Coins size={25}/><strong>每日签到 +5 积分</strong><p>今天已签到，连续签到还能点亮更多奖励。</p><PrimaryButton onClick={() => onNavigate("points-store")}>逛积分商城</PrimaryButton></SurfaceCard><h2>积分明细</h2><section className="customer-list">{ledger.map(([title, amount, date], index) => <article className="customer-referral-record" key={`${date}-${index}`}><span><strong>{title}</strong><small>{date}</small></span><b>{amount}</b></article>)}</section></main>;
+  return <main className="customer-page"><LiaoxiaoxingMoment kind="points" className="customer-scene-hero customer-points-hero"><header className="customer-page__header"><span>我的积分</span><h1>{state.points.balance.toLocaleString()}</h1><p>每一次到店和创作，都在点亮下一份惊喜。</p></header></LiaoxiaoxingMoment><SurfaceCard tone="warm"><Coins size={25}/><strong>每日签到 +5 积分</strong><p>今天已签到，连续签到还能点亮更多奖励。</p><PrimaryButton onClick={() => onNavigate("points-store")}>逛积分商城</PrimaryButton></SurfaceCard><h2>积分明细</h2><section className="customer-list">{ledger.map(([title, amount, date], index) => <article className="customer-referral-record" key={`${date}-${index}`}><span><strong>{title}</strong><small>{date}</small></span><b>{amount}</b></article>)}</section></main>;
 }
 
 export function PointsStore({ state, products, onSelect, onNavigate }) {
@@ -55,7 +55,7 @@ export function MemberLevel() {
   return <main className="customer-page motion-host">{justUpgraded && <GalaceanStage kind="upgrade" />}<header className="customer-page__header"><span>会员成长</span><h1>Lv2 熟客</h1></header><SurfaceCard tone="hero"><strong>1,280 / 2,000 成长值</strong><progress value="1280" max="2000" style={{width:"100%"}}/><p>距离 Lv3 挚友还差 720 成长值</p></SurfaceCard><h2>已解锁权益</h2><section className="customer-list">{["会员积分加速","生日专属好礼","每月到店券"].map((x) => <article className="customer-referral-record" key={x}><strong>{x}</strong><StatusPill status="success">已解锁</StatusPill></article>)}</section></main>;
 }
 
-export function Me({ state, onNavigate }) { return <main className="customer-page"><header className="customer-page__header"><span>个人中心</span><h1>{state.customer.name}</h1><p>{state.customer.maskedPhone}</p></header><SurfaceCard tone="warm"><UserRound size={26}/><strong>{state.customer.level}</strong><p>成长值 {state.customer.growth.toLocaleString()}</p><PrimaryButton onClick={() => onNavigate("member-level")}>查看会员等级</PrimaryButton></SurfaceCard><section className="customer-list">{[["我的积分","points"],["推荐进度","referrals"],["隐私与数据权利","privacy-data"]].map(([label, route]) => <button className="customer-coupon" type="button" key={route} onClick={() => onNavigate(route)}><ShieldCheck size={20}/><strong>{label}</strong><ChevronRight size={17}/></button>)}</section></main>; }
+export function Me({ state, onNavigate }) { return <main className="customer-page"><LiaoxiaoxingMoment kind="profile" className="customer-scene-hero customer-profile-hero"><header className="customer-page__header"><span>个人中心</span><h1>{state.customer.name}</h1><p>{state.customer.maskedPhone}</p></header></LiaoxiaoxingMoment><SurfaceCard tone="warm"><UserRound size={26}/><strong>{state.customer.level}</strong><p>成长值 {state.customer.growth.toLocaleString()}</p><PrimaryButton onClick={() => onNavigate("member-level")}>查看会员等级</PrimaryButton></SurfaceCard><h2>我的服务</h2><section className="customer-list">{[["我的积分","points"],["推荐进度","referrals"],["隐私与数据权利","privacy-data"]].map(([label, route]) => <button className="customer-coupon customer-service-row" type="button" key={route} onClick={() => onNavigate(route)}><ShieldCheck size={20}/><strong>{label}</strong><ChevronRight size={17}/></button>)}</section></main>; }
 
 export function PrivacyData() {
   const [message, setMessage] = useState("");

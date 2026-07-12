@@ -1,11 +1,12 @@
 import React from "react";
 
 const mascotAssets = {
-  welcome: "/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-welcome-table.png",
+  welcome: "/brand/ip-liaoxiaoxing/scene-library/display/scene-home-welcome-transparent-v1-display.png",
   merchant: "/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-merchant-verify.png",
-  coupon: "/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-coupon-wallet.png",
-  ai: "/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-ai-magic.png",
-  points: "/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-reward-points.png",
+  coupon: "/brand/ip-liaoxiaoxing/scene-library/display/scene-benefits-wallet-transparent-v1-display.png",
+  ai: "/brand/ip-liaoxiaoxing/scene-library/display/scene-ai-magic-transparent-v1-display.png",
+  points: "/brand/ip-liaoxiaoxing/scene-library/display/scene-points-reward-transparent-v1-display.png",
+  profile: "/brand/ip-liaoxiaoxing/scene-library/display/scene-profile-phone-cape-transparent-v2-display.png",
   empty: "/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-empty-error.png",
 };
 

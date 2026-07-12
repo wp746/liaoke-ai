@@ -1,13 +1,16 @@
 import { expect, test } from "@playwright/test";
 
-test("captures the four customer handoff screenshots", async ({ page }) => {
+test("captures the locked customer visual-system handoff screenshots", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
 
   for (const [route, filename] of [
     ["home", "customer-home.png"],
     ["benefits", "customer-benefits.png"],
+    ["ai-create", "customer-ai-create.png"],
+    ["points", "customer-points.png"],
     ["points-store", "customer-points-store.png"],
+    ["me", "customer-me.png"],
   ]) {
     await page.goto(`/?surface=customer&scenario=returning-customer&route=${route}`);
     await expect(page.locator(`[data-route-id="${route}"]`)).toBeVisible();

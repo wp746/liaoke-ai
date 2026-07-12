@@ -119,9 +119,9 @@ Prototype Shell
 
 所有状态都来自本地 fixture；刷新或切换场景可以重新开始评审，不会修改生产数据。
 
-## Spark Glass visual system
+## 已锁定的跨端 Liquid Glass visual system
 
-The prototype uses restrained Fluent Acrylic structure with Liquid Glass reserved for interactive focus. Liaoxiaoxing contributes flame, spark, trail, soft-arc, and ash glyph language. The UI provides a solid warm-white fallback when backdrop filtering is unavailable and removes spring/trail motion under reduced-motion preferences.
+本原型的视觉与动态方向已于 2026-07-12 正式锁定。完整参数、燎小星场景规则、CRUD 继承和跨平台验收见[`燎客跨端 Liquid Glass 视觉与动态系统`](../superpowers/specs/2026-07-12-liaoke-cross-platform-liquid-glass-visual-system.md)与[`小程序开发公司视觉实施与交接契约`](../brand-ip/08-mini-program-development-handoff.md)。
 
 三端共享同一套凝光玻璃语义，但强度按使用场景收敛：顾客端保留亲和的 IP 与奖励图形，商家端使用较低模糊的任务工作台，平台后台仅在导航和上下文层使用玻璃，表格始终保持高对比实心材质。同一视口最多两个大面积 Acrylic 层。
 
@@ -137,10 +137,13 @@ The prototype uses restrained Fluent Acrylic structure with Liquid Glass reserve
 
 ## 7. 交接截图
 
-已验证的八张交接截图位于：
+已验证的用户端五个主导航页面、关键流程和三端交接截图位于：
 
 - [`artifacts/screenshots/prototype/customer-home.png`](../../artifacts/screenshots/prototype/customer-home.png)
 - [`artifacts/screenshots/prototype/customer-benefits.png`](../../artifacts/screenshots/prototype/customer-benefits.png)
+- [`artifacts/screenshots/prototype/customer-ai-create.png`](../../artifacts/screenshots/prototype/customer-ai-create.png)
+- [`artifacts/screenshots/prototype/customer-points.png`](../../artifacts/screenshots/prototype/customer-points.png)
+- [`artifacts/screenshots/prototype/customer-me.png`](../../artifacts/screenshots/prototype/customer-me.png)
 - [`artifacts/screenshots/prototype/customer-ai-poster.png`](../../artifacts/screenshots/prototype/customer-ai-poster.png)
 - [`artifacts/screenshots/prototype/customer-points-store.png`](../../artifacts/screenshots/prototype/customer-points-store.png)
 - [`artifacts/screenshots/prototype/merchant-dashboard.png`](../../artifacts/screenshots/prototype/merchant-dashboard.png)
