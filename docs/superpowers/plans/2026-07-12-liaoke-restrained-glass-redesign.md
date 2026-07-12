@@ -74,7 +74,7 @@ test("glyphs expose kind and non-color state text", async () => {
 
 - [ ] **Step 2: Verify RED**
 
-Run: `node --test tests/unit/glass-system.test.js`  
+Run: `node --test tests/unit/glass-system.test.js`
 Expected: FAIL because `Glass.jsx` does not exist.
 
 - [ ] **Step 3: Implement the primitive module**
@@ -140,7 +140,7 @@ export function LiaoxiaoxingMoment({ kind = "coupon", className = "", children }
 
 Add `@import "./prototype/styles/glass.css";` after tokens in `src/styles.css`.
 
-Run: `node --test tests/unit/glass-system.test.js && npm run build`  
+Run: `node --test tests/unit/glass-system.test.js && npm run build`
 Expected: tests and build PASS; no new package or initial chunk.
 
 - [ ] **Step 6: Commit**
@@ -185,7 +185,7 @@ test("benefit tabs move the lens and keep content accessible", async ({ page }) 
 
 - [ ] **Step 2: Verify RED**
 
-Run: `npx playwright test tests/e2e/glass-redesign.spec.js`  
+Run: `npx playwright test tests/e2e/glass-redesign.spec.js`
 Expected: FAIL because the current page has flat cards and no semantic glyphs.
 
 - [ ] **Step 3: Implement exact semantic mapping and grouped markup**
@@ -224,7 +224,7 @@ Wrap the heading in `<LiaoxiaoxingMoment kind="coupon" className="customer-benef
 
 - [ ] **Step 5: Verify and capture**
 
-Run: `npx playwright test tests/e2e/glass-redesign.spec.js`  
+Run: `npx playwright test tests/e2e/glass-redesign.spec.js`
 Expected: 2 tests PASS.
 
 Capture after fonts and two animation frames to `artifacts/screenshots/glass/benefits-reference.png`; compare with `docs/superpowers/specs/assets/liaoke-restrained-glass-benefits.png`.
@@ -276,7 +276,7 @@ test("points and balance have distinct glyphs without list mascots", async ({ pa
 
 - [ ] **Step 2: Verify RED**
 
-Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "customer nav|points and balance"`  
+Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "customer nav|points and balance"`
 Expected: FAIL because navigation and object families do not expose the new contracts.
 
 - [ ] **Step 3: Convert the bottom navigation**
@@ -320,7 +320,7 @@ Wrap existing entry/success/empty/error mascots in `LiaoxiaoxingMoment`. Do not 
 
 - [ ] **Step 5: Verify customer and motion regressions**
 
-Run: `npm test && npx playwright test tests/e2e/customer-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/motion.spec.js`  
+Run: `npm test && npx playwright test tests/e2e/customer-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/motion.spec.js`
 Expected: all PASS; Galacean kinds remain `entry,ai,claim,poster,redeem,upgrade`.
 
 - [ ] **Step 6: Commit**
@@ -366,7 +366,7 @@ test("merchant redesign does not widen staff access", async ({ page }) => {
 
 - [ ] **Step 2: Verify RED**
 
-Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "merchant"`  
+Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "merchant"`
 Expected: glyph/workbench test FAIL; permission test PASS.
 
 - [ ] **Step 3: Implement verification glyphs and acrylic group**
@@ -394,7 +394,7 @@ Use `GlassSurface level="solid"` for metric groups, member groups, forms, and co
 
 - [ ] **Step 5: Verify merchant, permission, and overflow tests**
 
-Run: `npx playwright test tests/e2e/merchant-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/shell.spec.js --grep "merchant|staff|overflow"`  
+Run: `npx playwright test tests/e2e/merchant-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/shell.spec.js --grep "merchant|staff|overflow"`
 Expected: selected tests PASS; 390×844 has no horizontal overflow.
 
 - [ ] **Step 6: Commit**
@@ -442,7 +442,7 @@ test("platform read-only stays non-AI and exposes no write action", async ({ pag
 
 - [ ] **Step 2: Verify RED**
 
-Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "admin|platform"`  
+Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "admin|platform"`
 Expected: material hierarchy FAIL; permission test PASS.
 
 - [ ] **Step 3: Add semantic materials without changing handlers**
@@ -474,7 +474,7 @@ Use `RewardGlyph kind="risk"` on risk pages and `kind="ai"` only on AI quota/fai
 
 - [ ] **Step 5: Verify admin and responsive contracts**
 
-Run: `npx playwright test tests/e2e/admin-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/shell.spec.js --grep "admin|platform|sidebar|table"`  
+Run: `npx playwright test tests/e2e/admin-flows.spec.js tests/e2e/glass-redesign.spec.js tests/e2e/shell.spec.js --grep "admin|platform|sidebar|table"`
 Expected: selected tests PASS; sidebar/table visible at 1366×900; read-only controls absent.
 
 - [ ] **Step 6: Commit**
@@ -544,7 +544,7 @@ test("glass CSS includes a solid warm fallback", () => {
 
 - [ ] **Step 2: Verify RED**
 
-Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "fallback|two large|reduced motion"`  
+Run: `npx playwright test tests/e2e/glass-redesign.spec.js --grep "fallback|two large|reduced motion"`
 Expected: at least one test FAIL before final layer and motion rules.
 
 - [ ] **Step 3: Complete focus, fallback, and motion CSS**

@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 
-async function captureWithoutBlackTiles(page, path) {
+async function captureWithoutBlackTiles(page, path, takeScreenshot = () => page.screenshot({ fullPage: true })) {
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    const screenshot = await page.screenshot({ fullPage: true });
+    const screenshot = await takeScreenshot();
     const blackRatio = await page.evaluate(async (source) => {
       const image = new Image();
       image.src = source;
@@ -30,12 +30,17 @@ async function captureWithoutBlackTiles(page, path) {
   throw new Error(`Black compositor tiles persisted while capturing ${path}`);
 }
 
+function pngDimensions(buffer) {
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+}
+
 test("benefits uses one sheet and four distinct glyphs", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/?surface=customer&route=benefits&scenario=returning-customer");
   await expect(page.locator(".customer-benefits-hero .brand-mascot")).toHaveCount(1);
   await expect(page.locator('[data-glass-level="acrylic"].customer-coupon-sheet')).toHaveCount(1);
+  await expect(page.locator('.customer-coupon-row[data-glass-level="solid"]')).toHaveCount(4);
   for (const kind of ["store", "dish", "group", "drink"]) {
     await expect(page.locator(`[data-glyph-kind="${kind}"]`)).toHaveCount(1);
   }
@@ -118,6 +123,7 @@ test("entry success empty and poster mascots use Liaoxiaoxing moments", async ({
 test("merchant verification has distinct glyphs on one acrylic workbench", async ({ page }) => {
   await page.goto("/?surface=merchant&role=staff&scenario=points-verification&route=verify-hub");
   await expect(page.locator('[data-glass-level="acrylic"].merchant-verify-grid')).toHaveCount(1);
+  await expect(page.locator('.merchant-verify-grid > [data-glass-level="solid"]')).toHaveCount(5);
   await expect(page.locator('[data-glyph-kind="store"]')).toHaveCount(2);
   for (const kind of ["balance", "referral", "points"]) {
     await expect(page.locator(`[data-glyph-kind="${kind}"]`)).toHaveCount(1);
@@ -135,6 +141,7 @@ test("admin limits glass to navigation and context while tables stay solid", asy
   await page.goto("/?surface=admin&role=super_admin&route=admin-overview");
   await expect(page.locator('.admin-sidebar[data-glass-level="acrylic"]')).toHaveCount(1);
   await expect(page.locator('.admin-search[data-glass-level="acrylic"]')).toHaveCount(1);
+  await expect(page.locator('.admin-risk-panel[data-glass-level="solid"]')).toHaveCount(1);
   await expect(page.locator('.admin-context-drawer[data-glass-level="lens"]')).toHaveCount(1);
   await page.goto("/?surface=admin&role=super_admin&route=stores");
   await expect(page.locator('.admin-store-table[data-glass-level="solid"]')).toHaveCount(1);
@@ -187,7 +194,16 @@ test("each surface stays within two large acrylic layers", async ({ page }) => {
     "/?surface=admin&role=super_admin&route=admin-overview",
   ]) {
     await page.goto(url);
-    expect(await page.locator('[data-glass-level="acrylic"]').count()).toBeLessThanOrEqual(2);
+    const largeBackdropLayers = await page.locator("[data-glass-level]").evaluateAll((elements) => elements.filter((element) => {
+      const style = getComputedStyle(element);
+      const filter = style.backdropFilter || style.webkitBackdropFilter;
+      const box = element.getBoundingClientRect();
+      return filter && filter !== "none" && box.width * box.height >= 40_000;
+    }).map((element) => ({
+      className: element.className,
+      area: Math.round(element.getBoundingClientRect().width * element.getBoundingClientRect().height),
+    })));
+    expect(largeBackdropLayers.length, `${url} large backdrop layers: ${JSON.stringify(largeBackdropLayers)}`).toBeLessThanOrEqual(2);
   }
 });
 
@@ -221,4 +237,25 @@ test("captures four stable Spark Glass handoff views", async ({ browser }) => {
     await captureWithoutBlackTiles(page, path);
     await context.close();
   }
+
+  const phonePath = "artifacts/screenshots/glass/customer-benefits-phone.png";
+  const phoneContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2, reducedMotion: "reduce" });
+  const phonePage = await phoneContext.newPage();
+  await phonePage.goto("/?surface=customer&route=benefits&scenario=returning-customer");
+  await phonePage.evaluate(async () => {
+    await document.fonts.ready;
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+  const phoneFrame = phonePage.locator(".mini-program-frame");
+  await expect(phoneFrame).toBeVisible();
+  await captureWithoutBlackTiles(phonePage, phonePath, () => phoneFrame.screenshot());
+  await phoneContext.close();
+
+  const [phonePng, approvedPng] = await Promise.all([
+    readFile(phonePath),
+    readFile("docs/superpowers/specs/assets/liaoke-restrained-glass-benefits.png"),
+  ]);
+  const phone = pngDimensions(phonePng);
+  const approved = pngDimensions(approvedPng);
+  expect(Math.abs(phone.width / phone.height - approved.width / approved.height)).toBeLessThanOrEqual(.1);
 });

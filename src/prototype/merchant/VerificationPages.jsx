@@ -35,7 +35,7 @@ function VerificationHub({ onChoose, onNavigate }) {
     <main className="merchant-page merchant-verify">
       <div className="merchant-page-heading"><StatusPill status="success">核销服务正常</StatusPill><h1>核销工作台</h1><p>选择权益类型后扫码，也可以手动输入核销码。</p></div>
       <GlassSurface as="div" level="acrylic" className="merchant-verify-grid">
-        {Object.entries(verificationTypes).map(([id, item]) => <button type="button" key={id} className="glass-surface is-interactive" onClick={() => onChoose(id)}><RewardGlyph kind={verificationGlyphKinds[id]} /><strong>{item.label}</strong><span>扫码或输入券码</span></button>)}
+        {Object.entries(verificationTypes).map(([id, item]) => <GlassSurface as="button" type="button" level="solid" interactive key={id} onClick={() => onChoose(id)}><RewardGlyph kind={verificationGlyphKinds[id]} /><strong>{item.label}</strong><span>扫码或输入券码</span></GlassSurface>)}
       </GlassSurface>
       <button type="button" className="merchant-secondary-action" onClick={() => onNavigate("verify-history")}><History size={14} /> 查看核销记录</button>
     </main>

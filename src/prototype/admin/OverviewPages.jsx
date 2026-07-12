@@ -74,7 +74,7 @@ export function AdminOverviewPage({ permissions, onNavigate, adminState, onOpenS
           <Sparkline values={[42, 48, 45, 53, 58, 61, 59, 67, 72, 76, 74, 82]} label="近30日平台扫码趋势" />
           <div className="admin-trend-legend"><span><i />扫码人次 218,430</span><span><i />新会员 31,286</span></div>
         </section>
-        <GlassSurface level="lens" className="admin-panel admin-risk-panel">
+        <GlassSurface level="solid" className="admin-panel admin-risk-panel">
           <div className="admin-panel-heading"><div><span className="admin-eyebrow">ACTION REQUIRED</span><h2>风险队列</h2></div><RewardGlyph kind="risk" value="3" className="admin-page-glyph" /></div>
           <article><AlertTriangle size={17} /><div><strong>牛里牛气核销频率异常</strong><small>高风险 · 12:18</small></div></article>
           <article><AlertTriangle size={17} /><div><strong>AI 生成失败率超过阈值</strong><small>中风险 · 11:42</small></div></article>

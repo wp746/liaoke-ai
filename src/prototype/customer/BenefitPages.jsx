@@ -21,14 +21,14 @@ const couponGlyphKinds = {
 function CouponRow({ coupon, onOpen }) {
   const usable = coupon.status === "active";
   return (
-    <button type="button" className="customer-coupon-row glass-surface is-interactive" onClick={onOpen}>
+    <GlassSurface as="button" type="button" level="solid" interactive className="customer-coupon-row" onClick={onOpen}>
       <RewardGlyph kind={couponGlyphKinds[coupon.id]} state={usable ? "active" : "used"} value={`¥${coupon.value}`} />
       <span>
         <strong>{coupon.title.replace(/^¥\d+\s*/, "")}</strong>
         <small>{usable ? `有效期至 ${coupon.expiresAt.slice(0, 10)}` : "已使用"}</small>
       </span>
       <ChevronRight aria-hidden="true" size={18} />
-    </button>
+    </GlassSurface>
   );
 }
 

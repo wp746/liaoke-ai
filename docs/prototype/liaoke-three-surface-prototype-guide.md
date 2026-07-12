@@ -125,12 +125,15 @@ The prototype uses restrained Fluent Acrylic structure with Liquid Glass reserve
 
 三端共享同一套凝光玻璃语义，但强度按使用场景收敛：顾客端保留亲和的 IP 与奖励图形，商家端使用较低模糊的任务工作台，平台后台仅在导航和上下文层使用玻璃，表格始终保持高对比实心材质。同一视口最多两个大面积 Acrylic 层。
 
-新增的四张 Spark Glass 视觉验收图位于：
+新增的五张 Spark Glass 视觉验收图位于：
 
 - [`artifacts/screenshots/glass/customer-benefits.png`](../../artifacts/screenshots/glass/customer-benefits.png)
+- [`artifacts/screenshots/glass/customer-benefits-phone.png`](../../artifacts/screenshots/glass/customer-benefits-phone.png)
 - [`artifacts/screenshots/glass/customer-home.png`](../../artifacts/screenshots/glass/customer-home.png)
 - [`artifacts/screenshots/glass/merchant-verification.png`](../../artifacts/screenshots/glass/merchant-verification.png)
 - [`artifacts/screenshots/glass/admin-overview.png`](../../artifacts/screenshots/glass/admin-overview.png)
+
+其中 `customer-benefits-phone.png` 是与[批准的权益中心方向稿](../superpowers/specs/assets/liaoke-restrained-glass-benefits.png)对应的手机主体裁切。自动验收要求两者均为竖向手机主体、宽高比差值不超过 `0.1`，并同时验证单个 Hero IP、三段选择 Lens、单一 Acrylic 券组、四类券图形及 Ash 已使用态。该门槛用于复现构图与语义一致性，不把概念图中的生成式高光当作像素级生产规范。
 
 ## 7. 交接截图
 

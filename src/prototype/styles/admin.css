@@ -163,7 +163,7 @@
 }
 .admin-page-glyph strong { font-size: 8px; }
 .admin-page-glyph > i { display: none; }
-.admin-page-glyph.reward-glyph--ai { background: rgba(0, 194, 255, .09); color: var(--ai-cyan); }
+.admin-page-glyph.reward-glyph--ai { background: rgba(0, 194, 255, .09); color: var(--ai-cyan-ink); }
 .admin-page-glyph.reward-glyph--risk { color: var(--ember-600); }
 
 .admin-risk-panel { display: grid; gap: 10px; }

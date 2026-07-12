@@ -20,6 +20,22 @@ async function loadMotionCss() {
   return readFile(new URL("../../src/prototype/styles/motion.css", import.meta.url), "utf8");
 }
 
+async function loadTokensCss() {
+  return readFile(new URL("../../src/prototype/styles/tokens.css", import.meta.url), "utf8");
+}
+
+function relativeLuminance(hex) {
+  const channels = hex.match(/[a-f\d]{2}/gi).map((channel) => parseInt(channel, 16) / 255)
+    .map((channel) => channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4);
+  return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+}
+
+function contrastRatio(foreground, background) {
+  const lighter = Math.max(relativeLuminance(foreground), relativeLuminance(background));
+  const darker = Math.min(relativeLuminance(foreground), relativeLuminance(background));
+  return (lighter + .05) / (darker + .05);
+}
+
 test("glass primitives expose semantic material contracts", async () => {
   const { vite, module } = await loadGlass();
   try {
@@ -87,8 +103,8 @@ test("glass CSS preserves fallback, palette, focus, and motion contracts", async
   assert.match(css, /\.glass-surface--lens,\.liquid-lens\s*\{[^}]*-webkit-backdrop-filter:\s*blur\(24px\)[^}]*backdrop-filter:\s*blur\(24px\)/s);
 
   assert.match(css, /\.reward-glyph--store\s*\{[^}]*color:\s*var\(--ember-600\)/s);
-  assert.match(css, /\.reward-glyph--points,\.reward-glyph--referral\s*\{[^}]*color:\s*var\(--gold-400\)/s);
-  assert.match(css, /\.reward-glyph--ai\s*\{[^}]*color:\s*var\(--ai-cyan\)/s);
+  assert.match(css, /\.reward-glyph--points,\.reward-glyph--referral\s*\{[^}]*color:\s*var\(--gold-ink\)/s);
+  assert.match(css, /\.reward-glyph--ai\s*\{[^}]*color:\s*var\(--ai-cyan-ink\)/s);
   assert.match(css, /\.reward-glyph__reservoir\s*\{[^}]*overflow:\s*hidden[^}]*border-radius:/s);
   assert.match(css, /\.reward-glyph__water-level\s*\{[^}]*height:\s*24px[^}]*background-image:\s*linear-gradient/s);
   assert.match(css, /\.reward-glyph--used,\.reward-glyph--expired,\.reward-glyph--paused\s*\{[^}]*color:\s*var\(--ink-600\)/s);
@@ -102,6 +118,25 @@ test("glass CSS includes a solid warm fallback", async () => {
 
   assert.match(css, /@supports not/);
   assert.match(css, /rgba\(255,253,248,\.96\)/);
+});
+
+test("reward gold and AI cyan inks meet text and non-text contrast on warm white", async () => {
+  const tokens = await loadTokensCss();
+  const glass = await loadGlassCss();
+  const tokenValue = (name) => tokens.match(new RegExp(`--${name}:\\s*(#[a-fA-F0-9]{6})`))?.[1];
+  const warmWhite = "#fffdf8";
+
+  for (const name of ["gold-ink", "ai-cyan-ink"]) {
+    const color = tokenValue(name);
+    assert.ok(color, `${name} token must exist`);
+    assert.ok(contrastRatio(color, warmWhite) >= 4.5, `${name} must reach 4.5:1 for small text`);
+    assert.ok(contrastRatio(color, warmWhite) >= 3, `${name} must reach 3:1 for non-text glyphs`);
+  }
+
+  assert.match(glass, /\.reward-glyph--points,\.reward-glyph--referral\s*\{[^}]*color:\s*var\(--gold-ink\)/s);
+  assert.match(glass, /\.reward-glyph--ai\s*\{[^}]*color:\s*var\(--ai-cyan-ink\)/s);
+  assert.match(tokens, /--gold-400:\s*#f8b84d/);
+  assert.match(tokens, /--ai-cyan:\s*#00c2ff/);
 });
 
 test("reduced motion keeps the spark fallback static", async () => {
