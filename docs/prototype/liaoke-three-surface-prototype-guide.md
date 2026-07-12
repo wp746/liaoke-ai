@@ -25,8 +25,8 @@ npm run test:e2e
 npm run verify:all
 ```
 
-- `npm test`：运行 26 个 Node 单元测试，覆盖路由注册表、场景状态、权限、AI 直达状态和动效生命周期。
-- `npm run test:e2e`：启动 Playwright 配置的本地 Vite 服务并执行全量浏览器测试；覆盖全部 56 个路由、五条主流程、响应式、权限、动效降级和截图生成。
+- `npm test`：运行 33 个 Node 单元测试，覆盖路由注册表、场景状态、权限、AI 直达状态、动效生命周期和 Spark Glass 降级合同。
+- `npm run test:e2e`：启动 Playwright 配置的本地 Vite 服务并执行 146 个浏览器测试；覆盖全部 56 个路由、五条主流程、响应式、权限、动效降级、大面积玻璃层预算和稳定截图生成。
 - `npm run verify:all`：依次验证 API 合同、导出品牌包、校验原生小程序、运行小程序/API 冒烟测试并构建 Vite 产物。它不替代 `npm test` 或 `npm run test:e2e`，三条命令应分别执行。
 
 ## 3. 三端架构
@@ -118,6 +118,19 @@ Prototype Shell
 5. 平台进入门店 360° 详情，并对比 `super_admin` 与只读 `platform_admin`。
 
 所有状态都来自本地 fixture；刷新或切换场景可以重新开始评审，不会修改生产数据。
+
+## Spark Glass visual system
+
+The prototype uses restrained Fluent Acrylic structure with Liquid Glass reserved for interactive focus. Liaoxiaoxing contributes flame, spark, trail, soft-arc, and ash glyph language. The UI provides a solid warm-white fallback when backdrop filtering is unavailable and removes spring/trail motion under reduced-motion preferences.
+
+三端共享同一套凝光玻璃语义，但强度按使用场景收敛：顾客端保留亲和的 IP 与奖励图形，商家端使用较低模糊的任务工作台，平台后台仅在导航和上下文层使用玻璃，表格始终保持高对比实心材质。同一视口最多两个大面积 Acrylic 层。
+
+新增的四张 Spark Glass 视觉验收图位于：
+
+- [`artifacts/screenshots/glass/customer-benefits.png`](../../artifacts/screenshots/glass/customer-benefits.png)
+- [`artifacts/screenshots/glass/customer-home.png`](../../artifacts/screenshots/glass/customer-home.png)
+- [`artifacts/screenshots/glass/merchant-verification.png`](../../artifacts/screenshots/glass/merchant-verification.png)
+- [`artifacts/screenshots/glass/admin-overview.png`](../../artifacts/screenshots/glass/admin-overview.png)
 
 ## 7. 交接截图
 

@@ -90,8 +90,8 @@
 @media (prefers-reduced-motion: reduce) {
   .spark-fallback::before,
   .spark-fallback i {
-    animation-duration: 1ms !important;
-    animation-delay: 0ms !important;
+    animation: none !important;
+    transition: none !important;
   }
 
   .galacean-stage[data-motion-mode="reduced"] .spark-fallback::before {

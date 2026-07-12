@@ -14,10 +14,14 @@
   .glass-surface--lens,.liquid-lens { -webkit-backdrop-filter: blur(24px) saturate(1.15); backdrop-filter: blur(24px) saturate(1.15); }
 }
 
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-surface--acrylic,.glass-surface--lens,.liquid-lens { background: rgba(255,253,248,.96); box-shadow: 0 12px 28px rgba(73,43,18,.11); }
+}
+
 .glass-surface.is-interactive { transition: transform var(--glass-spring),box-shadow var(--glass-spring); }
 .glass-surface.is-interactive:hover { transform: translateY(-2px); box-shadow: var(--glass-shadow-hover); }
 .glass-surface.is-interactive:active { transform: scale(.987); box-shadow: 0 8px 18px rgba(73,43,18,.10); }
-.glass-surface.is-interactive:focus-visible,.liquid-lens:focus-visible { outline: 3px solid rgba(255,75,27,.28); outline-offset: 2px; }
+.glass-surface.is-interactive:focus-visible,.liquid-lens:focus-visible { outline: 2px solid var(--ember-600); outline-offset: 3px; }
 .liquid-lens { display: grid; place-items: center; border-radius: inherit; }
 .liquid-lens.is-active { background: rgba(255,255,255,.78); box-shadow: inset 0 1px 0 #fff,0 8px 22px rgba(255,104,20,.13); }
 .reward-glyph { display: grid; width: 60px; height: 60px; place-items: center; color: var(--ember-600); }
@@ -37,4 +41,6 @@
 
 @keyframes spark-trail-glide { from { transform: translateX(-14px) scaleX(.3); } to { transform: none; } }
 
-@media (prefers-reduced-motion: reduce) { .glass-surface.is-interactive,.spark-trail.is-active { animation: none; transition: none; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .glass-surface.is-interactive:hover,.glass-surface.is-interactive:active,.liquid-lens,.spark-trail { transform: none !important; animation: none !important; transition: none !important; }
+}

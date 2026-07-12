@@ -16,6 +16,10 @@ async function loadGlassCss() {
   return readFile(new URL("../../src/prototype/styles/glass.css", import.meta.url), "utf8");
 }
 
+async function loadMotionCss() {
+  return readFile(new URL("../../src/prototype/styles/motion.css", import.meta.url), "utf8");
+}
+
 test("glass primitives expose semantic material contracts", async () => {
   const { vite, module } = await loadGlass();
   try {
@@ -90,5 +94,18 @@ test("glass CSS preserves fallback, palette, focus, and motion contracts", async
   assert.match(css, /\.reward-glyph--used,\.reward-glyph--expired,\.reward-glyph--paused\s*\{[^}]*color:\s*var\(--ink-600\)/s);
 
   assert.match(css, /\.glass-surface\.is-interactive:focus-visible,\.liquid-lens:focus-visible\s*\{/);
-  assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[^}]*animation:\s*none;[^}]*transition:\s*none;[^}]*transform:\s*none;/s);
+  assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[^}]*transform:\s*none !important;[^}]*animation:\s*none !important;[^}]*transition:\s*none !important;/s);
+});
+
+test("glass CSS includes a solid warm fallback", async () => {
+  const css = await loadGlassCss();
+
+  assert.match(css, /@supports not/);
+  assert.match(css, /rgba\(255,253,248,\.96\)/);
+});
+
+test("reduced motion keeps the spark fallback static", async () => {
+  const css = await loadMotionCss();
+
+  assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*\.spark-fallback::before,[\s\S]*\.spark-fallback i\s*\{[^}]*animation:\s*none !important;/);
 });
