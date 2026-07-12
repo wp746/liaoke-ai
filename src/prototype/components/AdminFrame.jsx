@@ -45,7 +45,13 @@ export function AdminFrame({
     : [];
 
   return (
-    <section className="admin-frame" data-frame="admin" data-route-id={activeRoute}>
+    <section
+      className="admin-frame"
+      data-frame="admin"
+      data-route-id={activeRoute}
+      data-admin-density="high"
+      data-admin-role-mode={readonly ? "readonly" : "writable"}
+    >
       <GlassSurface as="aside" level="acrylic" className="admin-sidebar">
         <BrandMark compact />
         <nav aria-label="平台模块导航">
@@ -83,7 +89,7 @@ export function AdminFrame({
               aria-controls="admin-global-search-results"
             />
             {normalizedSearch && (
-              <div className="admin-search-results" id="admin-global-search-results">
+              <div className="admin-search-results" id="admin-global-search-results" aria-live="polite">
                 {searchResults.length ? searchResults.map((store) => (
                   <button type="button" key={store.id} onClick={() => onOpenSearchResult?.(store.id)}>
                     <strong>打开{store.name}</strong><small>{store.id} · {store.city}</small>

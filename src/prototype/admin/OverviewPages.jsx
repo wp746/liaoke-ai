@@ -14,12 +14,16 @@ const planLabels = { basic: "基础版", pro: "成长版 Pro", enterprise: "企�
 const statusLabels = { active: "营业中", paused: "暂停营业", disabled: "已停用" };
 
 export function StoreTable({ stores, onOpenStore, compact = false, emptyMessage = "没有符合条件的门店" }) {
+  const sortedStores = [...stores].sort((left, right) => {
+    const riskCount = (store) => Number.parseInt(store.risk, 10) || 0;
+    return riskCount(right) - riskCount(left) || left.name.localeCompare(right.name, "zh-CN");
+  });
   return (
     <div className="admin-table-wrap">
-      <GlassSurface as="table" level="solid" className="admin-store-table" aria-label="平台门店列表">
+      <GlassSurface as="table" level="solid" className="admin-store-table" aria-label="平台门店列表" data-default-sort="risk-desc">
         <thead><tr><th>门店</th><th>套餐</th><th>会员</th><th>风险</th><th>状态</th><th><span className="sr-only">操作</span></th></tr></thead>
         <tbody>
-          {stores.slice(0, compact ? 2 : stores.length).map((store) => (
+          {sortedStores.slice(0, compact ? 2 : sortedStores.length).map((store) => (
             <tr key={store.id}>
               <td><strong>{store.name}</strong><small>{store.id} · {store.city}</small></td>
               <td>{planLabels[store.plan]}</td><td>{store.members}</td><td>{store.risk}</td>
@@ -56,7 +60,7 @@ export function AdminLoginPage({ role, onNavigate }) {
 
 export function AdminOverviewPage({ permissions, onNavigate, adminState, onOpenStore, onCreateStore }) {
   return (
-    <main className="admin-page">
+    <main className="admin-page" data-admin-page="overview">
       <header className="admin-page-heading">
         <div><span className="admin-eyebrow">全局经营指挥台</span><h1>平台经营总览</h1><p>2026 年 7 月 11 日 · 数据截至 14:40</p></div>
         {permissions.canWrite && <button type="button" className="admin-primary-action" onClick={onCreateStore}>创建门店</button>}
@@ -76,8 +80,8 @@ export function AdminOverviewPage({ permissions, onNavigate, adminState, onOpenS
         </section>
         <GlassSurface level="solid" className="admin-panel admin-risk-panel">
           <div className="admin-panel-heading"><div><span className="admin-eyebrow">ACTION REQUIRED</span><h2>风险队列</h2></div><RewardGlyph kind="risk" value="3" className="admin-page-glyph" /></div>
-          <article><AlertTriangle size={17} /><div><strong>牛里牛气核销频率异常</strong><small>高风险 · 12:18</small></div></article>
-          <article><AlertTriangle size={17} /><div><strong>AI 生成失败率超过阈值</strong><small>中风险 · 11:42</small></div></article>
+          <article data-severity="high"><AlertTriangle size={17} /><div><strong>牛里牛气核销频率异常</strong><small>高风险 · 12:18</small></div></article>
+          <article data-severity="medium"><AlertTriangle size={17} /><div><strong>AI 生成失败率超过阈值</strong><small>中风险 · 11:42</small></div></article>
           <button type="button" className="admin-secondary-action" onClick={() => onNavigate("risk-center")}>查看全部风险</button>
         </GlassSurface>
       </div>

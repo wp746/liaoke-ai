@@ -17,7 +17,7 @@ export function StoresPage({ permissions, adminState, onOpenStore, onCreateStore
   });
 
   return (
-    <main className="admin-page">
+    <main className="admin-page" data-admin-page="stores">
       <header className="admin-page-heading"><div><span className="admin-eyebrow">STORE NETWORK</span><h1>门店管理</h1><p>查看门店经营、套餐、风险和会员概况。</p></div>{permissions.canWrite && <button className="admin-primary-action" type="button" onClick={onCreateStore}>创建门店</button>}</header>
       {!permissions.canWrite && <p className="admin-readonly-note"><CheckCircle2 size={16} />只读运营视图：可跨门店查看，不可创建、编辑或停用。</p>}
       <section className="admin-panel admin-store-panel">
@@ -34,7 +34,7 @@ export function StoresPage({ permissions, adminState, onOpenStore, onCreateStore
 export function StoreDetailPage({ permissions, selectedStore, onOpenStore, onNavigate, adminState }) {
   if (!selectedStore) return <main className="admin-page"><h1>未选择门店</h1><button type="button" className="admin-secondary-action" onClick={() => onNavigate("stores")}>返回门店列表</button></main>;
   return (
-    <main className="admin-page">
+    <main className="admin-page" data-admin-page="store-detail">
       <header className="admin-page-heading"><div><span className="admin-eyebrow">单店360°详情</span><h1>{selectedStore.name}</h1><p>{selectedStore.id} · {selectedStore.city} · {statusLabels[selectedStore.status]}</p></div>{permissions.canWrite && <button type="button" className="admin-primary-action" onClick={() => onOpenStore(selectedStore.id, "store-editor")}>编辑门店</button>}</header>
       {adminState.feedback && <p className="admin-feedback" role="status">{adminState.feedback}</p>}
       <section className="admin-kpi-grid admin-kpi-grid--store" aria-label="单店核心指标">
