@@ -145,3 +145,19 @@ P0 未全部通过，不应认定视觉交付完成。
 - `tests/unit/miniprogram-visual-system.test.js`：视觉合同自动化闸口。
 
 任何后续增删改查都必须保持该测试通过；如果业务需求确需改变视觉合同，应先修改正式规范并获得书面批准，再更新测试和实现。
+
+## 8.11 原生商家端生产基线
+
+首批商家端样板已经落在：
+
+- `miniprogram/pages/merchant/verify.*`：核销工作台。
+- `miniprogram/pages/merchant/dashboard.*`：今日经营首页。
+- `tests/unit/miniprogram-merchant-production.test.js`：商家端视觉与状态合同。
+
+商家端必须遵守：
+
+- 工作表单、经营指标、记录和设置默认使用 `Solid`，聚合入口可使用低透明 `Acrylic`。
+- 完整燎小星不得进入表格、表单、普通列表和连续经营操作；成功节点使用 `lk-spark-motion` 或静态 Glyph。
+- 核销必须具备查询、可核销、处理中、成功、错误状态，处理中禁止重复提交。
+- 经营首页必须具备加载、正常、空、错误状态，状态切换不得改变主要页面宽度与信息层级。
+- 角色权限由接口和状态层决定，视觉改造不得让店员看到老板或店长专属能力。

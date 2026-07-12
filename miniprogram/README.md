@@ -15,8 +15,8 @@
   - `pages/poster/preview`：海报预览、复制文案、模拟保存。
   - `pages/group/join`：会员福利群引导、二维码放大、复制入群链接。
 - 商家端：
-  - `pages/merchant/verify`：券码查询、金额计算、确认核销。
-  - `pages/merchant/dashboard`：扫码、发券、核销、AI 使用数据。
+  - `pages/merchant/verify`：生产化核销工作台，覆盖查询、可核销、处理中、成功和错误状态。
+  - `pages/merchant/dashboard`：生产化今日经营首页，覆盖六项指标、转化率、最近核销和四种页面状态。
 - 品牌组件：
   - `components/lk-glass-surface`：Acrylic / Lens / Solid 玻璃材质。
   - `components/lk-liquid-lens`：筛选与选中态液态焦点层。
@@ -162,6 +162,7 @@ npm run config:miniprogram:mock
 - `backdrop-filter` 只作增强；关闭模糊后仍须呈现暖白实体玻璃。
 - 根节点必须透传 `.reduce-motion`，关闭动画后不能改变布局或业务结果。
 - iOS 与 Android 使用同一 WXML、WXSS、场景资产和动效参数，不维护“安卓扁平版”。
+- 商家端比用户端更克制：工作表单、指标和记录优先使用 Solid；完整燎小星不进入表格、表单和普通列表。
 
 ## 海报生成
 

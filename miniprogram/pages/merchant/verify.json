@@ -1,3 +1,8 @@
 {
-  "navigationBarTitleText": "商家核销"
+  "navigationBarTitleText": "核销工作台",
+  "usingComponents": {
+    "lk-glass-surface": "../../components/lk-glass-surface/lk-glass-surface",
+    "lk-reward-glyph": "../../components/lk-reward-glyph/lk-reward-glyph",
+    "lk-spark-motion": "../../components/lk-spark-motion/lk-spark-motion"
+  }
 }

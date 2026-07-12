@@ -7,10 +7,14 @@ Page({
     amount: "256.00",
     coupon: null,
     discount: "38.40",
-    payable: "217.60"
+    payable: "217.60",
+    verifyState: "querying",
+    errorMessage: "",
+    reduceMotion: false
   },
 
   onLoad() {
+    this.setData({ reduceMotion: app.globalData.reduceMotion });
     this.preview();
   },
 
@@ -23,10 +27,26 @@ Page({
   },
 
   preview() {
+    if (!this.data.code.trim()) {
+      this.setData({
+        coupon: null,
+        verifyState: "error",
+        errorMessage: "请输入顾客券码"
+      });
+      return;
+    }
+    this.setData({ verifyState: "querying", errorMessage: "" });
     api.previewVerify(this.data.code).then((coupon) => {
-      this.setData({ coupon }, () => this.recalc());
+      this.setData({
+        coupon,
+        verifyState: "ready"
+      }, () => this.recalc());
     }).catch((error) => {
-      this.setData({ coupon: null });
+      this.setData({
+        coupon: null,
+        verifyState: "error",
+        errorMessage: error.msg || "未找到券码"
+      });
       wx.showToast({ title: error.msg || "未找到券码", icon: "none" });
     });
   },
@@ -51,18 +71,34 @@ Page({
       content: `${this.data.coupon.title}，应收 ¥${this.data.payable}`,
       success: (res) => {
         if (res.confirm) {
+          this.setData({ verifyState: "verifying", errorMessage: "" });
           api.verifyCoupon({
             coupon_code: this.data.code,
             store_id: app.globalData.store.id,
             amount: Number(this.data.amount) || 0
           }).then(() => {
+            this.setData({ verifyState: "success" });
             wx.showToast({ title: "核销成功", icon: "success" });
-            this.preview();
           }).catch((error) => {
+            this.setData({
+              verifyState: "error",
+              errorMessage: error.msg || "核销失败"
+            });
             wx.showToast({ title: error.msg || "核销失败", icon: "none" });
           });
         }
       }
+    });
+  },
+
+  resetVerify() {
+    this.setData({
+      code: "",
+      coupon: null,
+      discount: "0.00",
+      payable: "0.00",
+      verifyState: "error",
+      errorMessage: "请输入下一张券码"
     });
   }
 });

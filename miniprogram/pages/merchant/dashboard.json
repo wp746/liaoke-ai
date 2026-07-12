@@ -1,3 +1,7 @@
 {
-  "navigationBarTitleText": "今日数据"
+  "navigationBarTitleText": "今日经营",
+  "usingComponents": {
+    "lk-glass-surface": "../../components/lk-glass-surface/lk-glass-surface",
+    "lk-reward-glyph": "../../components/lk-reward-glyph/lk-reward-glyph"
+  }
 }
