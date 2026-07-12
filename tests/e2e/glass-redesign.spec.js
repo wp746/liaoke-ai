@@ -99,3 +99,37 @@ test("merchant redesign does not widen staff access", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "当前角色无法访问" })).toBeVisible();
   await expect(page.getByRole("button", { name: "发布活动" })).toHaveCount(0);
 });
+
+test("admin limits glass to navigation and context while tables stay solid", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 900 });
+  await page.goto("/?surface=admin&role=super_admin&route=admin-overview");
+  await expect(page.locator('.admin-sidebar[data-glass-level="acrylic"]')).toHaveCount(1);
+  await expect(page.locator('.admin-search[data-glass-level="acrylic"]')).toHaveCount(1);
+  await expect(page.locator('.admin-context-drawer[data-glass-level="lens"]')).toHaveCount(1);
+  await page.goto("/?surface=admin&role=super_admin&route=stores");
+  await expect(page.locator('.admin-store-table[data-glass-level="solid"]')).toHaveCount(1);
+  await expect(page.getByRole("table", { name: "平台门店列表" })).toBeVisible();
+});
+
+test("platform read-only stays non-AI and exposes no write action", async ({ page }) => {
+  await page.goto("/?surface=admin&role=platform_admin&route=stores");
+  await expect(page.getByText("只读运营视图", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "创建门店" })).toHaveCount(0);
+  await expect(page.locator(".admin-role.is-readonly")).not.toHaveCSS("background-color", "rgba(0, 194, 255, 0.09)");
+});
+
+test("admin glyphs reserve risk for risk surfaces and AI for AI operations", async ({ page }) => {
+  await page.goto("/?surface=admin&role=super_admin&route=risk-center");
+  await expect(page.locator('[data-glyph-kind="risk"]')).toHaveCount(1);
+  await expect(page.locator('[data-glyph-kind="ai"]')).toHaveCount(0);
+
+  for (const route of ["ai-quota", "ai-failures"]) {
+    await page.goto(`/?surface=admin&role=super_admin&route=${route}`);
+    await expect(page.locator('[data-glyph-kind="ai"]')).toHaveCount(1);
+    await expect(page.locator('[data-glyph-kind="risk"]')).toHaveCount(0);
+  }
+
+  await page.goto("/?surface=admin&role=super_admin&route=system-logs");
+  await expect(page.locator('[data-glyph-kind="ai"]')).toHaveCount(0);
+  await expect(page.locator('[data-glyph-kind="risk"]')).toHaveCount(0);
+});

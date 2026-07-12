@@ -12,6 +12,7 @@ import {
   TicketPercent,
 } from "lucide-react";
 import { BrandMark } from "./Brand.jsx";
+import { GlassSurface } from "./Glass.jsx";
 
 const navigation = [
   { id: "admin-overview", label: "平台总览", icon: LayoutDashboard },
@@ -45,7 +46,7 @@ export function AdminFrame({
 
   return (
     <section className="admin-frame" data-frame="admin" data-route-id={activeRoute}>
-      <aside className="admin-sidebar">
+      <GlassSurface as="aside" level="acrylic" className="admin-sidebar">
         <BrandMark compact />
         <nav aria-label="平台模块导航">
           {navigation.map(({ id, label, icon: Icon }) => (
@@ -65,11 +66,11 @@ export function AdminFrame({
           <span className="admin-sidebar__spark" />
           <div><strong>系统运行正常</strong><small>刚刚完成巡检</small></div>
         </div>
-      </aside>
+      </GlassSurface>
 
       <div className="admin-frame__main">
         <header className="admin-topbar">
-          <div className="admin-search">
+          <GlassSurface as="div" level="acrylic" className="admin-search">
             <Search size={16} />
             <label className="sr-only" htmlFor="admin-global-search">全局搜索</label>
             <input
@@ -90,7 +91,7 @@ export function AdminFrame({
                 )) : <p>没有找到匹配的门店</p>}
               </div>
             )}
-          </div>
+          </GlassSurface>
           <div className="admin-topbar__actions">
             <span className={readonly ? "admin-role is-readonly" : "admin-role"}>
               {roleLabel}
