@@ -5,19 +5,24 @@
 ## 当前包含
 
 - 顾客端 Tab：
-  - `pages/index/index`：扫码落地页、门店信息、今日券、AI 玩法入口。
-  - `pages/coupon/list`：我的吃肉券、状态筛选、券码弹层。
-  - `pages/ai-play/index`：上传/拍照、输入感受、选择风格。
-  - `pages/reward/index`：燎星值、任务奖励、邀请引导。
-  - `pages/me/index`：会员信息、当前门店、商家入口。
+  - `pages/index/index`：扫码落地、今日权益、积分与 AI 创作入口。
+  - `pages/coupon/list`：权益中心、Liquid Lens 状态筛选、券码弹层。
+  - `pages/ai-play/index`：AI 创作、上传/拍照、输入感受、选择风格。
+  - `pages/reward/index`：积分、等级进度、任务与积分流水。
+  - `pages/me/index`：会员等级、我的服务、商家工具入口。
 - 顾客端流程页：
   - `pages/ai-result/index`：AI 文案候选与选择。
   - `pages/poster/preview`：海报预览、复制文案、模拟保存。
   - `pages/group/join`：会员福利群引导、二维码放大、复制入群链接。
 - 商家端：
-  - `pages/merchant/verify`：券码查询、金额计算、确认核销。
-  - `pages/merchant/dashboard`：扫码、发券、核销、AI 使用数据。
+  - `pages/merchant/verify`：生产化核销工作台，覆盖查询、可核销、处理中、成功和错误状态。
+  - `pages/merchant/dashboard`：生产化今日经营首页，覆盖六项指标、转化率、最近核销和四种页面状态。
 - 品牌组件：
+  - `components/lk-glass-surface`：Acrylic / Lens / Solid 玻璃材质。
+  - `components/lk-liquid-lens`：筛选与选中态液态焦点层。
+  - `components/lk-reward-glyph`：透明立体业务 Glyph。
+  - `components/lk-liaoxiaoxing-moment`：燎小星场景与统一 Hero 尺寸。
+  - `components/lk-spark-motion`：高价值节点的轻量反馈。
   - `components/brand-lockup`：燎客 AI 品牌锁定。
   - `components/mascot-card`：燎小星 IP 引导卡。
   - `components/coupon-card`：统一吃肉券卡片。
@@ -25,6 +30,7 @@
   - SVG 源文件：`assets/brand/*.svg`
   - 小程序优先引用 PNG：`assets/brand/png/*.png`
   - 燎小星标准 IP 动作：`assets/brand/ip/*.png`，统一使用有披肩 3D 版。
+  - 五页面生产场景：`assets/brand/scenes/*.png`，来源锁定为正式场景母库。
 - TabBar 图标：
   - 源 SVG：`assets/tabbar/svg/*.svg`
   - 小程序引用 PNG：`assets/tabbar/png/*.png`
@@ -38,6 +44,7 @@ npm run validate:miniprogram
 npm run validate:api-contract
 npm run smoke:miniprogram
 npm run smoke:api
+npm run preflight:wechat
 npm run verify:all
 ```
 
@@ -69,13 +76,16 @@ npm run verify:all
 
 `verify:all` 会串行运行品牌导出、小程序结构校验、接口契约校验、两套 smoke test 和网页构建。
 
-## 打开方式
-
-用微信开发者工具导入：
+`preflight:wechat` 独立检查真实 AppID、微信开发者工具 CLI 和项目配置。当前发布就绪状态见：
 
 ```text
-/Users/wangpeng/Documents/Playground/AI 扫码牌/miniprogram
+miniprogram/RELEASE_READINESS.md
+miniprogram/DEVICE_ACCEPTANCE_REPORT.md
 ```
+
+## 打开方式
+
+用微信开发者工具导入仓库内的 `miniprogram/`。
 
 `appid` 当前为 `touristappid`，正式联调时替换为真实小程序 AppID。
 
@@ -151,6 +161,16 @@ npm run config:miniprogram:mock
 - AI 创作：`/api/upload/token`、`/api/ai/text`、`/api/ai/image`
 - 海报：`/api/poster/generate`
 - 统计：`/api/stats/event`、`/api/stats/daily`
+
+## 生产视觉约束
+
+- 首页、权益、AI 创作、积分、我的分别使用 `home / benefits / ai / points / profile` 场景。
+- 顶部燎小星固定 `340rpx × 340rpx`，必须有披风、透明背景。
+- 页面不得自行新增品牌色、圆角、阴影或玻璃材质常量，统一使用 `app.wxss` 的 `--lk-*` Token 和共享组件。
+- `backdrop-filter` 只作增强；关闭模糊后仍须呈现暖白实体玻璃。
+- 根节点必须透传 `.reduce-motion`，关闭动画后不能改变布局或业务结果。
+- iOS 与 Android 使用同一 WXML、WXSS、场景资产和动效参数，不维护“安卓扁平版”。
+- 商家端比用户端更克制：工作表单、指标和记录优先使用 Solid；完整燎小星不进入表格、表单和普通列表。
 
 ## 海报生成
 

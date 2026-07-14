@@ -1,0 +1,7 @@
+<view class="lk-reward-glyph lk-reward-glyph--{{kind}} lk-reward-glyph--{{state}}" aria-label="{{kind}} {{state}} {{value}}">
+  <view class="lk-reward-glyph__glass">
+    <text>{{symbol}}</text>
+    <view class="lk-reward-glyph__spark"></view>
+  </view>
+  <text wx:if="{{value}}" class="lk-reward-glyph__value">{{value}}</text>
+</view>

@@ -1,0 +1,4 @@
+<view class="lk-liquid-lens {{active ? 'is-active lk-glass-lens' : ''}}">
+  <slot />
+  <view wx:if="{{active}}" class="lk-liquid-lens__trail" aria-hidden="true"></view>
+</view>

@@ -24,10 +24,12 @@ App({
     coupons: [],
     rewards: [],
     launchScene: {},
-    selectedPoster: null
+    selectedPoster: null,
+    reduceMotion: false
   },
 
   onLaunch(options) {
+    this.globalData.reduceMotion = wx.getStorageSync("liaoke_reduce_motion") === true;
     this.bootstrap(options);
   },
 

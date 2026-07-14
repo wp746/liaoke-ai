@@ -13,6 +13,22 @@ Local note: v3.0 switches referral rewards from WeChat Pay profit sharing to del
 
 ---
 
+## 全产品视觉基线（2026-07-12 正式锁定）
+
+用户端小程序、商家端小程序和平台管理后台必须统一执行：
+
+- [`燎客跨端 Liquid Glass 视觉与动态系统`](superpowers/specs/2026-07-12-liaoke-cross-platform-liquid-glass-visual-system.md)
+- [`小程序开发公司视觉实施与交接契约`](brand-ip/08-mini-program-development-handoff.md)
+- [`燎小星场景库 manifest`](../public/brand/ip-liaoxiaoxing/scene-library/manifest.json)
+
+该视觉基线属于 PRD 强制要求，不是可选装修项。以后新增、删除、修改、查询任何板块，都必须复用同一设计 Token、材质层级、圆角体系、立体 Glyph、燎小星场景映射和交互参数。
+
+开发公司不得为 iOS 与 Android 制作两套不同布局或低配扁平版。模糊能力不支持时，只允许回退为暖白实体玻璃，不得删除圆角、层级、互动反馈或品牌 IP。
+
+视觉 P0 验收以锁定规范第 12 节和开发交接契约为准；未通过时，不认定前端视觉交付完成。
+
+---
+
 ## 第一节：版本说明与核心变更摘要
 
 ### 1.1 v3.0相对v2.0模块级变更对照表
@@ -1538,6 +1554,11 @@ HAVING days_left IN (14, 7, 3, 1);
 - [ ] platform_admin_logs表已创建并记录所有跨商家访问操作
 - [ ] 错误码7001/7002/7003/3004已实现并测试
 - [ ] 日度对账任务测试通过（手动制造余额不一致，验证告警写入日志）
+- [ ] 三端共用锁定的 Liquid Glass Token 和共享组件，不存在单页私有视觉体系
+- [ ] iOS 与 Android 的布局、尺寸、层级、燎小星素材和动效参数一致
+- [ ] 燎小星全部有披风、透明背景、正确场景动作，手机顶部 Hero 统一为 `170 × 170px` 视觉框
+- [ ] 关键业务图标为透明立体 Glyph，普通扁平图标未作为券、权益、积分和余额主视觉
+- [ ] 玻璃降级和减少动态效果测试通过
 
 ### v3.0新增检查项
 

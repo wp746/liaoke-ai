@@ -1,0 +1,106 @@
+.galacean-stage {
+  --spark-color: var(--ember-500, #ff6b1a);
+  --spark-accent: var(--gold-500, #f8b52f);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motion-host {
+  position: relative;
+  isolation: isolate;
+}
+
+.motion-host > :not(.galacean-stage) {
+  position: relative;
+  z-index: 1;
+}
+
+.galacean-stage[data-kind="ai"] {
+  --spark-color: var(--ai-cyan, #00c2ff);
+  --spark-accent: #8be7ff;
+}
+
+.galacean-stage__canvas,
+.galacean-stage__canvas canvas,
+.spark-fallback {
+  width: 100%;
+  height: 100%;
+}
+
+.galacean-stage__canvas,
+.spark-fallback {
+  position: absolute;
+  inset: 0;
+}
+
+.spark-fallback::before {
+  content: "";
+  position: absolute;
+  inset: 25%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--spark-accent) 34%, transparent), transparent 68%);
+  opacity: .72;
+  animation: spark-glow 1.5s ease-out both;
+}
+
+.spark-fallback i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--spark-color);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--spark-color) 72%, transparent);
+  opacity: 0;
+  animation: spark-burst 1.5s cubic-bezier(.2, .72, .22, 1) both;
+}
+
+.spark-fallback i:nth-child(1) { --spark-x: -54px; --spark-y: -30px; animation-delay: 0ms; }
+.spark-fallback i:nth-child(2) { --spark-x: -30px; --spark-y: 43px; animation-delay: 40ms; }
+.spark-fallback i:nth-child(3) { --spark-x: 0px; --spark-y: -58px; animation-delay: 80ms; }
+.spark-fallback i:nth-child(4) { --spark-x: 34px; --spark-y: 39px; animation-delay: 120ms; }
+.spark-fallback i:nth-child(5) { --spark-x: 57px; --spark-y: -24px; animation-delay: 160ms; }
+.spark-fallback i:nth-child(6) { --spark-x: 2px; --spark-y: 58px; animation-delay: 200ms; }
+
+.galacean-stage[data-motion-mode="ready"] .spark-fallback,
+.galacean-stage[data-motion-mode="inactive"] {
+  opacity: 0;
+}
+
+.galacean-stage[data-motion-mode="fallback"] .spark-fallback i {
+  animation-iteration-count: 1;
+}
+
+@keyframes spark-burst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.2); }
+  18% { opacity: 1; }
+  72% { opacity: .84; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--spark-x)), calc(-50% + var(--spark-y))) scale(.05); }
+}
+
+@keyframes spark-glow {
+  0% { opacity: 0; transform: scale(.65); }
+  26% { opacity: .78; }
+  100% { opacity: .22; transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spark-fallback::before,
+  .spark-fallback i {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .galacean-stage[data-motion-mode="reduced"] .spark-fallback::before {
+    opacity: .34;
+    transform: none;
+  }
+
+  .galacean-stage[data-motion-mode="reduced"] .spark-fallback i {
+    opacity: .42;
+    transform: translate(-50%, -50%) scale(.65);
+  }
+}

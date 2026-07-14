@@ -1,6 +1,8 @@
 {
-  "navigationBarTitleText": "AI 朋友圈神器",
+  "navigationBarTitleText": "AI 创作",
   "usingComponents": {
-    "mascot-card": "../../components/mascot-card/mascot-card"
+    "lk-glass-surface": "../../components/lk-glass-surface/lk-glass-surface",
+    "lk-reward-glyph": "../../components/lk-reward-glyph/lk-reward-glyph",
+    "lk-liaoxiaoxing-moment": "../../components/lk-liaoxiaoxing-moment/lk-liaoxiaoxing-moment"
   }
 }

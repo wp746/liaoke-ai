@@ -1,34 +1,42 @@
-<view class="page with-tab reward-page">
-  <view class="reward-hero">
-    <view>
-      <text class="tiny-label">我的奖励</text>
+<view class="page with-tab reward-page {{reduceMotion ? 'reduce-motion' : ''}}">
+  <lk-liaoxiaoxing-moment scene-id="points">
+    <view class="points-copy">
+      <text class="tiny-label">LIAOKE POINTS</text>
       <text class="points">{{member.points}}</text>
-      <text class="muted">燎星值 · {{member.level}}</text>
+      <text class="points-unit">可用积分 · {{member.level}}</text>
     </view>
-    <image src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png" mode="aspectFit" />
-  </view>
+  </lk-liaoxiaoxing-moment>
 
-  <view class="progress-card card section">
-    <view class="split-row">
-      <text class="progress-title">今日进度</text>
-      <text class="muted">还差 72 升级</text>
+  <lk-glass-surface level="lens">
+    <view class="mall-entry">
+      <lk-reward-glyph kind="points" value="兑换" />
+      <view><text>积分好物馆</text><text class="muted">用积分兑换吃肉券与隐藏福利</text></view>
+      <text class="entry-arrow">›</text>
     </view>
-    <view class="progress-track">
-      <view></view>
+  </lk-glass-surface>
+
+  <lk-glass-surface level="solid">
+    <view class="progress-card">
+      <view class="split-row"><text class="progress-title">等级进度</text><text class="muted">还差 72 积分升级</text></view>
+      <view class="progress-track"><view></view></view>
     </view>
-  </view>
+  </lk-glass-surface>
 
   <view class="task-grid section">
-    <view wx:for="{{rewards}}" wx:key="id" class="task-card">
-      <text class="task-title">{{item.title}}</text>
-      <text class="task-points">{{item.points}}</text>
-      <button data-id="{{item.id}}" bindtap="handleReward">{{item.done ? '已完成' : item.cta}}</button>
-    </view>
+    <lk-glass-surface wx:for="{{rewards}}" wx:key="id" level="acrylic" interactive>
+      <view class="task-card">
+        <lk-reward-glyph kind="{{item.id === 'poster' ? 'ai' : item.id === 'invite' ? 'referral' : 'points'}}" state="{{item.done ? 'used' : 'active'}}" value="{{item.points}}" />
+        <text class="task-title">{{item.title}}</text>
+        <button class="lk-pressable" data-id="{{item.id}}" bindtap="handleReward">{{item.done ? '已完成' : item.cta}}</button>
+      </view>
+    </lk-glass-surface>
   </view>
 
-  <mascot-card
-    title="邀请好友赚燎星值"
-    image-src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png"
-    text="每成功邀请 1 位好友到店扫码，你可以获得 30 燎星值。"
-  />
+  <lk-glass-surface level="solid">
+    <view class="points-history">
+      <view class="split-row"><text>最近积分</text><text class="muted">全部 ›</text></view>
+      <view><text>扫码到店</text><text class="plus">+10</text></view>
+      <view><text>使用吃肉券</text><text class="plus">+15</text></view>
+    </view>
+  </lk-glass-surface>
 </view>

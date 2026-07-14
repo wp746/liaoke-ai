@@ -32,19 +32,19 @@
       },
       {
         "pagePath": "pages/coupon/list",
-        "text": "吃肉券",
+        "text": "权益",
         "iconPath": "assets/tabbar/png/coupon.png",
         "selectedIconPath": "assets/tabbar/png/coupon-active.png"
       },
       {
         "pagePath": "pages/ai-play/index",
-        "text": "AI 创作",
+        "text": "AI创作",
         "iconPath": "assets/tabbar/png/create.png",
         "selectedIconPath": "assets/tabbar/png/create-active.png"
       },
       {
         "pagePath": "pages/reward/index",
-        "text": "奖励",
+        "text": "积分",
         "iconPath": "assets/tabbar/png/reward.png",
         "selectedIconPath": "assets/tabbar/png/reward-active.png"
       },

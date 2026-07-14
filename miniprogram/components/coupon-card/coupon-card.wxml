@@ -1,9 +1,13 @@
-<view class="coupon-card">
-  <view class="coupon-ribbon"></view>
+<view class="coupon-card lk-pressable coupon-card--{{glyphState}}">
+  <lk-reward-glyph kind="{{glyphKind}}" state="{{glyphState}}" />
   <view class="coupon-main">
     <text class="coupon-title">{{coupon.title}}</text>
     <text class="coupon-benefit">{{coupon.benefit}}</text>
     <text class="coupon-note">{{coupon.note}} · {{coupon.expireText}}</text>
   </view>
-  <button class="coupon-action" bindtap="handleTap">{{actionText}}</button>
+  <button class="coupon-action" bindtap="handleTap">
+    <image src="/assets/brand/scenes/scene-benefits-wallet.png" mode="aspectFit" />
+    <text>{{actionText}}</text>
+    <text class="coupon-arrow">›</text>
+  </button>
 </view>

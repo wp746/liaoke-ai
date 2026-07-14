@@ -1,8 +1,9 @@
 {
-  "navigationBarTitleText": "燎客 AI",
+  "navigationBarTitleText": "燎客",
   "usingComponents": {
-    "brand-lockup": "../../components/brand-lockup/brand-lockup",
-    "mascot-card": "../../components/mascot-card/mascot-card",
-    "coupon-card": "../../components/coupon-card/coupon-card"
+    "coupon-card": "../../components/coupon-card/coupon-card",
+    "lk-glass-surface": "../../components/lk-glass-surface/lk-glass-surface",
+    "lk-reward-glyph": "../../components/lk-reward-glyph/lk-reward-glyph",
+    "lk-liaoxiaoxing-moment": "../../components/lk-liaoxiaoxing-moment/lk-liaoxiaoxing-moment"
   }
 }

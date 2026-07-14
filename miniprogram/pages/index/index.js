@@ -5,7 +5,8 @@ Page({
   data: {
     store: {},
     member: {},
-    todayCoupon: null
+    todayCoupon: null,
+    reduceMotion: false
   },
 
   onShow() {
@@ -13,7 +14,8 @@ Page({
       this.setData({
         store,
         member,
-        todayCoupon: coupons.find((item) => item.type === "base" && item.status === "unused")
+        todayCoupon: coupons.find((item) => item.type === "base" && item.status === "unused"),
+        reduceMotion: app.globalData.reduceMotion
       });
     });
   },

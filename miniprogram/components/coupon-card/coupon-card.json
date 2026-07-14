@@ -1,3 +1,6 @@
 {
-  "component": true
+  "component": true,
+  "usingComponents": {
+    "lk-reward-glyph": "../lk-reward-glyph/lk-reward-glyph"
+  }
 }

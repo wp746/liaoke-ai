@@ -149,6 +149,29 @@ for (const asset of [
   checkFile(path.join(root, asset), `品牌资产 ${asset}`);
 }
 
+for (const component of [
+  "components/lk-glass-surface/lk-glass-surface",
+  "components/lk-liquid-lens/lk-liquid-lens",
+  "components/lk-reward-glyph/lk-reward-glyph",
+  "components/lk-liaoxiaoxing-moment/lk-liaoxiaoxing-moment",
+  "components/lk-spark-motion/lk-spark-motion"
+]) {
+  for (const ext of [".js", ".wxml", ".json", ".wxss"]) {
+    checkFile(path.join(root, `${component}${ext}`), `视觉系统组件 ${component}${ext}`);
+  }
+}
+
+checkFile(path.join(root, "assets/brand/scenes/manifest.js"), "燎小星场景映射");
+for (const asset of [
+  "scene-home-welcome.png",
+  "scene-benefits-wallet.png",
+  "scene-ai-magic.png",
+  "scene-points-reward.png",
+  "scene-profile-phone.png"
+]) {
+  checkFile(path.join(root, "assets/brand/scenes", asset), `燎小星场景资产 ${asset}`);
+}
+
 if (errors.length) {
   console.error("小程序结构校验失败:");
   for (const error of errors) {

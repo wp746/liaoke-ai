@@ -1,25 +1,66 @@
-<view class="page dashboard-page">
-  <view class="dash-head">
-    <text class="tiny-label">牛里牛气 商家端</text>
-    <text class="screen-title">今日数据</text>
-    <text class="muted">扫码、发券、AI 创作和核销表现。</text>
-  </view>
-
-  <view class="stats-grid section">
-    <view wx:for="{{statCards}}" wx:key="label" class="stat-card">
-      <text>{{item.value}}</text>
-      <text>{{item.label}}</text>
+<view class="page dashboard-page {{reduceMotion ? 'reduce-motion' : ''}}">
+  <view class="merchant-head">
+    <view>
+      <text class="tiny-label">LIAOKE MERCHANT</text>
+      <text class="screen-title">今日经营</text>
+      <text class="muted">扫码、权益、AI 创作与核销表现</text>
     </view>
+    <button class="verify-shortcut lk-pressable" bindtap="goVerify">去核销</button>
   </view>
 
-  <view class="records card section">
-    <text class="record-title">最近核销记录</text>
-    <view wx:for="{{stats.records}}" wx:key="time" class="record-row">
-      <text>{{item.time}}</text>
-      <view>
-        <text>{{item.title}}</text>
-        <text class="muted">{{item.amount}} · {{item.status}}</text>
+  <lk-glass-surface wx:if="{{pageState === 'loading'}}" level="solid">
+    <view class="state-panel loading-panel">
+      <view class="loading-orb"></view>
+      <text>正在汇总今日经营数据…</text>
+    </view>
+  </lk-glass-surface>
+
+  <block wx:if="{{pageState === 'ready'}}">
+    <view class="stats-grid">
+      <lk-glass-surface wx:for="{{statCards}}" wx:key="label" level="solid">
+        <view class="stat-card">
+          <lk-reward-glyph kind="{{item.kind}}" state="active" />
+          <view><text>{{item.value}}</text><text>{{item.label}}</text></view>
+        </view>
+      </lk-glass-surface>
+    </view>
+
+    <lk-glass-surface level="acrylic">
+      <view class="conversion-card">
+        <view class="split-row"><text class="panel-title">今日转化</text><text class="muted">实时</text></view>
+        <view class="conversion-row"><text>扫码 → 领券</text><text>90.5%</text></view>
+        <view class="conversion-track"><view style="width: 90.5%"></view></view>
+        <view class="conversion-row"><text>领券 → 核销</text><text>92.1%</text></view>
+        <view class="conversion-track"><view style="width: 92.1%"></view></view>
       </view>
+    </lk-glass-surface>
+
+    <lk-glass-surface level="solid">
+      <view class="records">
+        <view class="split-row"><text class="panel-title">最近核销</text><text class="muted">{{stats.records.length}} 笔</text></view>
+        <view wx:for="{{stats.records}}" wx:key="time" class="record-row">
+          <text>{{item.time}}</text>
+          <view><text>{{item.title}}</text><text class="muted">{{item.amount}} · {{item.status}}</text></view>
+          <text class="record-status">完成</text>
+        </view>
+      </view>
+    </lk-glass-surface>
+  </block>
+
+  <lk-glass-surface wx:if="{{pageState === 'empty'}}" level="solid">
+    <view class="state-panel">
+      <lk-reward-glyph kind="store" state="paused" />
+      <text class="state-title">今天还没有经营数据</text>
+      <text class="muted">顾客扫码后，核心指标会自动出现在这里</text>
     </view>
-  </view>
+  </lk-glass-surface>
+
+  <lk-glass-surface wx:if="{{pageState === 'error'}}" level="solid">
+    <view class="state-panel">
+      <lk-reward-glyph kind="store" state="paused" />
+      <text class="state-title">经营数据加载失败</text>
+      <text class="muted">{{errorMessage}}</text>
+      <button class="secondary-btn lk-pressable" bindtap="loadStats">重新加载</button>
+    </view>
+  </lk-glass-surface>
 </view>

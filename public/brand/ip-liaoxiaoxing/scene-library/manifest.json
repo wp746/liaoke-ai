@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "character": "燎小星",
+  "principle": "同一角色身份，不同任务姿态；完整 IP 只用于页面主视觉、关键成功反馈和任务引导。",
+  "scenes": [
+    {
+      "id": "home-welcome",
+      "surface": "customer",
+      "routes": ["home", "store-welcome"],
+      "asset": "scene-home-welcome-transparent-v1.png",
+      "runtimeAsset": "display/scene-home-welcome-transparent-v1-display.png",
+      "story": "燎小星站在餐厅欢迎牌旁招手，引导用户开始到店体验。",
+      "props": ["餐厅欢迎牌", "餐具符号"],
+      "motion": "轻浮动、招手高光、欢迎星点"
+    },
+    {
+      "id": "benefits-wallet",
+      "surface": "customer",
+      "routes": ["benefits", "coupon-detail", "claim-success"],
+      "asset": "scene-benefits-wallet-transparent-v1.png",
+      "runtimeAsset": "display/scene-benefits-wallet-transparent-v1-display.png",
+      "story": "燎小星拿着优惠钱包和星券，强调福利、领券与核销。",
+      "props": ["优惠钱包", "星券"],
+      "motion": "钱包弹开、券片浮起、领取星火"
+    },
+    {
+      "id": "ai-magic",
+      "surface": "customer",
+      "routes": ["ai-create", "ai-generating", "poster-complete"],
+      "asset": "scene-ai-magic-transparent-v1.png",
+      "runtimeAsset": "display/scene-ai-magic-transparent-v1-display.png",
+      "story": "燎小星挥动星杖并被魔法轨迹环绕，表达 AI 正在创作。",
+      "props": ["星杖", "魔法轨迹", "星点"],
+      "motion": "轨迹环绕、星杖点亮、生成完成爆闪"
+    },
+    {
+      "id": "points-reward",
+      "surface": "customer",
+      "routes": ["points", "task-complete", "level-up"],
+      "asset": "scene-points-reward-transparent-v1.png",
+      "runtimeAsset": "display/scene-points-reward-transparent-v1-display.png",
+      "story": "燎小星抱着星币庆祝，表达积分获得、升级与奖励。",
+      "props": ["星币", "奖励星点"],
+      "motion": "星币轻弹、数字增长、升级星环"
+    },
+    {
+      "id": "profile-phone",
+      "surface": "customer",
+      "routes": ["me", "account", "member-profile"],
+      "asset": "scene-profile-phone-cape-transparent-v2.png",
+      "runtimeAsset": "display/scene-profile-phone-cape-transparent-v2-display.png",
+      "story": "标准披风版燎小星拿着手机查看会员账户，表达个人资料与服务管理。",
+      "props": ["手机", "标准橙金披风"],
+      "motion": "屏幕亮起、消息星点、轻微点头"
+    }
+  ]
+}

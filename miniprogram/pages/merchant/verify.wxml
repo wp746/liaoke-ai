@@ -1,28 +1,72 @@
-<view class="page merchant-page">
-  <view class="verify-head">
-    <text class="tiny-label">牛里牛气 商家端</text>
-    <text class="screen-title">优惠券核销</text>
-    <text class="muted">首版支持扫码后填券码，也可以手动输入。</text>
-  </view>
-
-  <view class="form-card card section">
-    <text class="field-label">券码</text>
-    <input value="{{code}}" bindinput="updateCode" placeholder="输入顾客券码" />
-    <button class="secondary-btn" bindtap="preview">查询券详情</button>
-  </view>
-
-  <view wx:if="{{coupon}}" class="detail-card card section">
-    <text class="coupon-title">{{coupon.title}}</text>
-    <text class="coupon-benefit">{{coupon.benefit}}</text>
-    <text class="muted">{{coupon.note}} · {{coupon.expireText}}</text>
-    <view class="amount-row">
-      <text>本单金额</text>
-      <input type="digit" value="{{amount}}" bindinput="updateAmount" />
+<view class="page merchant-page {{reduceMotion ? 'reduce-motion' : ''}}">
+  <view class="merchant-head">
+    <view>
+      <text class="tiny-label">LIAOKE MERCHANT</text>
+      <text class="screen-title">核销工作台</text>
+      <text class="muted">一笔一核，确认权益与应收金额后再完成操作</text>
     </view>
-    <view class="money-row"><text>优惠金额</text><text>¥{{discount}}</text></view>
-    <view class="money-row strong"><text>应收金额</text><text>¥{{payable}}</text></view>
-    <button class="primary-btn" bindtap="verify">确认核销</button>
+    <view class="staff-badge">员工模式</view>
   </view>
 
-  <view wx:else class="empty-state card section">暂无券详情，请先查询。</view>
+  <lk-glass-surface level="acrylic">
+    <view class="verify-console">
+      <view class="console-title">
+        <lk-reward-glyph kind="store" state="{{verifyState === 'error' ? 'paused' : 'active'}}" />
+        <view><text>输入核销码</text><text class="muted">支持扫码结果或手动输入</text></view>
+      </view>
+      <view class="code-field">
+        <input value="{{code}}" bindinput="updateCode" placeholder="输入顾客券码" />
+        <button class="scan-button lk-pressable" aria-label="扫码">扫</button>
+      </view>
+      <button class="secondary-btn lk-pressable" disabled="{{verifyState === 'querying' || verifyState === 'verifying'}}" bindtap="preview">
+        {{verifyState === 'querying' ? '正在查询…' : '查询券详情'}}
+      </button>
+    </view>
+  </lk-glass-surface>
+
+  <lk-glass-surface wx:if="{{coupon && verifyState !== 'success'}}" level="solid">
+    <view class="detail-card">
+      <view class="coupon-summary">
+        <lk-reward-glyph kind="dish" state="{{verifyState === 'error' ? 'paused' : 'active'}}" />
+        <view>
+          <text class="coupon-title">{{coupon.title}}</text>
+          <text class="coupon-benefit">{{coupon.benefit}}</text>
+          <text class="muted">{{coupon.note}} · {{coupon.expireText}}</text>
+        </view>
+      </view>
+      <view class="amount-row">
+        <text>本单金额</text>
+        <view class="money-input"><text>¥</text><input type="digit" value="{{amount}}" bindinput="updateAmount" /></view>
+      </view>
+      <view class="money-row"><text>优惠金额</text><text>- ¥{{discount}}</text></view>
+      <view class="money-row strong"><text>顾客应付</text><text>¥{{payable}}</text></view>
+      <button class="primary-btn lk-pressable" disabled="{{verifyState === 'verifying' || verifyState === 'querying'}}" bindtap="verify">
+        {{verifyState === 'verifying' ? '核销处理中…' : '确认核销'}}
+      </button>
+    </view>
+  </lk-glass-surface>
+
+  <lk-glass-surface wx:if="{{verifyState === 'success'}}" level="solid">
+    <view class="result-state success-state">
+      <lk-spark-motion active reduced="{{reduceMotion}}" kind="success" />
+      <lk-reward-glyph kind="store" value="完成" />
+      <text class="result-title">核销成功</text>
+      <text class="muted">{{coupon.title}} · 实收 ¥{{payable}}</text>
+      <button class="secondary-btn lk-pressable" bindtap="resetVerify">继续核销下一笔</button>
+    </view>
+  </lk-glass-surface>
+
+  <lk-glass-surface wx:if="{{verifyState === 'error'}}" level="solid">
+    <view class="result-state error-state">
+      <lk-reward-glyph kind="store" state="paused" />
+      <text class="result-title">暂时无法核销</text>
+      <text class="muted">{{errorMessage}}</text>
+      <button class="secondary-btn lk-pressable" bindtap="preview">重新查询</button>
+    </view>
+  </lk-glass-surface>
+
+  <view class="operation-note">
+    <text>操作提示</text>
+    <text class="muted">核销结果将进入经营记录。遇到金额或权益异常，请暂停操作并联系店长。</text>
+  </view>
 </view>

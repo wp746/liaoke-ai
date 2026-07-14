@@ -1,0 +1,5 @@
+.lk-glass-surface {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--lk-radius-md);
+}

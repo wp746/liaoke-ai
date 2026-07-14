@@ -1,0 +1,80 @@
+.customer-page { min-height: 100%; padding: 18px 15px 28px; color: var(--ink-900); }
+.customer-page h1 { margin: 7px 0 9px; font-size: 27px; line-height: 1.08; letter-spacing: -.04em; }
+.customer-page p { color: var(--ink-600); font-size: 12px; line-height: 1.65; }
+.customer-entry { display: grid; align-content: center; }
+.customer-entry .ui-card { display: grid; grid-template-columns: 1fr 112px; padding: 23px 0 0 20px; overflow: hidden; }
+.customer-entry-moment > div { grid-column: 1; grid-row: 1; }
+.customer-entry-moment > .brand-mascot { grid-column: 2; grid-row: 1; }
+.customer-entry .brand-mascot { width: 132px; height: 200px; }
+.customer-consent { display: flex; gap: 7px; align-items: flex-start; margin: 16px 10px 17px 0; color: var(--ink-600); font-size: 10px; line-height: 1.45; }
+.customer-unavailable { display: grid; place-items: center; text-align: center; }
+.customer-unavailable .empty-state img { width: 168px; height: 178px; object-fit: contain; }
+.customer-unavailable .empty-state h3 { margin: 3px 0 7px; font-size: 22px; }
+.customer-unavailable .empty-state p { max-width: 250px; margin: 0 auto 17px; }
+.customer-home { display: grid; gap: 13px; align-content: start; }
+.customer-home__hero { display: grid; grid-template-columns: minmax(0, 1fr) 150px; min-height: 220px; overflow: hidden; padding: 20px 0 0 19px; border-radius: 28px; background: linear-gradient(145deg, #fff2da, #fff 68%); box-shadow: var(--shadow-soft); }
+.customer-home__hero > div { z-index: 1; }
+.customer-home__hero .brand-mascot { width: 170px; height: 170px; align-self: center; transform: translateX(-20px); }
+.customer-home__hero .ui-primary { padding: 0 14px; font-size: 11px; }
+.customer-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.customer-metrics button { display: flex; align-items: baseline; gap: 6px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 18px; background: #fff; text-align: left; }
+.customer-metrics strong { font-size: 18px; }.customer-metrics span { color: var(--ink-600); font-size: 10px; }
+.customer-home > .ui-card { display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; align-items: center; padding: 16px; }
+.customer-home > .ui-card strong { display: block; margin-top: 4px; font-size: 12px; line-height: 1.4; }
+.customer-home > .ui-card span { color: var(--ember-600); font-size: 9px; font-weight: 800; }
+.customer-home > .ui-card button, .customer-text-button { padding: 0; background: transparent; color: var(--ember-600); font-size: 11px; font-weight: 800; }
+.customer-ai-card__icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 15px; background: var(--brand-gradient); color: #fff; }
+.customer-claim { display: grid; place-items: center; align-content: center; text-align: center; }
+.customer-claim-moment .brand-mascot { width: 145px; height: 160px; transform: none; }
+.customer-claim > p { max-width: 270px; margin: 0 0 14px; }
+.customer-claim .ui-card { display: flex; width: 100%; justify-content: space-between; margin-bottom: 15px; padding: 15px; }
+.customer-claim .ui-card span { color: var(--ink-600); font-size: 10px; }
+.customer-page__header span { color: var(--ember-600); font-size: 10px; font-weight: 800; }
+.customer-scene-hero { position: relative; display: grid; min-height: 170px; align-items: center; overflow: hidden; margin-bottom: 16px; padding: 18px 154px 18px 18px; border: 1px solid rgba(255,255,255,.7); border-radius: 28px; background: linear-gradient(145deg,rgba(255,255,255,.82),rgba(255,244,224,.68)); box-shadow: var(--shadow-soft); }
+.customer-scene-hero .customer-page__header { position: relative; z-index: 1; }
+.customer-scene-hero .brand-mascot { position: absolute; top: 0; right: -2px; width: 170px; height: 170px; transform: none; object-fit: contain; }
+.customer-scene-hero p { margin-bottom: 0; }
+.customer-points-hero { background: radial-gradient(circle at 80% 30%,rgba(248,184,77,.25),transparent 36%),linear-gradient(145deg,rgba(255,255,255,.86),rgba(255,245,224,.72)); }
+.customer-profile-hero { background: radial-gradient(circle at 82% 28%,rgba(255,107,26,.18),transparent 38%),linear-gradient(145deg,rgba(255,255,255,.86),rgba(255,248,236,.74)); }
+.customer-page:has(.customer-benefits-hero) { background: radial-gradient(circle at 76% 5%,rgba(248,184,77,.18),transparent 34%),linear-gradient(180deg,#fffdf8,#faf6ee); }
+.customer-benefits-hero { position: relative; min-height: 170px; padding: 18px 154px 18px 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.7); border-radius: 28px; background: linear-gradient(145deg,rgba(255,255,255,.84),rgba(255,244,224,.68)); box-shadow: var(--shadow-soft); }
+.customer-benefits-hero .brand-mascot { position: absolute; top: 0; right: -2px; width: 170px; height: 170px; transform: none; }
+.customer-benefits-hero .customer-page__header { position: relative; z-index: 1; }
+.customer-segment { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; margin: 14px 0; padding: 4px; border-radius: 22px; }
+.customer-segment button { position: relative; min-height: 42px; padding: 0; border-radius: 17px; background: transparent; color: var(--ink-600); font-size: 10px; font-weight: 750; }
+.customer-segment button.is-active { background: transparent; color: var(--ember-600); box-shadow: none; }
+.customer-segment .liquid-lens { position: absolute; inset: 0; }
+.customer-segment .spark-trail { position: absolute; right: 12px; bottom: 3px; }
+.customer-coupon-sheet { display: grid; overflow: hidden; padding: 6px 12px; border-radius: 28px; }
+.customer-coupon-row { position: relative; display: grid; grid-template-columns: 64px 1fr 20px; gap: 13px; align-items: center; min-height: 94px; padding: 14px 4px; border: 0; border-bottom: 1px solid rgba(90,55,24,.10); border-radius: 0; background: transparent; box-shadow: none; color: inherit; text-align: left; }
+.customer-coupon-row::after { content:""; position:absolute; right:-14px; bottom:-34px; width:92px; height:92px; background:url("/brand/ip-liaoxiaoxing/scene-library/display/scene-benefits-wallet-transparent-v1-display.png") center/contain no-repeat; opacity:.06; pointer-events:none; }
+.customer-coupon-row > * { position:relative; z-index:1; }
+.customer-coupon-row:last-child { border-bottom: 0; }
+.customer-coupon-row strong,.customer-coupon-row small { display: block; }
+.customer-coupon-row strong { font-size: 11px; }
+.customer-coupon-row small { margin-top: 7px; color: var(--ink-600); font-size: 9px; }
+.customer-referrals { display: grid; gap: 13px; }.customer-referrals .ui-card p { margin-bottom: 0; }
+.customer-referral-list { display: grid; gap: 8px; }.customer-referral-record { display: flex; align-items: center; justify-content: space-between; padding: 13px; border: 1px solid var(--line); border-radius: 17px; background: #fff; }.customer-referral-record strong,.customer-referral-record small { display: block; }.customer-referral-record strong { font-size: 11px; }.customer-referral-record small { margin-top: 5px; color: var(--ink-600); font-size: 8px; }.customer-empty-copy { padding: 15px; border: 1px dashed var(--line); border-radius: 16px; text-align: center; }
+.customer-balance-number { display: block; margin: 8px 0 14px; font-size: 32px; }
+.customer-balance-vessel { display: grid; gap: 10px; padding: 20px; border-radius: 24px; }
+.customer-balance-vessel .reward-glyph { width: 48px; height: 48px; }
+.customer-ai-composer { display: grid; gap: 13px; padding: 16px; border-radius: 25px; }
+.customer-ai-composer > .reward-glyph { width: 44px; height: 44px; }
+.customer-list { display: grid; gap: 9px; }
+.customer-points-product { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 11px; align-items: center; min-height: 82px; padding: 12px; border-radius: 19px; color: inherit; }
+.customer-points-product .reward-glyph { width: 52px; height: 52px; font-size: 9px; }
+.customer-points-product .reward-glyph strong { font-size: 9px; }
+.customer-points-product > span:not(.reward-glyph) strong,.customer-points-product > span:not(.reward-glyph) small { display: block; }
+.customer-points-product > span:not(.reward-glyph) strong { font-size: 11px; }
+.customer-points-product > span:not(.reward-glyph) small { margin-top: 5px; color: var(--ink-600); font-size: 8px; line-height: 1.45; }
+.customer-points-product > button { max-width: 76px; padding: 0; background: transparent; color: var(--ember-600); font-size: 9px; font-weight: 800; }
+.customer-points-product > button:disabled { color: var(--ink-600); }
+.customer-referrals-vessel { display: grid; grid-template-columns: 54px 1fr; gap: 11px; align-items: center; margin-bottom: 14px; padding: 14px; border-radius: 22px; }
+.customer-referrals-vessel .reward-glyph { width: 50px; height: 50px; }
+.customer-referrals-vessel h1 { margin-bottom: 0; }
+.customer-service-row { position:relative; display:grid; grid-template-columns:28px 1fr 24px; align-items:center; gap:10px; min-height:64px; overflow:hidden; padding:12px 14px; border:1px solid var(--line); border-radius:20px; background:rgba(255,253,248,.94); color:var(--ink-900); text-align:left; }
+.customer-service-row::after { content:""; position:absolute; right:-16px; bottom:-38px; width:96px; height:96px; background:url("/brand/ip-liaoxiaoxing/scene-library/display/scene-profile-phone-cape-transparent-v2-display.png") center/contain no-repeat; opacity:.065; pointer-events:none; }
+.customer-service-row > * { position:relative; z-index:1; }
+.customer-code-page { background: rgba(244,239,230,.72); }.customer-code-dialog { margin-top: 13px; padding: 22px 18px; border: 1px solid var(--line); border-radius: 25px; background: #fff; box-shadow: var(--shadow-soft); text-align: center; }
+.customer-code-dialog > span { color: var(--ember-600); font-size: 10px; font-weight: 800; }.customer-qr { display: grid; width: 150px; height: 150px; margin: 16px auto 12px; place-items: center; border: 8px solid #fff8ed; border-radius: 20px; background: repeating-linear-gradient(45deg,#fff,#fff 8px,#faf4ea 8px,#faf4ea 16px); }.customer-code { font-size: 22px; letter-spacing: .14em; }.customer-code-dialog > p { display: flex; justify-content: center; align-items: center; gap: 5px; }.customer-code-dialog dl { margin: 15px 0 0; padding-top: 10px; border-top: 1px solid var(--line); text-align: left; }.customer-code-dialog dl div { display: grid; grid-template-columns: 62px 1fr; gap: 8px; margin-top: 8px; font-size: 9px; line-height: 1.5; }.customer-code-dialog dt { color: var(--ink-600); }.customer-code-dialog dd { margin: 0; font-weight: 700; }
+.customer-placeholder { display: grid; place-items: center; align-content: center; text-align: center; }

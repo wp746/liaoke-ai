@@ -1,12 +1,32 @@
-.dash-head {
+.merchant-head {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+  margin-bottom: 28rpx;
+}
+
+.merchant-head > view {
+  display: flex;
+  min-width: 0;
+  flex: 1;
   flex-direction: column;
-  gap: 10rpx;
+  gap: 9rpx;
 }
 
 .screen-title {
-  color: #1f1f23;
-  font-size: 45rpx;
+  color: var(--lk-ink-900);
+  font-size: 48rpx;
+  font-weight: 900;
+}
+
+.verify-shortcut {
+  min-height: 72rpx;
+  padding: 0 22rpx;
+  border-radius: var(--lk-radius-pill);
+  background: var(--lk-ink-900);
+  color: #ffffff;
+  font-size: 23rpx;
   font-weight: 900;
 }
 
@@ -18,56 +38,135 @@
 
 .stat-card {
   display: flex;
-  min-height: 170rpx;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10rpx;
-  padding: 26rpx;
-  border-radius: 30rpx;
-  background: #ffffff;
-  box-shadow: 0 14rpx 34rpx rgba(82, 54, 24, 0.07);
+  min-height: 164rpx;
+  align-items: center;
+  gap: 8rpx;
+  padding: 20rpx 16rpx;
 }
 
-.stat-card text:first-child {
-  color: #ff4b1b;
-  font-size: 52rpx;
+.stat-card > view {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 7rpx;
+}
+
+.stat-card > view text:first-child {
+  color: var(--lk-ink-900);
+  font-size: 44rpx;
   font-weight: 900;
 }
 
-.stat-card text:last-child {
-  color: #696a72;
-  font-size: 25rpx;
+.stat-card > view text:last-child {
+  color: var(--lk-ink-600);
+  font-size: 23rpx;
   font-weight: 700;
 }
 
+.conversion-card,
 .records {
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
+  gap: 0;
   padding: 30rpx;
 }
 
-.record-title {
-  margin-bottom: 14rpx;
-  color: #1f1f23;
+.panel-title {
+  color: var(--lk-ink-900);
   font-size: 31rpx;
   font-weight: 900;
 }
 
-.record-row {
+.conversion-row {
   display: flex;
-  gap: 24rpx;
-  padding: 20rpx 0;
-  border-top: 1rpx solid #f0e7dc;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+  color: var(--lk-ink-600);
+  font-size: 24rpx;
+  font-weight: 700;
 }
 
-.record-row > text {
-  color: #ff4b1b;
+.conversion-row text:last-child {
+  color: var(--lk-ember-600);
   font-weight: 900;
 }
 
-.record-row view {
+.conversion-track {
+  height: 14rpx;
+  margin-top: 10rpx;
+  overflow: hidden;
+  border-radius: var(--lk-radius-pill);
+  background: rgba(90, 55, 24, .08);
+}
+
+.conversion-track view {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--lk-ember-600), var(--lk-reward-gold));
+}
+
+.record-row {
   display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 20rpx 0;
+  border-top: 1rpx solid var(--lk-line);
+}
+
+.record-row > text {
+  color: var(--lk-ember-600);
+  font-weight: 900;
+}
+
+.record-row > view {
+  display: flex;
+  min-width: 0;
+  flex: 1;
   flex-direction: column;
   gap: 6rpx;
+}
+
+.record-status {
+  padding: 8rpx 12rpx;
+  border-radius: var(--lk-radius-pill);
+  background: rgba(248, 184, 77, .16);
+  color: #8a5b00 !important;
+  font-size: 20rpx;
+}
+
+.state-panel {
+  display: flex;
+  min-height: 360rpx;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14rpx;
+  padding: 36rpx;
+  text-align: center;
+}
+
+.state-title {
+  color: var(--lk-ink-900);
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+.state-panel .secondary-btn {
+  width: 100%;
+  margin-top: 8rpx;
+}
+
+.loading-orb {
+  width: 64rpx;
+  height: 64rpx;
+  border: 8rpx solid rgba(255, 75, 27, .16);
+  border-top-color: var(--lk-ember-600);
+  border-radius: var(--lk-radius-pill);
+  animation: merchant-spin 900ms linear infinite;
+}
+
+@keyframes merchant-spin {
+  to { transform: rotate(360deg); }
 }

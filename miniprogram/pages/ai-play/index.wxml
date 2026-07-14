@@ -1,52 +1,45 @@
-<view class="page with-tab ai-page">
-  <view class="screen-head">
-    <view>
-      <text class="tiny-label">燎小星创作台</text>
-      <text class="screen-title">今天这顿火锅，值得被记住</text>
-      <text class="muted">上传随手拍，也可以只写一句真实感受。</text>
+<view class="page with-tab ai-page {{reduceMotion ? 'reduce-motion' : ''}}">
+  <lk-liaoxiaoxing-moment scene-id="ai">
+    <view class="hero-copy">
+      <text class="tiny-label ai-label">LIAOKE AI STUDIO</text>
+      <text class="screen-title">把今天这顿，<br />变成一张好作品</text>
+      <text class="muted">上传随手拍，也可以只写一句真实感受</text>
     </view>
-    <image src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png" mode="aspectFit" />
-  </view>
+  </lk-liaoxiaoxing-moment>
 
-  <button class="upload-card section" bindtap="chooseImage">
-    <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFill" />
-    <view wx:else>
-      <text class="upload-icon">+</text>
-      <text class="upload-title">上传/拍一张火锅照片</text>
-      <text class="muted">支持美食、环境、合影</text>
+  <lk-glass-surface level="acrylic" interactive>
+    <button class="upload-card" bindtap="chooseImage">
+      <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFill" />
+      <view wx:else>
+        <lk-reward-glyph kind="ai" value="添加照片" />
+        <text class="upload-title">上传 / 拍一张火锅照片</text>
+        <text class="muted">支持美食、环境、合影</text>
+      </view>
+      <text wx:if="{{uploadStatus === 'uploading'}}" class="upload-state">AI 上传中</text>
+      <text wx:if="{{uploadStatus === 'done'}}" class="upload-state done">AI 已就绪</text>
+      <text wx:if="{{uploadStatus === 'failed'}}" class="upload-state failed">上传失败</text>
+    </button>
+  </lk-glass-surface>
+
+  <lk-glass-surface level="solid">
+    <view class="input-card">
+      <text class="input-label">说一句你的真实感受</text>
+      <textarea value="{{feeling}}" maxlength="80" auto-height bindinput="updateFeeling" />
+      <view class="preset-row">
+        <button wx:for="{{presets}}" wx:key="*this" class="lk-pressable" data-text="{{item}}" bindtap="usePreset">{{item}}</button>
+      </view>
     </view>
-    <text wx:if="{{uploadStatus === 'uploading'}}" class="upload-state">上传中</text>
-    <text wx:if="{{uploadStatus === 'done'}}" class="upload-state done">已上传</text>
-    <text wx:if="{{uploadStatus === 'failed'}}" class="upload-state failed">上传失败</text>
-  </button>
+  </lk-glass-surface>
 
-  <view class="input-card card section">
-    <text class="input-label">说一句你的真实感受</text>
-    <textarea value="{{feeling}}" maxlength="80" auto-height bindinput="updateFeeling" />
-    <view class="preset-row">
-      <button wx:for="{{presets}}" wx:key="*this" data-text="{{item}}" bindtap="usePreset">{{item}}</button>
+  <lk-glass-surface level="acrylic">
+    <view class="style-panel">
+      <text class="input-label">选择创作风格</text>
+      <view class="style-grid">
+        <button wx:for="{{styles}}" wx:key="*this" class="lk-pressable {{activeStyle === item ? 'active' : ''}}" data-style="{{item}}" bindtap="chooseStyle">{{item}}</button>
+      </view>
     </view>
-  </view>
+  </lk-glass-surface>
 
-  <view class="style-panel section">
-    <text class="input-label">选择风格</text>
-    <view class="style-grid">
-      <button
-        wx:for="{{styles}}"
-        wx:key="*this"
-        class="{{activeStyle === item ? 'active' : ''}}"
-        data-style="{{item}}"
-        bindtap="chooseStyle"
-      >{{item}}</button>
-    </view>
-  </view>
-
-  <button class="primary-btn section" bindtap="generate">生成我的朋友圈素材</button>
-
-  <mascot-card
-    compact
-    title="安全提示"
-    image-src="/assets/brand/ip/liaoxiaoxing-standalone-no-star.png"
-    text="生成内容会避开强制分享、虚假宣传和敏感表达。"
-  />
+  <button class="primary-btn section lk-pressable" bindtap="generate">让燎小星开始创作</button>
+  <text class="safety-note">内容会自动避开强制分享、虚假宣传和敏感表达</text>
 </view>

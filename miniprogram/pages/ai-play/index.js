@@ -10,7 +10,12 @@ Page({
     feeling: "吊龙太嫩了，朋友聚餐很舒服。",
     styles: styleOptions,
     activeStyle: "高级日常",
-    presets: ["今天肉很新鲜", "这家性价比可以", "朋友聚餐很舒服"]
+    presets: ["今天肉很新鲜", "这家性价比可以", "朋友聚餐很舒服"],
+    reduceMotion: false
+  },
+
+  onShow() {
+    this.setData({ reduceMotion: getApp().globalData.reduceMotion });
   },
 
   chooseImage() {

@@ -7,6 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "dev:api": "node server/mock-api.cjs",
     "build": "vite build",
+    "test": "node --test tests/unit/*.test.js",
+    "test:e2e": "playwright test",
+    "test:e2e:update": "playwright test --update-snapshots",
     "config:miniprogram:mock": "node scripts/configure-miniprogram-env.cjs mock",
     "config:miniprogram:local": "node scripts/configure-miniprogram-env.cjs localHttpMock",
     "config:miniprogram:test": "node scripts/configure-miniprogram-env.cjs test",
@@ -16,10 +19,13 @@
     "validate:miniprogram": "node scripts/validate-miniprogram.js",
     "smoke:miniprogram": "node scripts/smoke-miniprogram-api.cjs",
     "smoke:api": "node scripts/smoke-http-api.cjs",
+    "preflight:wechat": "node scripts/preflight-wechat-devtools.cjs",
+    "preflight:wechat:strict": "node scripts/preflight-wechat-devtools.cjs --require-ready",
     "verify:all": "npm run validate:api-contract && npm run export:brand-kit && npm run validate:miniprogram && npm run smoke:miniprogram && npm run smoke:api && npm run build",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
+    "@galacean/effects": "2.9.3",
     "@vitejs/plugin-react": "^4.3.4",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
@@ -27,6 +33,7 @@
     "vite": "^6.0.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.61.1",
     "playwright": "^1.61.1"
   }
 }

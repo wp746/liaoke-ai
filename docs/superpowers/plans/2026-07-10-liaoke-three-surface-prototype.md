@@ -440,7 +440,7 @@ Expected: FAIL because the current showcase has no surface controls.
 export { default } from "./prototype/PrototypeApp.jsx";
 ```
 
-`PrototypeApp` initializes `surface="customer"`, `routeId="home"`, `scenarioId="returning-customer"`, and `role="owner"`; it renders the inspector on desktop and collapses it into a drawer below 900 px.
+`PrototypeApp` initializes `surface="customer"`, `routeId="home"`, and `scenarioId="returning-customer"`; role defaults are surface-specific: customer uses `role=null` and omits `role` from customer URLs, merchant defaults to `role="owner"`, and admin defaults to `role="super_admin"`. It renders the inspector on desktop and collapses it into a drawer below 900 px.
 
 - [ ] **Step 5: Build reusable UI primitives**
 

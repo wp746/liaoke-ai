@@ -1,0 +1,3 @@
+<view class="lk-glass-surface lk-glass-{{level}} {{interactive ? 'lk-pressable' : ''}}">
+  <slot />
+</view>
