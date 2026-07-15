@@ -6,6 +6,7 @@
 > 适用系统：顾客端小程序、商家端小程序、平台管理后台、统一业务后端<br>
 > GitHub 源码：[wp746/liaoke-ai](https://github.com/wp746/liaoke-ai)，正式发布分支为 `main`<br>
 > 当前评审地址：[https://liaoke-ai.vercel.app](https://liaoke-ai.vercel.app)<br>
+> v3.1.3 最新预览：[liaoke-35hf4x47q-modifaireliondersderson-5344s-projects.vercel.app](https://liaoke-35hf4x47q-modifaireliondersderson-5344s-projects.vercel.app)<br>
 > 重要说明：Vercel 页面是三端交互评审原型，不能处理真实顾客、支付、券码或经营数据。
 
 ## 0. 如何使用本说明书
@@ -1576,6 +1577,17 @@ GitHub 与 Vercel 发布约定：
 - 本地 `output/` 和 Playwright 临时报告不进入 GitHub，也不进入 Vercel 部署包。
 
 当前 v3.1.3 发布验证基线：61 个单元测试、153 个浏览器测试、生产构建、小程序结构、API 契约和两套 smoke test 全部通过。
+
+本次预览发布记录：
+
+| 项目 | 记录 |
+|---|---|
+| 功能提交 | `8ebefe3` |
+| Vercel deployment ID | `dpl_5a5Z3MkaWHji31UNj6wLv6QUdV62` |
+| 发布目标 | Preview |
+| 部署状态 | `READY` |
+| 预览地址 | `https://liaoke-35hf4x47q-modifaireliondersderson-5344s-projects.vercel.app` |
+| 正式域名 | `https://liaoke-ai.vercel.app`，确认预览后再更新 Production |
 
 #### 微信小程序
 
