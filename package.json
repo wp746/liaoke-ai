@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "dev:api": "node server/mock-api.cjs",
-    "build": "vite build",
+    "build": "vite build && node scripts/prepare-sites-build.cjs",
     "test": "node --test tests/unit/*.test.js",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
