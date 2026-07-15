@@ -138,6 +138,8 @@ MVP 可用两种方案：
 | 统计 | GET | `/api/stats/daily` | 日统计 |
 | 商家 | POST | `/api/merchant/login` | 商家登录 |
 | 商家 | GET | `/api/merchant/verify/preview` | 核销前查询 |
+| 私域群 | GET | `/api/merchant/private-group` | 老板和店长查看本店群配置与漏斗 |
+| 私域群 | PUT | `/api/merchant/private-group` | 仅老板保存本店群配置 |
 
 ## 10.5 代表性接口详情
 
@@ -206,11 +208,39 @@ GET /api/store/detail?store_id=STORE001
     "slogan": "吃肉的人终会相遇",
     "brand_keywords": ["潮汕牛肉火锅", "05后女生老板", "肉好实惠"],
     "group_chat_url": "https://xxx.com/group-guide",
+    "group_chat_name": "牛里牛气会员福利群",
+    "group_join_guide": "进群领隐藏福利、生日券和新品试吃提醒。",
+    "group_qr_image": "https://cdn.example.com/store/STORE001/group-live-code.png",
+    "group_enabled": true,
+    "group_qr_expires_at": "2026-12-31",
+    "group_assistant_name": "牛气群福利助手",
+    "group_welcome_message": "群内只发门店福利、新品和生日提醒，不刷屏。",
     "poster_template": "hotpot_standard",
     "activity_enabled": true
   }
 }
 ```
+
+### GET / PUT `/api/merchant/private-group`
+
+查看权限：老板、店长。修改权限：仅老板。`PUT` 必须校验当前账号授权的 `store_id`，不能信任客户端提交的门店归属。
+
+保存请求：
+
+```json
+{
+  "enabled": true,
+  "name": "牛里牛气会员福利群",
+  "guide": "进群领隐藏福利、生日券和新品试吃提醒。",
+  "join_url": "https://work.weixin.qq.com/example",
+  "qr_image": "https://cdn.example.com/store/STORE001/group-live-code.png",
+  "qr_expires_at": "2026-12-31",
+  "assistant_name": "牛气群福利助手",
+  "welcome_message": "群内只发门店福利、新品和生日提醒，不刷屏。"
+}
+```
+
+返回同时包含 `page_view_count`、`join_click_count`、`link_copy_count`、`assistant_request_count` 和 `confirmed_join_count`。服务端必须校验 HTTPS、字段长度和日期，并写入修改前后值、操作人和请求 ID。关闭入口只停止新的入群操作，不改变顾客既有权益。
 
 ### POST `/api/coupon/issue`
 
@@ -970,6 +1000,8 @@ GET /api/member/level?store_id=STORE001&member_id=MEM202606270001
 
 ### POST `/api/stats/event`
 
+私域群允许的事件包括 `group_join_page_show`、`group_join_click`、`group_join_qr_preview`、`group_join_link_copy`、`group_join_assistant_request` 和 `group_join_confirmed`。其中只有 `group_join_confirmed` 可以计入实际入群人数，且应来自企业微信可信回调或可审计人工核验。
+
 请求：
 
 ```json
@@ -977,7 +1009,7 @@ GET /api/member/level?store_id=STORE001&member_id=MEM202606270001
   "store_id": "STORE001",
   "member_id": "MEM202606270001",
   "table_id": "A01",
-  "event_type": "group_click",
+  "event_type": "group_join_click",
   "event_payload": {
     "page": "home",
     "button": "join_group"
@@ -1021,6 +1053,7 @@ GET /api/stats/daily?store_id=STORE001&date=2026-06-27
     "ai_image_count": 12,
     "poster_count": 7,
     "group_join_click_count": 12,
+    "group_join_confirmed_count": 8,
     "invite_bind_count": 3,
     "new_customer_verified_count": 1,
     "ai_cost_amount": 4.86,

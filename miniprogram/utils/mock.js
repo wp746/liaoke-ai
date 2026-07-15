@@ -8,7 +8,11 @@ const mockStore = {
   groupChatUrl: "https://example.com/group-guide",
   groupChatName: "牛里牛气会员福利群",
   groupJoinGuide: "进群领隐藏福利、生日券、新品试吃和工作日午市提醒。",
-  groupQrImage: "/assets/brand/png/liaoke-mark.png",
+  groupQrImage: "/assets/brand/png/group-guide-demo-qr.png",
+  groupEnabled: true,
+  groupQrExpiresAt: "2026-12-31",
+  groupAssistantName: "牛气群福利助手",
+  groupWelcomeMessage: "欢迎进群。群内只发门店福利、新品和生日提醒，不刷屏。",
   keywords: ["潮汕牛肉火锅", "肉好实惠", "朋友聚餐"]
 };
 

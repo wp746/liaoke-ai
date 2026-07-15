@@ -26,7 +26,7 @@ npm run verify:all
 ```
 
 - `npm test`：运行 49 个 Node 单元测试，覆盖路由注册表、场景状态、权限、AI 直达状态、动效生命周期、原生用户端、原生商家端和平台后台生产视觉合同。
-- `npm run test:e2e`：启动 Playwright 配置的本地 Vite 服务并执行 146 个浏览器测试；覆盖全部 56 个路由、五条主流程、响应式、权限、动效降级、大面积玻璃层预算和稳定截图生成。
+- `npm run test:e2e`：启动 Playwright 配置的本地 Vite 服务；覆盖全部 59 个路由、私域入群等主流程、响应式、权限、动效降级、大面积玻璃层预算和稳定截图生成。
 - `npm run verify:all`：依次验证 API 合同、导出品牌包、校验原生小程序、运行小程序/API 冒烟测试并构建 Vite 产物。它不替代 `npm test` 或 `npm run test:e2e`，三条命令应分别执行。
 
 ## 3. 三端架构
@@ -47,13 +47,13 @@ Prototype Shell
 └── Motion Layer（按需加载的 Galacean 与 CSS 降级）
 ```
 
-路由注册表提供 56 个核心页面：
+路由注册表提供 59 个核心页面：
 
 | 端 | `surface` | 路由数 | 默认路由 | 角色规则 |
 |---|---|---:|---|---|
-| 顾客端 | `customer` | 20 | `home` | 无角色；URL 中的 `role` 会被移除 |
-| 商家端 | `merchant` | 20 | `merchant-dashboard` | 默认 `owner`；可切换 `manager`、`staff` |
-| 平台后台 | `admin` | 16 | `admin-overview` | 默认 `super_admin`；`platform_admin` 为只读 |
+| 顾客端 | `customer` | 21 | `home` | 无角色；URL 中的 `role` 会被移除 |
+| 商家端 | `merchant` | 21 | `merchant-dashboard` | 默认 `owner`；可切换 `manager`、`staff` |
+| 平台后台 | `admin` | 17 | `admin-overview` | 默认 `super_admin`；`platform_admin` 为只读 |
 
 页面下拉选项的中文标题与 `src/prototype/routeRegistry.js` 同源，避免页面目录和实际渲染脱节。无效的端、路由、场景或角色参数会被归一化为该端的有效默认值。
 
@@ -77,6 +77,8 @@ Prototype Shell
 /?surface=customer&scenario=returning-customer&route=ai-progress&variant=image
 /?surface=customer&scenario=returning-customer&route=ai-progress&variant=fallback
 /?surface=customer&scenario=returning-customer&route=ai-progress&variant=rejected
+/?surface=customer&scenario=returning-customer&route=private-group
+/?surface=merchant&role=owner&route=private-group-settings
 ```
 
 本地可直接点击：

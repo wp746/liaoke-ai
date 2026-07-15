@@ -80,9 +80,9 @@ export function PrototypeShell({
           open={inspectorOpen}
           onToggle={(event) => setInspectorOpen(event.currentTarget.open)}
         >
-          <summary>
+          <summary aria-label="原型控制台" title="原型控制台">
             <SlidersHorizontal size={17} />
-            原型控制台
+            <span className="prototype-inspector__label">原型控制台</span>
             <ChevronDown className="prototype-inspector__chevron" size={16} />
           </summary>
           <div className="prototype-inspector__body">

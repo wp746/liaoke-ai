@@ -634,9 +634,14 @@ summary:focus-visible {
 
   .prototype-inspector {
     position: fixed;
+    top: auto;
     right: 12px;
     bottom: 12px;
     z-index: 50;
+    width: 52px;
+  }
+
+  .prototype-inspector[open] {
     width: min(330px, calc(100% - 24px));
   }
 
@@ -652,6 +657,16 @@ summary:focus-visible {
     color: #fff;
     font-size: 13px;
     font-weight: 800;
+  }
+
+  .prototype-inspector:not([open]) summary {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .prototype-inspector:not([open]) .prototype-inspector__label,
+  .prototype-inspector:not([open]) .prototype-inspector__chevron {
+    display: none;
   }
 
   .prototype-inspector summary::-webkit-details-marker {

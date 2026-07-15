@@ -6,6 +6,7 @@ const mascotAssets = {
   coupon: "/brand/ip-liaoxiaoxing/scene-library/display/scene-benefits-wallet-transparent-v1-display.png",
   ai: "/brand/ip-liaoxiaoxing/scene-library/display/scene-ai-magic-transparent-v1-display.png",
   points: "/brand/ip-liaoxiaoxing/scene-library/display/scene-points-reward-transparent-v1-display.png",
+  group: "/brand/ip-liaoxiaoxing/scene-library/display/scene-home-welcome-transparent-v1-display.png",
   profile: "/brand/ip-liaoxiaoxing/scene-library/display/scene-profile-phone-cape-transparent-v2-display.png",
   empty: "/brand/ip-liaoxiaoxing/product-poses/liaoxiaoxing-empty-error.png",
 };

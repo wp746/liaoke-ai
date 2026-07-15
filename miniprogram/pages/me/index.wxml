@@ -21,7 +21,7 @@
       <view class="service-title"><text>我的服务</text><text class="muted">常用入口</text></view>
       <button class="service-row lk-pressable"><lk-reward-glyph kind="store" /><text>会员资料</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
       <button class="service-row lk-pressable"><lk-reward-glyph kind="ai" /><text>我的 AI 作品</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
-      <button class="service-row lk-pressable" bindtap="goMemberGroup"><lk-reward-glyph kind="group" /><text>加入会员福利群</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
+      <button wx:if="{{store.groupEnabled}}" class="service-row lk-pressable" bindtap="goMemberGroup"><lk-reward-glyph kind="group" /><text>加入会员福利群</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
       <button class="service-row lk-pressable"><lk-reward-glyph kind="drink" /><text>联系客服</text><view class="service-arrow"><image src="/assets/brand/scenes/scene-profile-phone.png" mode="aspectFit" /><text>›</text></view></button>
     </view>
   </lk-glass-surface>

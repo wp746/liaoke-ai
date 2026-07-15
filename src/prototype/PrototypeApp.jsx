@@ -77,6 +77,7 @@ const merchantTabPresentation = {
   "verify-hub": { label: "核销", icon: Home },
   members: { label: "会员", icon: UserRound },
   activities: { label: "运营", icon: Gift },
+  "points-products": { label: "商品", icon: Gift },
   "verify-history": { label: "记录", icon: BarChart3 },
   "merchant-export": { label: "我的", icon: UserRound },
 };

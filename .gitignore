@@ -7,3 +7,5 @@ yarn-error.log*
 pnpm-debug.log*
 .worktrees/
 .superpowers/
+output/
+artifacts/playwright/

@@ -5,36 +5,42 @@ import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
 const categories = ["热门", "饮品", "小菜", "小吃", "服务"];
-const baseLedger = [
-  ["每日签到", "+5", "今天 09:18"],
-  ["到店消费", "+120", "07-09"],
-];
+
+function pointsPauseReason(state) {
+  if (!state.platform.pointsGovernance.enabled) return "平台已暂停积分兑换";
+  if (!state.operations.pointsRules.enabled) return "本店已暂停积分兑换";
+  return "";
+}
 
 function availability(product, state) {
-  const used = state.points.redemptions.filter(({ productId }) => productId === product.id).length;
-  if (used >= product.stock) return { disabled: true, reason: "已售罄" };
+  const paused = pointsPauseReason(state);
+  if (paused) return { disabled: true, reason: paused };
+  if (!product?.active) return { disabled: true, reason: "商品已下架" };
+  const used = state.points.redemptions.filter(({ productId, status }) => productId === product.id && ["active", "used"].includes(status)).length;
+  if (product.stock <= 0) return { disabled: true, reason: "已售罄" };
   if (used >= product.monthlyLimit) return { disabled: true, reason: "本月限兑次数已用完" };
   if (state.points.balance < product.points) return { disabled: true, reason: "积分不足" };
   return { disabled: false, reason: "" };
 }
 
 export function Points({ state, onNavigate, products = [] }) {
-  const productName = (id) => products.find((product) => product.id === id)?.name ?? "积分礼品";
-  const ledger = [...state.points.redemptions.map((item) => [`兑换${productName(item.productId)}`, `-${products.find((product) => product.id === item.productId)?.points ?? 0}`, item.id]), ...baseLedger];
-  return <main className="customer-page"><LiaoxiaoxingMoment kind="points" className="customer-scene-hero customer-points-hero"><header className="customer-page__header"><span>我的积分</span><h1>{state.points.balance.toLocaleString()}</h1><p>每一次到店和创作，都在点亮下一份惊喜。</p></header></LiaoxiaoxingMoment><SurfaceCard tone="warm"><Coins size={25}/><strong>每日签到 +5 积分</strong><p>今天已签到，连续签到还能点亮更多奖励。</p><PrimaryButton onClick={() => onNavigate("points-store")}>逛积分商城</PrimaryButton></SurfaceCard><h2>积分明细</h2><section className="customer-list">{ledger.map(([title, amount, date], index) => <article className="customer-referral-record" key={`${date}-${index}`}><span><strong>{title}</strong><small>{date}</small></span><b>{amount}</b></article>)}</section></main>;
+  const paused = pointsPauseReason(state);
+  return <main className="customer-page"><LiaoxiaoxingMoment kind="points" className="customer-scene-hero customer-points-hero"><header className="customer-page__header"><span>我的积分</span><h1>{state.points.balance.toLocaleString()}</h1><p>每一次到店和创作，都在点亮下一份惊喜。</p></header></LiaoxiaoxingMoment><SurfaceCard tone="warm"><Coins size={25}/><strong>每日签到 +{state.operations.pointsRules.checkIn} 积分</strong><p>{paused || "今天已签到，连续签到还能点亮更多奖励。"}</p><PrimaryButton disabled={Boolean(paused)} onClick={() => onNavigate("points-store")}>{paused || "逛积分商城"}</PrimaryButton></SurfaceCard><h2>积分明细</h2><section className="customer-list">{(state.points.transactions ?? []).map((item) => <article className="customer-referral-record" key={item.id}><span><strong>{item.title}</strong><small>{item.occurredAt}</small></span><b>{item.amount > 0 ? `+${item.amount}` : item.amount}</b></article>)}</section></main>;
 }
 
 export function PointsStore({ state, products, onSelect, onNavigate }) {
   const [category, setCategory] = useState("热门");
-  const visible = category === "热门" ? products : products.filter((p) => p.category === category);
-  return <main className="customer-page"><header className="customer-page__header"><span>可用积分 {state.points.balance.toLocaleString()}</span><h1>积分商城</h1></header><div className="customer-segment" role="tablist" aria-label="礼品分类" style={{gridTemplateColumns:"repeat(5,1fr)"}}>{categories.map((item) => <button type="button" role="tab" aria-selected={category === item} className={category === item ? "is-active" : ""} key={item} onClick={() => setCategory(item)}>{item}</button>)}</div><section className="customer-list customer-product-list">{visible.map((product) => { const gate = availability(product, state); const used = state.points.redemptions.filter(({productId}) => productId === product.id).length; return <GlassSurface as="article" level="solid" interactive className="customer-coupon customer-points-product" key={product.id}><RewardGlyph kind="points" state={gate.disabled ? "paused" : "active"} value={product.points.toLocaleString()} /><span><strong>{product.name}</strong><small>{product.points.toLocaleString()} 积分 · 剩余库存 {Math.max(0, product.stock - used)} · 本月 {used}/{product.monthlyLimit}</small></span><button type="button" aria-label={`查看${product.name}`} disabled={gate.disabled} onClick={() => { onSelect(product.id); onNavigate("points-product"); }}>{gate.reason || <ChevronRight size={17}/>}</button></GlassSurface>; })}{visible.length === 0 && <p className="customer-empty-copy">该分类礼品即将上新</p>}</section></main>;
+  const activeProducts = products.filter((product) => product.active);
+  const visible = category === "热门" ? activeProducts : activeProducts.filter((product) => product.category === category);
+  const paused = pointsPauseReason(state);
+  return <main className="customer-page"><header className="customer-page__header"><span>可用积分 {state.points.balance.toLocaleString()}</span><h1>积分商城</h1></header>{paused && <SurfaceCard tone="plain"><StatusPill status="danger">兑换暂停</StatusPill><strong>{paused}</strong><p>积分余额和历史记录不受影响。</p></SurfaceCard>}<div className="customer-segment" role="tablist" aria-label="礼品分类" style={{gridTemplateColumns:"repeat(5,1fr)"}}>{categories.map((item) => <button type="button" role="tab" aria-selected={category === item} className={category === item ? "is-active" : ""} key={item} onClick={() => setCategory(item)}>{item}</button>)}</div><section className="customer-list customer-product-list">{visible.map((product) => { const gate = availability(product, state); const used = state.points.redemptions.filter(({productId, status}) => productId === product.id && ["active", "used"].includes(status)).length; const action = paused ? "暂停兑换" : gate.reason; return <GlassSurface as="article" level="solid" interactive className="customer-coupon customer-points-product" key={product.id}><RewardGlyph kind="points" state={gate.disabled ? "paused" : "active"} value={product.points.toLocaleString()} /><span><strong>{product.name}</strong><small>{product.points.toLocaleString()} 积分 · 剩余库存 {product.stock} · 本月 {used}/{product.monthlyLimit}</small></span><button type="button" aria-label={`查看${product.name}`} disabled={gate.disabled} onClick={() => { onSelect(product.id); onNavigate("points-product"); }}>{action || <ChevronRight size={17}/>}</button></GlassSurface>; })}{visible.length === 0 && <p className="customer-empty-copy">该分类礼品即将上新</p>}</section></main>;
 }
 
 export function PointsProduct({ product, state, onNavigate }) {
   if (!product) return <PointsStore state={state} products={[]} onSelect={() => {}} onNavigate={onNavigate}/>;
   const gate = availability(product, state);
-  const used = state.points.redemptions.filter(({productId}) => productId === product.id).length;
-  return <main className="customer-page"><button className="customer-text-button" type="button" onClick={() => onNavigate("points-store")}>返回积分商城</button><SurfaceCard tone="warm"><Gift size={30}/><h1>{product.name}</h1><strong>{product.points.toLocaleString()} 积分</strong><p>剩余库存 {Math.max(0, product.stock - used)} · 本月已兑 {used}/{product.monthlyLimit} 次。兑换后请向门店出示核销码。</p><PrimaryButton disabled={gate.disabled} onClick={() => onNavigate("points-redemption")}>{gate.reason || "立即兑换"}</PrimaryButton></SurfaceCard></main>;
+  const used = state.points.redemptions.filter(({productId, status}) => productId === product.id && ["active", "used"].includes(status)).length;
+  return <main className="customer-page"><button className="customer-text-button" type="button" onClick={() => onNavigate("points-store")}>返回积分商城</button><SurfaceCard tone="warm"><Gift size={30}/><h1>{product.name}</h1><strong>{product.points.toLocaleString()} 积分</strong><p>剩余库存 {product.stock} · 本月已兑 {used}/{product.monthlyLimit} 次。兑换后请向门店出示核销码。</p><PrimaryButton disabled={gate.disabled} onClick={() => onNavigate("points-redemption")}>{gate.reason || "立即兑换"}</PrimaryButton></SurfaceCard></main>;
 }
 
 export function PointsRedemption({ product, state, dispatch }) {
@@ -55,7 +61,7 @@ export function MemberLevel() {
   return <main className="customer-page motion-host">{justUpgraded && <GalaceanStage kind="upgrade" />}<header className="customer-page__header"><span>会员成长</span><h1>Lv2 熟客</h1></header><SurfaceCard tone="hero"><strong>1,280 / 2,000 成长值</strong><progress value="1280" max="2000" style={{width:"100%"}}/><p>距离 Lv3 挚友还差 720 成长值</p></SurfaceCard><h2>已解锁权益</h2><section className="customer-list">{["会员积分加速","生日专属好礼","每月到店券"].map((x) => <article className="customer-referral-record" key={x}><strong>{x}</strong><StatusPill status="success">已解锁</StatusPill></article>)}</section></main>;
 }
 
-export function Me({ state, onNavigate }) { return <main className="customer-page"><LiaoxiaoxingMoment kind="profile" className="customer-scene-hero customer-profile-hero"><header className="customer-page__header"><span>个人中心</span><h1>{state.customer.name}</h1><p>{state.customer.maskedPhone}</p></header></LiaoxiaoxingMoment><SurfaceCard tone="warm"><UserRound size={26}/><strong>{state.customer.level}</strong><p>成长值 {state.customer.growth.toLocaleString()}</p><PrimaryButton onClick={() => onNavigate("member-level")}>查看会员等级</PrimaryButton></SurfaceCard><h2>我的服务</h2><section className="customer-list">{[["我的积分","points"],["推荐进度","referrals"],["隐私与数据权利","privacy-data"]].map(([label, route]) => <button className="customer-coupon customer-service-row" type="button" key={route} onClick={() => onNavigate(route)}><ShieldCheck size={20}/><strong>{label}</strong><ChevronRight size={17}/></button>)}</section></main>; }
+export function Me({ state, onNavigate }) { return <main className="customer-page"><LiaoxiaoxingMoment kind="profile" className="customer-scene-hero customer-profile-hero"><header className="customer-page__header"><span>个人中心</span><h1>{state.customer.name}</h1><p>{state.customer.maskedPhone}</p></header></LiaoxiaoxingMoment><SurfaceCard tone="warm"><UserRound size={26}/><strong>{state.customer.level}</strong><p>成长值 {state.customer.growth.toLocaleString()}</p><PrimaryButton onClick={() => onNavigate("member-level")}>查看会员等级</PrimaryButton></SurfaceCard><h2>我的服务</h2><section className="customer-list">{[["加入会员福利群","private-group"],["我的积分","points"],["推荐进度","referrals"],["隐私与数据权利","privacy-data"]].map(([label, route]) => <button className="customer-coupon customer-service-row" type="button" key={route} onClick={() => onNavigate(route)}><ShieldCheck size={20}/><strong>{label}</strong><ChevronRight size={17}/></button>)}</section></main>; }
 
 export function PrivacyData() {
   const [message, setMessage] = useState("");

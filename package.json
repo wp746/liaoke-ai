@@ -28,6 +28,7 @@
     "@galacean/effects": "2.9.3",
     "@vitejs/plugin-react": "^4.3.4",
     "lucide-react": "^0.468.0",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "vite": "^6.0.7"

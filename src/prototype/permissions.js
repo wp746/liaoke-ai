@@ -1,12 +1,12 @@
 const merchantNavigation = {
   owner: ["merchant-dashboard", "verify-hub", "members", "activities", "merchant-export"],
-  manager: ["merchant-dashboard", "verify-hub", "members", "verify-history"],
+  manager: ["merchant-dashboard", "verify-hub", "members", "points-products", "verify-history"],
   staff: ["verify-hub", "verify-history", "merchant-export"],
 };
 
 const merchantActions = {
-  owner: new Set(["verify", "members:read", "activity:write", "points:write", "employee:write", "store:update", "export"]),
-  manager: new Set(["verify", "members:read"]),
+  owner: new Set(["verify", "members:read", "activity:write", "points:products:write", "points:rules:write", "group:read", "group:write", "employee:write", "store:update", "export"]),
+  manager: new Set(["verify", "members:read", "points:products:write", "group:read"]),
   staff: new Set(["verify"]),
 };
 

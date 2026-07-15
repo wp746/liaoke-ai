@@ -14,6 +14,7 @@ const tabPresentation = {
   "verify-hub": { label: "核销", icon: ScanLine },
   members: { label: "会员", icon: UsersRound },
   activities: { label: "运营", icon: Gift },
+  "points-products": { label: "商品", icon: Gift },
   "verify-history": { label: "记录", icon: History },
   "merchant-export": { label: "我的", icon: UserRound },
 };
@@ -22,7 +23,7 @@ const verificationRoutes = new Set(["verify-hub", "verify-scan", "verify-manual"
 const memberRoutes = new Set(["members", "member-detail"]);
 const operationRoutes = new Set(["activities", "activity-editor", "benefit-policy"]);
 const pointsRoutes = new Set(["points-products", "points-product-editor", "points-rules"]);
-const configurationRoutes = new Set([...operationRoutes, ...pointsRoutes, "employees", "store-settings", "merchant-plan", "merchant-export"]);
+const configurationRoutes = new Set([...operationRoutes, ...pointsRoutes, "private-group-settings", "employees", "store-settings", "merchant-plan", "merchant-export"]);
 
 function canAccessRoute(role, routeId) {
   if (routeId === "merchant-login") return true;
@@ -30,8 +31,9 @@ function canAccessRoute(role, routeId) {
   if (verificationRoutes.has(routeId)) return canMerchant(role, "verify");
   if (memberRoutes.has(routeId)) return canMerchant(role, "members:read");
   if (operationRoutes.has(routeId)) return canMerchant(role, "activity:write");
-  if (routeId === "points-rules" && role === "manager") return true;
-  if (pointsRoutes.has(routeId)) return canMerchant(role, "points:write");
+  if (routeId === "points-rules") return role === "owner" || role === "manager";
+  if (routeId === "points-products" || routeId === "points-product-editor") return canMerchant(role, "points:products:write");
+  if (routeId === "private-group-settings") return canMerchant(role, "group:read");
   if (routeId === "employees") return canMerchant(role, "employee:write");
   if (routeId === "merchant-plan") return role === "owner" || role === "manager";
   if (routeId === "merchant-export") return true;

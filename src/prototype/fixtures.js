@@ -5,6 +5,16 @@ export const fixtures = {
     slogan: "吃肉的人终会相遇",
     tableName: "A12桌",
     paused: false,
+    privateGroup: {
+      enabled: true,
+      name: "牛里牛气会员福利群",
+      guide: "进群领隐藏福利、生日券、新品试吃和工作日午市提醒。",
+      joinUrl: "https://example.com/liaoke-group-guide",
+      qrImage: "",
+      qrExpiresAt: "2026-12-31",
+      assistantName: "牛气群福利助手",
+      welcomeMessage: "欢迎进群。群内只发门店福利、新品和生日提醒，不刷屏。",
+    },
   },
   customer: {
     id: "MEM-20260710-01",
@@ -22,7 +32,7 @@ export const fixtures = {
       value: 10,
       status: "active",
       code: "NXNQ0710",
-      expiresAt: "2026-07-10 23:59:59",
+      expiresAt: "2026-07-11 23:59:59",
     },
     {
       id: "CPN-20260710-02",

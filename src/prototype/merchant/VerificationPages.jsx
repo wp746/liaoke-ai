@@ -7,7 +7,7 @@ export const verificationTypes = {
   coupon: { label: "扫码核销", icon: ScanLine, title: "到店优惠券", code: "CP-20260711-0088", value: "满 100 减 20", cash: "¥ 128.00" },
   manual: { label: "手动核销", icon: Keyboard, title: "手动券码", code: "CP-20260711-0066", value: "满 80 减 10", cash: "¥ 92.00" },
   balance: { label: "余额核销", icon: WalletCards, title: "会员余额抵扣", code: "BL-20260711-0032", value: "抵扣 ¥ 30", cash: "¥ 168.00" },
-  referral_coupon: { label: "老带新抵扣券核销", icon: Ticket, title: "老带新抵扣券", code: "RC-20260711-0019", value: "满 100 减 10", cash: "¥ 136.00" },
+  referral_coupon: { label: "推荐券核销", icon: Ticket, title: "老带新抵扣券", code: "RC-20260711-0019", value: "满 100 减 10", cash: "¥ 136.00" },
   points_redemption: { label: "积分兑换核销", icon: Gift, title: "酸梅汤一杯", code: "AB7X3K2Q", value: "500 积分" },
 };
 

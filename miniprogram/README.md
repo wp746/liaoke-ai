@@ -13,7 +13,7 @@
 - 顾客端流程页：
   - `pages/ai-result/index`：AI 文案候选与选择。
   - `pages/poster/preview`：海报预览、复制文案、模拟保存。
-  - `pages/group/join`：会员福利群引导、二维码放大、复制入群链接。
+  - `pages/group/join`：会员福利群引导、企业微信群活码放大、复制入群链接和群助手兜底。
 - 商家端：
   - `pages/merchant/verify`：生产化核销工作台，覆盖查询、可核销、处理中、成功和错误状态。
   - `pages/merchant/dashboard`：生产化今日经营首页，覆盖六项指标、转化率、最近核销和四种页面状态。
@@ -101,7 +101,7 @@ miniprogram/DEVICE_ACCEPTANCE_REPORT.md
 - 奖励任务页。
 - 商家核销与今日数据页。
 
-会员群入口的真实限制是：微信小程序不能静默把用户直接拉进微信群。当前实现采用可上线的结构：点击入口记录 `group_join_click`，进入原生引导页，展示群二维码并支持复制群引导链接。正式上线时，把门店配置里的 `groupChatUrl` / `groupQrImage` 替换为真实企微或微信群引导资源。
+会员群入口的真实限制是：微信小程序不能静默把用户直接拉进微信群。当前实现采用可上线的结构：领券成功后自愿选择入群，并在首页和个人中心保留常驻入口；引导页展示可放大的企业微信群活码，支持复制群引导链接，并在群满或二维码失效时联系群助手。正式上线时，把门店配置里的 `groupChatUrl` / `groupQrImage` 替换为真实企业微信群资源，并同步配置 `groupQrExpiresAt`、`groupAssistantName` 和 `groupWelcomeMessage`。仓库中的二维码只是演示资源。
 
 ## 下一步接真实接口
 

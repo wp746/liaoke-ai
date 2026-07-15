@@ -49,6 +49,7 @@
 .merchant-trend i.is-referral { background: var(--gold-400); }
 .merchant-trend .sparkline { display: block; width: 100%; height: 42px; margin-top: 4px; }
 .merchant-secondary-action { justify-self: start; padding: 7px 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink-600); font-size: 9px; font-weight: 800; }
+.merchant-operation-actions { display: flex; flex-wrap: wrap; gap: 7px; }
 .merchant-readonly { color: var(--ink-600); font-size: 9px; }
 
 .merchant-page-heading { display: grid; gap: 5px; }
@@ -68,6 +69,18 @@
 .merchant-activity-row:last-child { border-bottom: 0; }
 .merchant-form-surface label { font-size: 11px; font-weight: 800; }
 .merchant-form-surface input { min-width: 0; min-height: 40px; padding: 9px 10px; border: 1px solid rgba(90,55,24,.12); border-radius: 11px; background: #fffdfa; }
+.merchant-switch-field { display: flex; align-items: center; gap: 10px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 12px; background: var(--ivory); }
+.merchant-switch-field input { width: 31px; height: 18px; accent-color: var(--ember-600); }
+.merchant-switch-field span { display: grid; gap: 3px; }
+.merchant-switch-field strong { font-size: 10px; }
+.merchant-switch-field small { color: var(--ink-600); font-size: 8px; line-height: 1.4; }
+.merchant-group-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+.merchant-group-metrics article { display: grid; min-width: 0; gap: 4px; padding: 11px 9px; border: 1px solid rgba(90,55,24,.09); border-radius: 14px; background: #fffdfa; }
+.merchant-group-metrics span { overflow: hidden; color: var(--ink-600); font-size: 8px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.merchant-group-metrics strong { font-size: 16px; }
+.merchant-group-fieldset { display: grid; min-width: 0; gap: 11px; padding: 0; border: 0; }
+.merchant-group-fieldset input,.merchant-group-fieldset textarea { width: 100%; min-width: 0; font: inherit; resize: vertical; }
+.merchant-group-fieldset:disabled { opacity: .72; }
 
 .merchant-cost-warning { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; padding: 13px 14px; border: 1px solid rgba(217,64,52,.16); border-radius: 18px; background: rgba(217,64,52,.055); color: #b22f27; }
 .merchant-cost-warning div { display: grid; gap: 3px; }
@@ -128,5 +141,6 @@
 @media (max-width: 380px) {
   .merchant-page { padding-inline: 13px; }
   .merchant-metrics { grid-template-columns: repeat(2, 1fr); }
+  .merchant-group-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .merchant-member-filters { grid-template-columns: 1fr; }
 }

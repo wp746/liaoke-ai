@@ -20,7 +20,7 @@ const roleIdentity = {
   staff: { role: "店员", name: "周小满", destination: "核销工作台" },
 };
 
-const metrics = [
+const baseMetrics = [
   { label: "今日扫码", value: "128", delta: "+12%" },
   { label: "到店券领取", value: "76", delta: "+8%" },
   { label: "今日新会员", value: "31", delta: "+6%" },
@@ -96,6 +96,7 @@ export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
   const costAlertThreshold = state.store.monthlyCostAlert ?? 0.12;
   const costAlertGap = Math.max(costAlertThreshold - rightsCostRate, 0);
   const percent = (value) => (value * 100).toFixed(1).replace(/\.0$/, "");
+  const metrics = [...baseMetrics, { label: "入群点击", value: String(state.operations.groupStats.joinClicks), delta: `${Math.round(state.operations.groupStats.confirmedJoins / Math.max(state.operations.groupStats.joinClicks, 1) * 100)}% 确认入群` }];
 
   return (
     <main className="merchant-page merchant-dashboard">
@@ -111,7 +112,7 @@ export function MerchantDashboard({ role, state, dispatch, onNavigate }) {
         </PrimaryButton>
       </section>
 
-      <GlassSurface as="section" level="solid" className="merchant-metrics" aria-label="今日六项核心经营指标">
+      <GlassSurface as="section" level="solid" className="merchant-metrics" aria-label="今日七项核心经营指标">
         {metrics.map((metric) => (
           <article className="merchant-metric-card" key={metric.label}>
             <span>{metric.label}</span>

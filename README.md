@@ -5,11 +5,13 @@
 ## 核心文档
 
 - 完整 MVP PRD v3.0：[`docs/PRD-liaoke-ai-mvp-v3.0.md`](docs/PRD-liaoke-ai-mvp-v3.0.md)
-- 积分模块扩展 PRD v3.1：[`docs/PRD-liaoke-ai-mvp-v3.1-points.md`](docs/PRD-liaoke-ai-mvp-v3.1-points.md)
+- 积分商城与治理系统 PRD v3.1.1（开发交付版）：[`docs/PRD-liaoke-ai-mvp-v3.1-points.md`](docs/PRD-liaoke-ai-mvp-v3.1-points.md)
+- 私域会员群 PRD v3.1.2（开发交付版）：[`docs/PRD-liaoke-private-group-v3.1.2.md`](docs/PRD-liaoke-private-group-v3.1.2.md)
 - 历史 PRD v1.0：[`docs/PRD-liaoke-ai-mvp-v1.0.md`](docs/PRD-liaoke-ai-mvp-v1.0.md)
 - 7月9日 Apodex 新增对话导出：[`docs/apodex-2026-07-09-new-turns.md`](docs/apodex-2026-07-09-new-turns.md)
 - 7月8日 Apodex 新增对话导出：[`docs/apodex-2026-07-08-new-turns.md`](docs/apodex-2026-07-08-new-turns.md)
 - 6月29日 Apodex 对话导出：[`docs/apodex-2026-06-29-conversation.md`](docs/apodex-2026-06-29-conversation.md)
+- 全角色系统操作、运营与维护说明书 v3.1.2：[`docs/operations/liaoke-complete-system-manual-v3.1.md`](docs/operations/liaoke-complete-system-manual-v3.1.md)
 - 培训与路演手册：[`docs/operations/training-and-roadshow-manual-v3.0.md`](docs/operations/training-and-roadshow-manual-v3.0.md)
 - 上线验收标准：[`docs/standard-mvp/11-acceptance-checklist.md`](docs/standard-mvp/11-acceptance-checklist.md)
 - 系统闭环审查与经营测算：[`docs/business/system-audit-and-unit-economics-v3.0.md`](docs/business/system-audit-and-unit-economics-v3.0.md)
@@ -33,7 +35,7 @@
 
 ## 三端交互原型
 
-当前 React/Vite 原型覆盖顾客端 20 个、商家端 20 个、平台后台 16 个页面，共 56 个可直达路由。它用于评审三端信息架构、业务场景和角色权限；顾客端没有角色，商家端默认 `owner`，平台后台默认 `super_admin`，`platform_admin` 为只读运营视图。
+当前 React/Vite 原型覆盖顾客端 21 个、商家端 21 个、平台后台 17 个页面，共 59 个可直达路由。它用于评审三端信息架构、业务场景和角色权限；顾客端没有角色，商家端默认 `owner`，平台后台默认 `super_admin`，`platform_admin` 为只读运营视图。
 
 ```bash
 npm install
@@ -43,6 +45,8 @@ npm run dev
 开发服务器启动后打开 <http://localhost:5173/>。可直接进入以下评审状态：
 
 - 顾客新客同意页：<http://localhost:5173/?surface=customer&scenario=new-customer&route=entry-consent>
+- 顾客会员福利群：<http://localhost:5173/?surface=customer&scenario=returning-customer&route=private-group>
+- 商家私域群配置：<http://localhost:5173/?surface=merchant&role=owner&route=private-group-settings>
 - 店员积分核销台：<http://localhost:5173/?surface=merchant&role=staff&scenario=points-verification&route=verify-hub>
 - 平台运营只读总览：<http://localhost:5173/?surface=admin&role=platform_admin&route=admin-overview>
 

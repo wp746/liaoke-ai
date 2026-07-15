@@ -91,3 +91,28 @@
   font-size: 30rpx;
   font-weight: 900;
 }
+
+.group-disabled {
+  display: flex;
+  min-height: 420rpx;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22rpx;
+  padding: 42rpx;
+}
+
+.group-disabled .screen-title {
+  color: #1f1f23;
+}
+
+.group-consent {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  padding: 24rpx 28rpx;
+  border-radius: 24rpx;
+  background: #fff8ec;
+  color: #696a72;
+  font-size: 23rpx;
+  line-height: 1.55;
+}

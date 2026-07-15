@@ -60,9 +60,13 @@ test("keeps the inspector open on desktop and collapses it into a mobile drawer"
   await expect(page.getByText("实时检查器", { exact: true })).toBeVisible();
 
   await page.setViewportSize({ width: 820, height: 800 });
-  await expect(page.getByText("原型控制台", { exact: true })).toBeVisible();
+  const inspectorSummary = page.locator(".prototype-inspector summary");
+  await expect(inspectorSummary).toBeVisible();
   await expect(page.getByText("实时检查器", { exact: true })).toBeHidden();
-  await page.getByText("原型控制台", { exact: true }).click();
+  const collapsedInspector = await page.locator(".prototype-inspector").boundingBox();
+  expect(collapsedInspector.height).toBeLessThan(80);
+  expect(collapsedInspector.width).toBeLessThan(60);
+  await inspectorSummary.click();
   await expect(page.getByText("实时检查器", { exact: true })).toBeVisible();
 });
 
@@ -77,7 +81,7 @@ test("customer direct URLs strip privileged roles and expose the exact five tabs
 test("merchant direct URLs expose the exact tabs for every role", async ({ page }) => {
   const variants = [
     { role: "owner", labels: ["经营", "核销", "会员", "运营", "我的"] },
-    { role: "manager", labels: ["经营", "核销", "会员", "记录"] },
+    { role: "manager", labels: ["经营", "核销", "会员", "商品", "记录"] },
     { role: "staff", labels: ["核销", "记录", "我的"] },
   ];
 

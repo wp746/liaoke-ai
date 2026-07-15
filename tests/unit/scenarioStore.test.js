@@ -34,13 +34,21 @@ test("points redemption rejects monthly-limit, sold-out, and insufficient states
     id: `OLD-${index}`, productId: "drink-suanmei", status: "active", code: `CODE-${index}`,
   }));
   const limited = transition({ ...start, points: { balance: 5000, redemptions: prior(2) } }, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
-  const soldOut = transition({ ...start, points: { balance: 50000, redemptions: prior(99) } }, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  const soldOutStart = {
+    ...start,
+    points: { balance: 50000, redemptions: [] },
+    operations: {
+      ...start.operations,
+      pointsProducts: start.operations.pointsProducts.map((product) => product.id === "drink-suanmei" ? { ...product, stock: 0 } : product),
+    },
+  };
+  const soldOut = transition(soldOutStart, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
   const insufficient = transition({ ...start, points: { balance: 10, redemptions: [] } }, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
   assert.equal(limited.lastError, "POINTS_MONTHLY_LIMIT");
   assert.equal(soldOut.lastError, "POINTS_SOLD_OUT");
   assert.equal(insufficient.lastError, "POINTS_INSUFFICIENT");
   assert.equal(limited.points.balance, 5000);
-  assert.equal(soldOut.points.redemptions.length, 99);
+  assert.equal(soldOut.points.redemptions.length, 0);
 });
 
 test("AI generation advances from copy to image before completing", () => {
@@ -120,6 +128,142 @@ test("points settings and products reject invalid values and persist valid saves
   assert.equal(productSaved.operations.feedback, "积分商品已保存");
 });
 
+test("platform points governance is super-admin controlled and limits merchant rules", () => {
+  const start = createScenarioState("returning-customer");
+  const denied = transition(start, {
+    type: "UPDATE_PLATFORM_POINTS_GOVERNANCE",
+    actorRole: "platform_admin",
+    field: "maxBirthday",
+    value: 300,
+  });
+  assert.equal(denied, start);
+
+  const drafted = transition(start, {
+    type: "UPDATE_PLATFORM_POINTS_GOVERNANCE",
+    actorRole: "super_admin",
+    field: "maxBirthday",
+    value: 300,
+  });
+  const published = transition(drafted, {
+    type: "SAVE_PLATFORM_POINTS_GOVERNANCE",
+    actorRole: "super_admin",
+  });
+  assert.equal(published.platform.pointsGovernance.maxBirthday, 300);
+
+  const rejected = transition(published, {
+    type: "UPDATE_POINTS_RULE",
+    actorRole: "owner",
+    field: "birthday",
+    value: 301,
+  });
+  assert.equal(rejected.operations.pointsRulesDraft.birthday, 200);
+  assert.match(rejected.operations.feedback, /平台上限 300/);
+});
+
+test("platform points governance accepts permanent default expiry", () => {
+  const start = createScenarioState("returning-customer");
+  const drafted = transition(start, {
+    type: "UPDATE_PLATFORM_POINTS_GOVERNANCE",
+    actorRole: "super_admin",
+    field: "defaultExpiryDays",
+    value: "forever",
+  });
+  const published = transition(drafted, {
+    type: "SAVE_PLATFORM_POINTS_GOVERNANCE",
+    actorRole: "super_admin",
+  });
+  assert.equal(published.platform.pointsGovernance.defaultExpiryDays, "forever");
+  assert.equal(published.platform.feedback, "积分治理规则已发布");
+});
+
+test("manager-created points products feed customer redemption inventory and ledger", () => {
+  const start = createScenarioState("returning-customer");
+  const named = transition(start, {
+    type: "UPDATE_POINTS_PRODUCT_DRAFT",
+    actorRole: "manager",
+    field: "name",
+    value: "店长上架甜品",
+  });
+  const priced = transition(named, {
+    type: "UPDATE_POINTS_PRODUCT_DRAFT",
+    actorRole: "manager",
+    field: "points",
+    value: 600,
+  });
+  const stocked = transition(priced, {
+    type: "UPDATE_POINTS_PRODUCT_DRAFT",
+    actorRole: "manager",
+    field: "stock",
+    value: 5,
+  });
+  const saved = transition(stocked, {
+    type: "SAVE_POINTS_PRODUCT",
+    actorRole: "manager",
+  });
+  const product = saved.operations.pointsProducts.at(-1);
+  assert.equal(product.name, "店长上架甜品");
+
+  const redeemed = transition(saved, { type: "REDEEM_POINTS", productId: product.id });
+  assert.equal(redeemed.points.balance, start.points.balance - 600);
+  assert.equal(redeemed.operations.pointsProducts.find(({ id }) => id === product.id).stock, 4);
+  assert.deepEqual(redeemed.points.transactions[0], {
+    id: "PTX-PNT-20260710-01",
+    type: "redemption",
+    title: "兑换店长上架甜品",
+    amount: -600,
+    balanceBefore: 1250,
+    balanceAfter: 650,
+    redemptionId: "PNT-20260710-01",
+    occurredAt: "2026-07-10 14:32",
+  });
+});
+
+test("platform and store switches can independently block points redemption", () => {
+  const start = createScenarioState("returning-customer");
+  const pausedDraft = transition(start, {
+    type: "UPDATE_PLATFORM_POINTS_GOVERNANCE",
+    actorRole: "super_admin",
+    field: "enabled",
+    value: false,
+  });
+  const platformPaused = transition(pausedDraft, {
+    type: "SAVE_PLATFORM_POINTS_GOVERNANCE",
+    actorRole: "super_admin",
+  });
+  const platformBlocked = transition(platformPaused, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  assert.equal(platformBlocked.lastError, "POINTS_PLATFORM_PAUSED");
+
+  const storeDraft = transition(start, {
+    type: "UPDATE_POINTS_RULE",
+    actorRole: "owner",
+    field: "enabled",
+    value: false,
+  });
+  const storePaused = transition(storeDraft, { type: "SAVE_POINTS_RULES", actorRole: "owner" });
+  const storeBlocked = transition(storePaused, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  assert.equal(storeBlocked.lastError, "POINTS_STORE_PAUSED");
+});
+
+test("successful points verification closes the matching active redemption", () => {
+  const start = createScenarioState("returning-customer");
+  const redeemed = transition(start, { type: "REDEEM_POINTS", productId: "drink-suanmei" });
+  const code = redeemed.points.redemptions[0].code;
+  const verified = transition(redeemed, {
+    type: "VERIFY_CODE",
+    code,
+    result: "success",
+    verificationType: "points_redemption",
+    item: "酸梅汤一杯",
+    value: "500 积分",
+    verifierRole: "staff",
+    verifierName: "李店员",
+    timestamp: "2026-07-11 14:32:08",
+  });
+  assert.equal(verified.points.redemptions[0].status, "used");
+  assert.equal(verified.points.redemptions[0].verifierName, "李店员");
+  assert.equal(verified.points.redemptions[0].usedAt, "2026-07-11 14:32:08");
+});
+
 test("owner administration transitions employees and plan state", () => {
   const start = createScenarioState("returning-customer");
   const denied = transition(start, { type: "ADD_EMPLOYEE", actorRole: "staff" });
@@ -170,4 +314,43 @@ test("store availability transitions require the owner role", () => {
   assert.equal(deniedResume.store.paused, true);
   const resumed = transition(paused, { type: "RESUME_STORE", actorRole: "owner" });
   assert.equal(resumed.store.paused, false);
+});
+
+test("owner controls the private group while managers remain read-only", () => {
+  const start = createScenarioState("returning-customer");
+  const denied = transition(start, {
+    type: "UPDATE_PRIVATE_GROUP_DRAFT",
+    actorRole: "manager",
+    field: "name",
+    value: "店长不能修改",
+  });
+  assert.equal(denied.operations.privateGroupDraft.name, start.operations.privateGroupDraft.name);
+  assert.equal(denied.operations.feedback, "仅老板可执行此操作");
+
+  const drafted = transition(start, {
+    type: "UPDATE_PRIVATE_GROUP_DRAFT",
+    actorRole: "owner",
+    field: "name",
+    value: "牛气会员 2 群",
+  });
+  const saved = transition(drafted, { type: "SAVE_PRIVATE_GROUP", actorRole: "owner" });
+  assert.equal(saved.operations.privateGroup.name, "牛气会员 2 群");
+  assert.equal(saved.operations.feedback, "私域群配置已保存");
+});
+
+test("private group validation and funnel events remain explicit", () => {
+  const start = createScenarioState("returning-customer");
+  const invalidDraft = transition(start, {
+    type: "UPDATE_PRIVATE_GROUP_DRAFT",
+    actorRole: "owner",
+    field: "joinUrl",
+    value: "http://unsafe.example.com",
+  });
+  const invalid = transition(invalidDraft, { type: "SAVE_PRIVATE_GROUP", actorRole: "owner" });
+  assert.match(invalid.operations.feedback, /HTTPS 入群链接/);
+
+  const clicked = transition(start, { type: "TRACK_GROUP_EVENT", eventName: "join_click" });
+  const confirmed = transition(clicked, { type: "TRACK_GROUP_EVENT", eventName: "join_confirmed" });
+  assert.equal(clicked.operations.groupStats.joinClicks, start.operations.groupStats.joinClicks + 1);
+  assert.equal(confirmed.operations.groupStats.confirmedJoins, start.operations.groupStats.confirmedJoins + 1);
 });

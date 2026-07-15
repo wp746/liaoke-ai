@@ -183,6 +183,7 @@
 .admin-page-glyph > i { display: none; }
 .admin-page-glyph.reward-glyph--ai { background: rgba(0, 194, 255, .09); color: var(--ai-cyan-ink); }
 .admin-page-glyph.reward-glyph--risk { color: var(--ember-600); }
+.admin-page-glyph.reward-glyph--points { background: rgba(248, 184, 77, .14); color: var(--gold-ink); }
 
 .admin-risk-panel { display: grid; gap: 10px; }
 .admin-risk-panel article { display: flex; gap: 9px; padding: 10px; border-radius: 12px; background: #fff8f5; }
@@ -241,6 +242,7 @@
 }
 
 .admin-feedback { border-color: #bae1ca; background: #f1fbf5; color: #237447; }
+.admin-feedback.is-error { border-color: rgba(201, 66, 39, .24); background: #fff3f0; color: #a53824; }
 .admin-filter-row { justify-content: flex-start; margin-bottom: 14px; }
 .admin-filter-row label,
 .admin-code-toolbar label,
@@ -263,6 +265,20 @@
 .admin-editor fieldset:disabled { opacity: .72; }
 .admin-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
 .admin-form-actions { justify-content: flex-end; }
+
+.admin-governance-status { display: grid; gap: 16px; }
+.admin-governance-form { display: grid; gap: 14px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.admin-governance-form:disabled { opacity: .78; }
+.admin-governance-form .admin-panel { display: grid; gap: 16px; }
+.admin-governance-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.admin-governance-grid label { display: grid; min-width: 0; gap: 6px; color: var(--ink-600); font-size: 8px; font-weight: 780; }
+.admin-governance-grid input,
+.admin-governance-grid select { width: 100%; min-width: 0; min-height: 38px; padding: 0 11px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink-900); font-size: 10px; }
+.admin-toggle-field { display: flex; align-items: center; gap: 11px; width: fit-content; cursor: pointer; }
+.admin-toggle-field input { width: 34px; height: 19px; accent-color: var(--ember-600); }
+.admin-toggle-field span { display: grid; gap: 3px; }
+.admin-toggle-field strong { font-size: 10px; }
+.admin-toggle-field small { color: var(--ink-600); font-size: 8px; }
 
 .admin-code-toolbar { justify-content: flex-start; }
 .admin-code-toolbar label { grid-template-columns: auto 70px; align-items: center; }
@@ -328,7 +344,8 @@
 @media (max-width: 720px) {
   .admin-page-heading { align-items: flex-start; flex-direction: column; }
   .admin-kpi-grid,
-  .admin-form-grid { grid-template-columns: 1fr; }
+  .admin-form-grid,
+  .admin-governance-grid { grid-template-columns: 1fr; }
   .admin-filter-row,
   .admin-code-toolbar { align-items: stretch; flex-direction: column; }
   .admin-filter-row input { width: 100%; }

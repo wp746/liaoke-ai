@@ -44,7 +44,7 @@ export function CouponClaim({ state, onNavigate }) {
         <strong>{state.coupons[0].title}</strong>
         <span>今日 23:59 前可用</span>
       </SurfaceCard>
-      <PrimaryButton onClick={() => onNavigate("benefits")}>查看权益</PrimaryButton>
+      <div className="customer-claim-actions"><PrimaryButton onClick={() => onNavigate("private-group")}>加入门店福利群</PrimaryButton><button type="button" onClick={() => onNavigate("benefits")}>先查看权益</button></div>
     </main>
   );
 }
@@ -155,5 +155,5 @@ export function Balance({ state, onNavigate }) {
 }
 
 export function DeductionCode({ onNavigate }) {
-  return <CodeDialog eyebrow="余额抵扣码" title="本次可抵扣 ¥24.80" code="YE24A80X" expiresAt="2026-07-10 23:59:59" limits="仅限本桌本次堂食账单使用，核销后立即失效" onBack={() => onNavigate("balance")} />;
+  return <CodeDialog eyebrow="余额抵扣码" title="本次可抵扣 ¥24.80" code="YE24A80X" expiresAt="2026-07-11 23:59:59" limits="仅限本桌本次堂食账单使用，核销后立即失效" onBack={() => onNavigate("balance")} />;
 }

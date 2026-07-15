@@ -12,7 +12,11 @@ function normalizeStore(store = {}) {
     groupChatUrl: store.groupChatUrl || store.group_chat_url || "",
     groupChatName: store.groupChatName || store.group_chat_name || "牛里牛气会员福利群",
     groupJoinGuide: store.groupJoinGuide || store.group_join_guide || "进群领隐藏福利、生日券和新品试吃提醒。",
-    groupQrImage: store.groupQrImage || store.group_qr_image || "/assets/brand/png/liaoke-mark.png"
+    groupQrImage: store.groupQrImage || store.group_qr_image || "/assets/brand/png/group-guide-demo-qr.png",
+    groupEnabled: store.groupEnabled ?? store.group_enabled ?? true,
+    groupQrExpiresAt: store.groupQrExpiresAt || store.group_qr_expires_at || "2026-12-31",
+    groupAssistantName: store.groupAssistantName || store.group_assistant_name || "门店群福利助手",
+    groupWelcomeMessage: store.groupWelcomeMessage || store.group_welcome_message || "欢迎进群。群内只发门店福利、新品和生日提醒，不刷屏。"
   };
   return normalized;
 }

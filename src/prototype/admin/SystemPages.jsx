@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { GlassSurface, RewardGlyph } from "../components/Glass.jsx";
 
@@ -6,17 +6,62 @@ const statusLabel = { active: "启用中", paused: "已暂停", failed: "失败"
 const promptStatus = { draft: "草稿", active: "生效中", retired: "已退役" };
 
 function Page({ eyebrow, title, description, permissions, glyphKind, children }) {
-  return <main className="admin-page"><header className="admin-page-heading"><div><span className="admin-eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div>{glyphKind && <RewardGlyph kind={glyphKind} value={glyphKind === "ai" ? "AI" : "风险"} className="admin-page-glyph" />}</header>{!permissions.canWrite && <p className="admin-readonly-note"><CheckCircle2 size={16} />只读运营视图：数据可查看，配置与执行操作仅限超级管理员。</p>}{children}</main>;
+  const glyphValues = { ai: "AI", risk: "风险", points: "积分" };
+  return <main className="admin-page"><header className="admin-page-heading"><div><span className="admin-eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div>{glyphKind && <RewardGlyph kind={glyphKind} value={glyphValues[glyphKind]} className="admin-page-glyph" />}</header>{!permissions.canWrite && <p className="admin-readonly-note"><CheckCircle2 size={16} />只读运营视图：数据可查看，配置与执行操作仅限超级管理员。</p>}{children}</main>;
 }
 
 function DataTable({ label, headers, rows }) {
   return <section className="admin-panel admin-store-panel"><div className="admin-table-wrap"><GlassSurface as="table" level="solid" className="admin-store-table" aria-label={label}><thead><tr>{headers.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{rows}</tbody></GlassSurface></div></section>;
 }
 
-function Feedback({ message }) { return message ? <p className="admin-feedback" role="status">{message}</p> : null; }
+function Feedback({ message, kind = "success" }) { return message ? <p className={`admin-feedback${kind === "error" ? " is-error" : ""}`} role={kind === "error" ? "alert" : "status"}>{message}</p> : null; }
 
 export function BenefitTemplatesPage({ permissions, adminState, dispatchAdmin }) {
   return <Page eyebrow="BENEFIT LIBRARY" title="权益预设模板" description="统一管理新门店可一键采用的权益基线。" permissions={permissions}><Feedback message={adminState.feedback} /><DataTable label="权益预设模板" headers={["模板", "默认规则", "状态", "操作"]} rows={adminState.benefitTemplates.map((item) => <tr key={item.id}><td><strong>{item.name}</strong></td><td>{item.rule}</td><td>{statusLabel[item.status]}</td><td>{permissions.canWrite ? <button type="button" className="admin-text-action" onClick={() => dispatchAdmin({ type: "TOGGLE_TEMPLATE", templateId: item.id })}>{item.status === "active" ? "暂停" : "启用"}{item.name}</button> : "只读"}</td></tr>)} /></Page>;
+}
+
+const defaultPointsFields = [
+  ["每消费 1 元", "defaultSpend", "maxSpend"],
+  ["每日到店签到", "defaultCheckIn", "maxCheckIn"],
+  ["AI 晒圈成功", "defaultAiShare", "maxAiShare"],
+  ["完善个人资料", "defaultProfile", "maxProfile"],
+  ["生日当月到店", "defaultBirthday", "maxBirthday"],
+];
+const pointsLimitFields = [
+  ["消费积分上限", "maxSpend"],
+  ["签到积分上限", "maxCheckIn"],
+  ["AI 晒圈上限", "maxAiShare"],
+  ["资料奖励上限", "maxProfile"],
+  ["生日奖励上限", "maxBirthday"],
+  ["商品最低积分", "minProductPoints"],
+  ["商品最高积分", "maxProductPoints"],
+  ["每人每月限兑上限", "maxMonthlyLimit"],
+];
+
+function GovernanceNumberField({ label, field, value, min = 0, max, update }) {
+  return <label>{label}<input aria-label={label} type="number" min={min} max={max} value={value} onChange={(event) => update(field, Number(event.target.value))} /></label>;
+}
+
+export function PointsGovernancePage({ role, permissions, state, dispatch }) {
+  const { pointsGovernance: published, pointsGovernanceDraft: draft, feedback, feedbackKind } = state.platform;
+  const update = (field, value) => dispatch({ type: "UPDATE_PLATFORM_POINTS_GOVERNANCE", actorRole: role, field, value });
+
+  useEffect(() => () => {
+    if (permissions.canWrite) dispatch({ type: "RESET_PLATFORM_POINTS_GOVERNANCE_DRAFT", actorRole: role });
+  }, [dispatch, permissions.canWrite, role]);
+
+  return <Page eyebrow="POINTS GOVERNANCE" title="积分治理" description="平台发布统一基线和调整边界，门店老板在边界内经营，店员只负责核销。" permissions={permissions} glyphKind="points">
+    <Feedback message={feedback} kind={feedbackKind} />
+    <section className="admin-panel admin-governance-status">
+      <div className="admin-panel-heading"><div><span className="admin-eyebrow">GLOBAL SWITCH</span><h2>全平台状态</h2></div><span className={`admin-state${published.enabled ? " is-live" : ""}`}>{published.enabled ? "兑换运行中" : "全平台已暂停"}</span></div>
+      <label className="admin-toggle-field"><input aria-label="全平台积分兑换" type="checkbox" checked={draft.enabled} disabled={!permissions.canWrite} onChange={(event) => update("enabled", event.target.checked)} /><span><strong>全平台积分兑换</strong><small>关闭后保留门店配置、顾客余额和历史流水</small></span></label>
+    </section>
+    <fieldset className="admin-governance-form" disabled={!permissions.canWrite}>
+      <section className="admin-panel"><div className="admin-panel-heading"><div><span className="admin-eyebrow">DEFAULTS</span><h2>新门店默认规则</h2></div><span className="admin-state">门店可在上限内调整</span></div><div className="admin-governance-grid">{defaultPointsFields.map(([label, field, maxField]) => <GovernanceNumberField key={field} label={label} field={field} value={draft[field]} max={draft[maxField]} update={update} />)}<label>默认积分有效期<select aria-label="默认积分有效期" value={draft.defaultExpiryDays} onChange={(event) => update("defaultExpiryDays", event.target.value === "forever" ? "forever" : Number(event.target.value))}><option value="90">90 天</option><option value="180">180 天</option><option value="365">365 天</option><option value="forever">永久</option></select></label></div></section>
+      <section className="admin-panel"><div className="admin-panel-heading"><div><span className="admin-eyebrow">GUARDRAILS</span><h2>商家调整边界</h2></div><span className="admin-state">防止积分失控</span></div><div className="admin-governance-grid">{pointsLimitFields.map(([label, field]) => <GovernanceNumberField key={field} label={label} field={field} value={draft[field]} min={field === "minProductPoints" || field === "maxMonthlyLimit" ? 1 : 0} update={update} />)}</div></section>
+    </fieldset>
+    {permissions.canWrite && <div className="admin-form-actions"><button type="button" className="admin-primary-action" onClick={() => dispatch({ type: "SAVE_PLATFORM_POINTS_GOVERNANCE", actorRole: role })}>发布积分治理规则</button></div>}
+  </Page>;
 }
 
 function QuotaBudgetControl({ item, dispatchAdmin }) {
@@ -70,7 +115,7 @@ export function SystemLogsPage({ permissions, adminState, onNavigate }) {
 }
 
 export const SYSTEM_PAGE_BY_ROUTE = {
-  "benefit-templates": BenefitTemplatesPage, "ai-quota": AiQuotaPage, "ai-failures": AiFailuresPage,
+  "benefit-templates": BenefitTemplatesPage, "points-governance": PointsGovernancePage, "ai-quota": AiQuotaPage, "ai-failures": AiFailuresPage,
   "prompt-versions": PromptVersionsPage, keywords: KeywordsPage, "risk-center": RiskCenterPage,
   contracts: ContractsPage, "export-audit": ExportAuditPage, "platform-accounts": PlatformAccountsPage,
   "system-logs": SystemLogsPage,

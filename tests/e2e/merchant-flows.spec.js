@@ -99,7 +99,7 @@ test("manual verification keeps the submitted code and appends an auditable hist
 
 test("all five verification modes share scan, manual, processing, and timeout-safe states", async ({ page }) => {
   await page.goto("/?surface=merchant&role=staff&route=verify-hub");
-  for (const label of ["扫码核销", "手动核销", "余额核销", "老带新抵扣券核销", "积分兑换核销"]) {
+  for (const label of ["扫码核销", "手动核销", "余额核销", "推荐券核销", "积分兑换核销"]) {
     await expect(page.getByRole("button", { name: new RegExp(label) })).toBeVisible();
   }
 
@@ -174,8 +174,8 @@ test("inaccessible merchant routes show permission state instead of target conte
 test("owner dashboard shows the PRD operating picture and opens scanning", async ({ page }) => {
   await page.goto("/?surface=merchant&role=owner&route=merchant-dashboard");
 
-  const metrics = page.getByLabel("今日六项核心经营指标");
-  for (const metric of ["今日扫码", "到店券领取", "今日新会员", "AI 海报用户", "老带新订单", "预估新增营业额"]) {
+  const metrics = page.getByLabel("今日七项核心经营指标");
+  for (const metric of ["今日扫码", "到店券领取", "今日新会员", "AI 海报用户", "老带新订单", "预估新增营业额", "入群点击"]) {
     await expect(metrics.getByText(metric, { exact: true })).toBeVisible();
   }
   await expect(page.getByRole("button", { name: "近7天" })).toHaveAttribute("aria-pressed", "true");
@@ -189,6 +189,19 @@ test("owner dashboard shows the PRD operating picture and opens scanning", async
 
   await page.getByRole("button", { name: "扫一扫" }).click();
   await expect(page).toHaveURL(/route=verify-scan/);
+});
+
+test("owner edits private group settings while manager sees a read-only view", async ({ page }) => {
+  await page.goto("/?surface=merchant&role=manager&route=private-group-settings");
+  await expect(page.getByText("店长可查看群配置和转化数据")).toBeVisible();
+  await expect(page.getByLabel("群名称")).toBeDisabled();
+  await expect(page.getByRole("button", { name: "保存私域群配置" })).toHaveCount(0);
+
+  await page.goto("/?surface=merchant&role=owner&route=private-group-settings");
+  await expect(page.getByLabel("私域群转化指标")).toContainText("确认入群");
+  await page.getByLabel("群名称").fill("牛气会员 2 群");
+  await page.getByRole("button", { name: "保存私域群配置" }).click();
+  await expect(page.getByRole("status")).toHaveText("私域群配置已保存");
 });
 
 test("manager can view the dashboard but cannot control store pause", async ({ page }) => {
@@ -230,7 +243,7 @@ test("merchant account keeps data export exclusive to the owner", async ({ page 
 
 test("only owner can publish points rules", async ({ page }) => {
   await page.goto("/?surface=merchant&role=manager&route=points-rules");
-  await expect(page.getByText("老板权限才能修改积分规则")).toBeVisible();
+  await expect(page.getByText("店长可以管理积分商品，积分发放规则仅老板可以修改。")).toBeVisible();
   await expect(page.getByRole("button", { name: "保存积分规则" })).toHaveCount(0);
 
   await page.goto("/?surface=merchant&role=owner&route=points-rules");

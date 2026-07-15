@@ -10,6 +10,7 @@ test("captures the locked customer visual-system handoff screenshots", async ({ 
     ["ai-create", "customer-ai-create.png"],
     ["points", "customer-points.png"],
     ["points-store", "customer-points-store.png"],
+    ["private-group", "customer-private-group.png"],
     ["me", "customer-me.png"],
   ]) {
     await page.goto(`/?surface=customer&scenario=returning-customer&route=${route}`);
@@ -84,6 +85,7 @@ test("renders every points and profile route with required customer content", as
     ["points-store", "积分商城"],
     ["points-product", "酸梅汤一杯"],
     ["points-redemption", "确认消耗 500 积分"],
+    ["private-group", "扫码加入企业微信群"],
     ["referrals", "推荐进度"],
     ["member-level", "1,280 / 2,000 成长值"],
     ["me", "林小满"],
@@ -100,19 +102,34 @@ test("renders every points and profile route with required customer content", as
 
 test("new customer accepts consent and claims the daily benefit", async ({ page }) => {
   await page.goto("/?surface=customer&scenario=new-customer&route=entry-consent");
+  await page.getByRole("checkbox", { name: "我已阅读并同意用户服务与隐私说明" }).check();
   await page.getByRole("button", { name: "同意并继续" }).click();
   await expect(page.getByText("欢迎落座")).toBeVisible();
   await page.getByRole("button", { name: "领取 ¥10 今日到店券" }).click();
   await expect(page.getByText("福利已放进权益中心")).toBeVisible();
-  await page.getByRole("button", { name: "查看权益" }).click();
+  await page.getByRole("button", { name: "先查看权益" }).click();
   await expect(page.getByRole("heading", { name: "权益中心" })).toBeVisible();
+});
+
+test("customer reaches the private group from home and can inspect the live-code entry", async ({ page }) => {
+  await page.goto("/?surface=customer&scenario=returning-customer&route=home");
+  await page.getByRole("button", { name: "加入会员福利群" }).click();
+  await expect(page.getByRole("heading", { name: "牛里牛气会员福利群" })).toBeVisible();
+  await expect(page.getByAltText("企业微信群入群二维码")).toBeVisible();
+  await expect(page.getByText("入群完全自愿", { exact: false })).toBeVisible();
+
+  await page.getByRole("button", { name: "放大企业微信群二维码" }).click();
+  await expect(page.getByRole("dialog", { name: "企业微信群二维码" })).toBeVisible();
+  await page.getByRole("button", { name: "关闭二维码" }).click();
+  await page.getByRole("button", { name: "一键打开入群入口" }).click();
+  await expect(page.getByRole("status")).toContainText("演示环境已记录入群点击");
 });
 
 test("consent must be checked before a new customer can continue", async ({ page }) => {
   await page.goto("/?surface=customer&scenario=new-customer&route=entry-consent");
-  await page.getByRole("checkbox", { name: "我已阅读并同意用户服务与隐私说明" }).uncheck();
+  await expect(page.getByRole("checkbox", { name: "我已阅读并同意用户服务与隐私说明" })).not.toBeChecked();
   await expect(page.getByRole("button", { name: "同意并继续" })).toBeDisabled();
-  await expect(page.getByRole("heading", { name: "这一桌的星火，等你点亮" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "一起点亮这一桌" })).toBeVisible();
 });
 
 test("coupon detail keeps the coupon selected from benefits", async ({ page }) => {

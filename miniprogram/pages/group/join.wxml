@@ -1,4 +1,12 @@
 <view class="page group-page">
+  <view wx:if="{{!store.groupEnabled}}" class="group-disabled card">
+    <text class="tiny-label">会员福利群</text>
+    <text class="screen-title">入口维护中</text>
+    <text class="muted">已经领取的券、余额和积分不受影响。</text>
+    <button class="secondary-btn" bindtap="backHome">返回首页</button>
+  </view>
+
+  <block wx:else>
   <view class="group-hero">
     <view>
       <text class="tiny-label">会员福利群</text>
@@ -24,13 +32,16 @@
   </view>
 
   <view class="qr-card card section">
-    <image src="{{store.groupQrImage}}" mode="aspectFit" bindtap="previewQr" />
-    <text class="qr-title">点击二维码可放大</text>
-    <text class="muted">真实上线时这里替换成门店微信群或企微群二维码。</text>
+    <image src="{{store.groupQrImage}}" mode="aspectFit" show-menu-by-longpress="{{true}}" bindtap="previewQr" />
+    <text class="qr-title">点击放大，长按识别</text>
+    <text class="muted">企业微信群活码有效期至 {{store.groupQrExpiresAt}}。失效时请联系群助手。</text>
   </view>
 
   <button class="primary-btn section" bindtap="copyGroupLink">
-    {{copied ? '已复制入群链接' : '一键复制入群链接'}}
+    {{copied ? '已复制入群链接' : '复制入群链接'}}
   </button>
+  <button class="secondary-btn section" open-type="contact" bindtap="contactAssistant">群满或二维码失效？联系{{store.groupAssistantName}}</button>
+  <view class="group-consent section"><text>{{store.groupWelcomeMessage}}</text><text>入群完全自愿，退群不影响已领取的券、余额和积分。</text></view>
   <button class="secondary-btn section" bindtap="backHome">返回首页</button>
+  </block>
 </view>

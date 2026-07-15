@@ -4,7 +4,7 @@ import { PrimaryButton, StatusPill } from "../components/Ui.jsx";
 import { GalaceanStage } from "../motion/GalaceanStage.jsx";
 
 export function EntryConsent({ dispatch, onNavigate }) {
-  const [consentChecked, setConsentChecked] = useState(true);
+  const [consentChecked, setConsentChecked] = useState(false);
   const accept = () => {
     if (!consentChecked) return;
     dispatch({ type: "ACCEPT_CONSENT" });
@@ -17,8 +17,8 @@ export function EntryConsent({ dispatch, onNavigate }) {
       <LiaoxiaoxingMoment kind="welcome" className="ui-card ui-card--hero customer-entry-moment">
         <div>
           <StatusPill status="reward">牛里牛气 · A12桌</StatusPill>
-          <h1>这一桌的星火，等你点亮</h1>
-          <p>授权手机号后，可领取到店权益，并在权益中心查看使用记录。</p>
+          <h1>一起点亮这一桌</h1>
+          <p>同意服务与隐私说明后即可进入；领取权益时可自行选择是否授权手机号。</p>
           <label className="customer-consent">
             <input
               type="checkbox"

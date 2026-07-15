@@ -51,7 +51,7 @@
     </button>
   </lk-glass-surface>
 
-  <lk-glass-surface level="acrylic" interactive>
+  <lk-glass-surface wx:if="{{store.groupEnabled}}" level="acrylic" interactive>
     <button class="group-entry" bindtap="joinMemberGroup">
       <lk-reward-glyph kind="group" />
       <view><text class="action-title">加入会员福利群</text><text class="action-body">{{store.groupJoinGuide}}</text></view>

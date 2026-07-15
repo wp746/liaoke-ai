@@ -15,6 +15,7 @@ const fieldStyle = { display: "grid", gap: 6, fontSize: 11, fontWeight: 750 };
 const inputStyle = { minHeight: 38, padding: "8px 10px", border: "1px solid var(--line)", borderRadius: 11, background: "#fff" };
 const cardGrid = { display: "grid", gap: 10 };
 const roleLabels = { owner: "老板", manager: "店长", staff: "店员" };
+const pointsRuleLimitFields = { spend: "maxSpend", checkIn: "maxCheckIn", aiShare: "maxAiShare", profile: "maxProfile", birthday: "maxBirthday" };
 const exportLabels = { queued: "排队中", processing: "生成中", ready: "可下载", failed: "生成失败" };
 const exportTypeLabels = { members: "会员列表", activity: "活动报表", operation: "月度经营总表" };
 
@@ -44,7 +45,7 @@ function Activities({ operations, dispatch, role, onNavigate }) {
   };
   return <main className="merchant-page"><PageHeader eyebrow={<><Gift size={14} /> 运营玩法</>} title="活动列表" body="选一个经过验证的餐饮玩法，再按门店情况调整。" />
     <GlassSurface as="section" level="solid" className="merchant-operations-panel merchant-activity-list" aria-label="活动模板">{ACTIVITY_TEMPLATES.map((template) => <button key={template.id} type="button" className="merchant-activity-row" style={{ ...cardGrid, textAlign: "left" }} onClick={() => selectTemplate(template)}><StatusPill status={operations.activities.some(({ templateId }) => templateId === template.id) ? "success" : "plain"}>{operations.activities.some(({ templateId }) => templateId === template.id) ? "已发布" : template.tag}</StatusPill><strong>{template.name}</strong><span className="merchant-readonly">{template.description}</span></button>)}</GlassSurface>
-    <button type="button" className="merchant-secondary-action" onClick={() => onNavigate("benefit-policy")}>配置返现与推荐策略</button></main>;
+    <div className="merchant-operation-actions"><button type="button" className="merchant-secondary-action" onClick={() => onNavigate("benefit-policy")}>配置返现与推荐策略</button><button type="button" className="merchant-secondary-action" onClick={() => onNavigate("points-products")}>管理积分商品</button><button type="button" className="merchant-secondary-action" onClick={() => onNavigate("points-rules")}>查看积分规则</button><button type="button" className="merchant-secondary-action" onClick={() => onNavigate("private-group-settings")}>配置私域福利群</button></div></main>;
 }
 
 function ActivityEditor({ operations, dispatch, role }) {
@@ -81,16 +82,17 @@ function PointsProducts({ operations, onNavigate }) {
   return <main className="merchant-page"><PageHeader eyebrow={<><Gift size={14} /> 礼品与服务</>} title="积分商品" body="积分只能兑换赠品或服务，不抵现金。" /><PrimaryButton onClick={() => onNavigate("points-product-editor")}><PackagePlus size={16} />新建积分商品</PrimaryButton><section style={cardGrid}>{operations.pointsProducts.map((product) => <MerchantOperationsPanel key={product.id}><div style={cardGrid}><StatusPill status={product.active ? "success" : "plain"}>{product.active ? "已上架" : "已下架"}</StatusPill><strong>{product.name}</strong><span className="merchant-readonly">{product.category} · {product.points} 积分 · 库存 {product.stock} · 每月 {product.monthlyLimit} 份</span></div></MerchantOperationsPanel>)}</section></main>;
 }
 
-function PointsProductEditor({ operations, dispatch, role }) {
+function PointsProductEditor({ operations, platform, dispatch, role }) {
   const draft = operations.pointsProductDraft;
+  const governance = platform.pointsGovernance;
   const update = (field, value) => dispatch({ type: "UPDATE_POINTS_PRODUCT_DRAFT", actorRole: role, field, value });
   return <main className="merchant-page"><PageHeader eyebrow="商品配置" title="积分商品编辑" body="配置完成后可上架到顾客的积分商城。" /><MerchantOperationsPanel><div style={cardGrid}>
     <label style={fieldStyle}>商品名称<input aria-label="商品名称" value={draft.name} onChange={(event) => update("name", event.target.value)} style={inputStyle} /></label>
     <label style={fieldStyle}>商品图片<input aria-label="商品图片" type="url" value={draft.image} onChange={(event) => update("image", event.target.value)} style={inputStyle} /></label>
     <label style={fieldStyle}>商品分类<select aria-label="商品分类" value={draft.category} onChange={(event) => update("category", event.target.value)} style={inputStyle}>{["饮品", "小菜", "小吃", "服务"].map((value) => <option key={value}>{value}</option>)}</select></label>
-    <NumberField label="所需积分" value={draft.points} min="1" onChange={(value) => update("points", value)} />
+    <NumberField label="所需积分" value={draft.points} min={governance.minProductPoints} max={governance.maxProductPoints} onChange={(value) => update("points", value)} />
     <NumberField label="库存" value={draft.stock} min="0" onChange={(value) => update("stock", value)} />
-    <NumberField label="每人每月上限" value={draft.monthlyLimit} min="1" onChange={(value) => update("monthlyLimit", value)} />
+    <NumberField label="每人每月上限" value={draft.monthlyLimit} min="1" max={governance.maxMonthlyLimit} onChange={(value) => update("monthlyLimit", value)} />
     <label style={fieldStyle}>上架状态<select aria-label="上架状态" value={draft.active ? "active" : "inactive"} onChange={(event) => update("active", event.target.value === "active")} style={inputStyle}><option value="active">已上架</option><option value="inactive">已下架</option></select></label>
     <PrimaryButton onClick={() => dispatch({ type: "SAVE_POINTS_PRODUCT", actorRole: role })}>保存积分商品</PrimaryButton><Feedback operations={operations} />
   </div></MerchantOperationsPanel></main>;
@@ -98,12 +100,27 @@ function PointsProductEditor({ operations, dispatch, role }) {
 
 const pointsFields = [["每消费 1 元", "spend"], ["每日到店签到", "checkIn"], ["AI 晒圈成功", "aiShare"], ["完善个人资料", "profile"], ["生日当月到店", "birthday"]];
 
-function PointsRules({ role, operations, dispatch }) {
+function PointsRules({ role, operations, platform, dispatch }) {
   useEffect(() => role === "owner" ? () => dispatch({ type: "RESET_POINTS_RULES_DRAFT", actorRole: role }) : undefined, [dispatch, role]);
-  if (!canMerchant(role, "points:write")) return <main className="merchant-page merchant-permission-state"><MerchantOperationsPanel tone="warm"><StatusPill status="danger">只读</StatusPill><h1>积分规则配置</h1><p>老板权限才能修改积分规则</p></MerchantOperationsPanel></main>;
+  if (!canMerchant(role, "points:rules:write")) return <main className="merchant-page merchant-permission-state"><MerchantOperationsPanel tone="warm"><StatusPill status="plain">只读</StatusPill><h1>积分规则配置</h1><p>店长可以管理积分商品，积分发放规则仅老板可以修改。</p></MerchantOperationsPanel></main>;
   const rules = operations.pointsRulesDraft;
+  const governance = platform.pointsGovernance;
   const update = (field, value) => dispatch({ type: "UPDATE_POINTS_RULE", actorRole: role, field, value });
-  return <main className="merchant-page"><PageHeader eyebrow="积分体系" title="积分规则配置" body="积分不抵现金、不可提现、不可转让。" /><MerchantOperationsPanel><div style={cardGrid}>{pointsFields.map(([label, field]) => <NumberField key={field} label={label} value={rules[field]} min="0" suffix="积分" onChange={(value) => update(field, value)} />)}<label style={fieldStyle}>积分有效期<select aria-label="积分有效期" value={rules.expiryDays} onChange={(event) => update("expiryDays", event.target.value === "forever" ? "forever" : Number(event.target.value))} style={inputStyle}><option value="90">90 天</option><option value="180">180 天</option><option value="365">365 天</option><option value="forever">永久</option></select></label><PrimaryButton onClick={() => dispatch({ type: "SAVE_POINTS_RULES", actorRole: role })}>保存积分规则</PrimaryButton><Feedback operations={operations} /></div></MerchantOperationsPanel></main>;
+  return <main className="merchant-page"><PageHeader eyebrow="积分体系" title="积分规则配置" body="积分不抵现金、不可提现、不可转让；商家设置受平台上限保护。" />{!governance.enabled && <p role="alert" className="merchant-cost-warning">平台已暂停积分兑换，当前规则会保留但暂不生效。</p>}<MerchantOperationsPanel><div style={cardGrid}><label className="merchant-switch-field"><input aria-label="本店启用积分兑换" type="checkbox" checked={rules.enabled} onChange={(event) => update("enabled", event.target.checked)} /><span><strong>本店启用积分兑换</strong><small>关闭后顾客仍可查看余额和历史流水</small></span></label>{pointsFields.map(([label, field]) => <NumberField key={field} label={label} value={rules[field]} min="0" max={governance[pointsRuleLimitFields[field]]} suffix="积分" onChange={(value) => update(field, value)} />)}<label style={fieldStyle}>积分有效期<select aria-label="积分有效期" value={rules.expiryDays} onChange={(event) => update("expiryDays", event.target.value === "forever" ? "forever" : Number(event.target.value))} style={inputStyle}><option value="90">90 天</option><option value="180">180 天</option><option value="365">365 天</option><option value="forever">永久</option></select></label><PrimaryButton onClick={() => dispatch({ type: "SAVE_POINTS_RULES", actorRole: role })}>保存积分规则</PrimaryButton><Feedback operations={operations} /></div></MerchantOperationsPanel></main>;
+}
+
+function PrivateGroupSettings({ role, operations, dispatch }) {
+  const writable = canMerchant(role, "group:write");
+  const group = writable ? operations.privateGroupDraft : operations.privateGroup;
+  const update = (field, value) => dispatch({ type: "UPDATE_PRIVATE_GROUP_DRAFT", actorRole: role, field, value });
+  useEffect(() => writable ? () => dispatch({ type: "RESET_PRIVATE_GROUP_DRAFT", actorRole: role }) : undefined, [dispatch, role, writable]);
+  const stats = [
+    ["引导页访问", operations.groupStats.pageViews],
+    ["入群入口点击", operations.groupStats.joinClicks],
+    ["复制链接", operations.groupStats.linkCopies],
+    ["确认入群", operations.groupStats.confirmedJoins],
+  ];
+  return <main className="merchant-page"><PageHeader eyebrow="私域沉淀" title="会员福利群" body="使用企业微信群活码承接扫码顾客；入群必须由顾客主动完成。" />{!writable && <p className="merchant-readonly">店长可查看群配置和转化数据，修改权限仅限老板。</p>}<section className="merchant-group-metrics" aria-label="私域群转化指标">{stats.map(([label, value]) => <article key={label}><span>{label}</span><strong>{value}</strong></article>)}</section><MerchantOperationsPanel><fieldset disabled={!writable} className="merchant-group-fieldset"><label className="merchant-switch-field"><input aria-label="启用私域群入口" type="checkbox" checked={group.enabled} onChange={(event) => update("enabled", event.target.checked)} /><span><strong>启用私域群入口</strong><small>关闭后顾客端不再提供新入群操作，已有权益不受影响</small></span></label><label style={fieldStyle}>群名称<input aria-label="群名称" maxLength="24" value={group.name} onChange={(event) => update("name", event.target.value)} style={inputStyle} /></label><label style={fieldStyle}>入群福利说明<textarea aria-label="入群福利说明" maxLength="60" value={group.guide} onChange={(event) => update("guide", event.target.value)} style={{ ...inputStyle, minHeight: 70 }} /></label><label style={fieldStyle}>企业微信群入群链接<input aria-label="企业微信群入群链接" type="url" value={group.joinUrl} onChange={(event) => update("joinUrl", event.target.value)} style={inputStyle} /></label><label style={fieldStyle}>群活码图片<input aria-label="群活码图片" type="url" value={group.qrImage} placeholder="留空时原型根据入群链接生成二维码" onChange={(event) => update("qrImage", event.target.value)} style={inputStyle} /></label><label style={fieldStyle}>活码有效期<input aria-label="活码有效期" type="date" value={group.qrExpiresAt} onChange={(event) => update("qrExpiresAt", event.target.value)} style={inputStyle} /></label><label style={fieldStyle}>群助手名称<input aria-label="群助手名称" maxLength="20" value={group.assistantName} onChange={(event) => update("assistantName", event.target.value)} style={inputStyle} /></label><label style={fieldStyle}>入群欢迎语<textarea aria-label="入群欢迎语" maxLength="120" value={group.welcomeMessage} onChange={(event) => update("welcomeMessage", event.target.value)} style={{ ...inputStyle, minHeight: 86 }} /></label></fieldset>{writable && <PrimaryButton onClick={() => dispatch({ type: "SAVE_PRIVATE_GROUP", actorRole: role })}>保存私域群配置</PrimaryButton>}<Feedback operations={operations} /></MerchantOperationsPanel><p className="merchant-readonly">建议使用企业微信群活码并在到期前 7 天更换。群满、二维码失效或客服不可用时，顾客端会提示联系群助手。</p></main>;
 }
 
 function Employees({ role, operations, dispatch }) {
@@ -136,13 +153,14 @@ function MerchantAccount({ role, state, dispatch }) {
 }
 
 export function OperationsPages({ routeId, role, state, dispatch, onNavigate }) {
-  const props = { role, operations: state.operations, dispatch, onNavigate };
+  const props = { role, operations: state.operations, platform: state.platform, dispatch, onNavigate };
   if (routeId === "activities") return <Activities {...props} />;
   if (routeId === "activity-editor") return <ActivityEditor {...props} />;
   if (routeId === "benefit-policy") return <BenefitPolicy {...props} />;
   if (routeId === "points-products") return <PointsProducts {...props} />;
   if (routeId === "points-product-editor") return <PointsProductEditor {...props} />;
   if (routeId === "points-rules") return <PointsRules {...props} />;
+  if (routeId === "private-group-settings") return <PrivateGroupSettings {...props} />;
   if (routeId === "employees") return <Employees {...props} />;
   if (routeId === "store-settings") return <StoreSettings role={role} state={state} dispatch={dispatch} />;
   if (routeId === "merchant-plan") return <MerchantPlan {...props} />;

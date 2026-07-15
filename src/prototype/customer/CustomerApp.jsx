@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BarChart3, Camera, Gift, Home, Sparkles, UserRound } from "lucide-react";
+import { BarChart3, Camera, Gift, Home, Sparkles, UserRound, UsersRound } from "lucide-react";
 import { BrandMascot } from "../components/Brand.jsx";
 import { MiniProgramFrame } from "../components/MiniProgramFrame.jsx";
 import { PrimaryButton, StatusPill, SurfaceCard } from "../components/Ui.jsx";
@@ -7,7 +7,7 @@ import { Balance, Benefits, CouponClaim, CouponCode, DeductionCode } from "./Ben
 import { EntryConsent, EntryUnavailable } from "./EntryPages.jsx";
 import { AI_PROGRESS_VARIANTS, AiCreate, AiProgress, AiSelect, PosterPreview } from "./AiPages.jsx";
 import { MemberLevel, Me, Points, PointsProduct, PointsRedemption, PointsStore, PrivacyData, Referrals } from "./PointsProfilePages.jsx";
-import { fixtures } from "../fixtures.js";
+import { PrivateGroup } from "./GroupPages.jsx";
 import "../styles/customer.css";
 
 const tabs = [
@@ -47,6 +47,11 @@ function HomePage({ state, dispatch, onNavigate }) {
         <div><span>燎客 AI 创作</span><strong>把这一桌的热气，变成会发光的作品</strong></div>
         <button type="button" aria-label="开始 AI 创作" onClick={() => onNavigate("ai-create")}>去创作</button>
       </SurfaceCard>
+      <SurfaceCard tone="warm">
+        <div className="customer-group-card__icon"><UsersRound size={23} /></div>
+        <div><span>门店私域福利</span><strong>加入会员群，接收隐藏券、生日礼和新品提醒</strong></div>
+        <button type="button" aria-label="加入会员福利群" onClick={() => onNavigate("private-group")}>去入群</button>
+      </SurfaceCard>
     </main>
   );
 }
@@ -60,6 +65,7 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate, aiVariant, o
   const [aiDraft, setAiDraft] = useState({ feeling: "", style: "质感大片" });
   const [selectedAiCopy, setSelectedAiCopy] = useState("");
   const [selectedProductId, setSelectedProductId] = useState("drink-suanmei");
+  const pointsProducts = state.operations.pointsProducts;
   const openCoupon = (couponId) => {
     setSelectedCouponId(couponId);
     onNavigate("coupon-code");
@@ -81,10 +87,11 @@ export function CustomerApp({ routeId, state, dispatch, onNavigate, aiVariant, o
     "poster-preview": aiReady ? <PosterPreview {...pageProps} selectedCopy={selectedAiCopy} /> : <AiCreate {...pageProps} draft={aiDraft} onDraftChange={setAiDraft} />,
     balance: <Balance {...pageProps} />,
     "deduction-code": <DeductionCode {...pageProps} />,
-    points: <Points {...pageProps} products={fixtures.pointsProducts} />,
-    "points-store": <PointsStore {...pageProps} products={fixtures.pointsProducts} onSelect={setSelectedProductId} />,
-    "points-product": <PointsProduct {...pageProps} product={fixtures.pointsProducts.find(({id}) => id === selectedProductId)} />,
-    "points-redemption": <PointsRedemption {...pageProps} product={fixtures.pointsProducts.find(({id}) => id === selectedProductId)} />,
+    points: <Points {...pageProps} products={pointsProducts} />,
+    "points-store": <PointsStore {...pageProps} products={pointsProducts} onSelect={setSelectedProductId} />,
+    "points-product": <PointsProduct {...pageProps} product={pointsProducts.find(({id}) => id === selectedProductId)} />,
+    "points-redemption": <PointsRedemption {...pageProps} product={pointsProducts.find(({id}) => id === selectedProductId)} />,
+    "private-group": <PrivateGroup {...pageProps} />,
     referrals: <Referrals {...pageProps} />,
     "member-level": <MemberLevel {...pageProps} />,
     me: <Me {...pageProps} />,

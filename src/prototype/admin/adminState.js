@@ -17,7 +17,7 @@ export function createAdminState() {
       { id: "coupon", name: "优惠券预设", rule: "满 100 元赠 20 元到店券", status: "active" },
       { id: "cashback", name: "返现预设", rule: "实付金额返 8% 权益余额", status: "active" },
       { id: "referral", name: "推荐奖励预设", rule: "好友到店后赠 10 元惊喜券", status: "active" },
-      { id: "points", name: "积分预设", rule: "每消费 10 元积 1 分", status: "active" },
+      { id: "points", name: "积分预设", rule: "每消费 1 元积 10 分", status: "active" },
     ],
     aiQuota: [
       { store: "牛里牛气潮汕牛肉火锅", used: 862, budget: 1200, cost: "¥431.00" },
